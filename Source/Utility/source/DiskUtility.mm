@@ -270,7 +270,7 @@ static std::string Execute(const std::string &_command)
     while( c.running() && pipe_stream ) {
         while( std::getline(pipe_stream, line) && !line.empty() ) {
             buffer += line;
-            buffer += "\n";
+            buffer += '\n';
         }
     }
 

@@ -93,7 +93,7 @@ TEST_CASE(PREFIX "can remove")
 
 TEST_CASE(PREFIX "works when empty")
 {
-    auto l = VolumeLookup{};
+    const auto l = VolumeLookup{};
     CHECK(l.FindVolumeForLocation("") == nullptr);
     CHECK(l.FindVolumeForLocation("/") == nullptr);
 }

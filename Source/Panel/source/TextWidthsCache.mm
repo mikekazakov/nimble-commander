@@ -44,7 +44,7 @@ std::vector<unsigned short> TextWidthsCache::Widths(std::span<const CFStringRef>
     std::pmr::vector<CFStringRef> unknown_strings(&mem_resource);
 
     {
-        auto lock = std::lock_guard{cache.lock};
+        const auto lock = std::lock_guard{cache.lock};
         for( size_t index = 0; index != _strings.size(); ++index ) {
             const auto string = _strings[index];
             const auto it = cache.widths.find(string);
@@ -66,7 +66,7 @@ std::vector<unsigned short> TextWidthsCache::Widths(std::span<const CFStringRef>
 
         {
             // insert the new widths into the cache
-            auto lock = std::lock_guard{cache.lock};
+            const auto lock = std::lock_guard{cache.lock};
             for( size_t index = 0; index < new_widths_sz; ++index ) {
                 const auto src_index = unknown_strings_indices[index];
                 assert(src_index < _strings.size());
@@ -107,8 +107,8 @@ TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
     *fmt::format_to(buf, "{}{}", font_size, name) = 0;
     const std::string_view key(buf);
 
-    auto lock = std::lock_guard{m_Lock};
-    if( auto it = m_CachesPerFont.find(key); it != m_CachesPerFont.end() ) {
+    const auto lock = std::lock_guard{m_Lock};
+    if( const auto it = m_CachesPerFont.find(key); it != m_CachesPerFont.end() ) {
         return it->second;
     }
     else {
@@ -118,7 +118,7 @@ TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 
 void TextWidthsCache::PurgeIfNeeded(Cache &_cache)
 {
-    auto lock = std::lock_guard{_cache.lock};
+    const auto lock = std::lock_guard{_cache.lock};
     if( _cache.widths.size() >= g_MaxStrings && !_cache.purge_scheduled ) {
         _cache.purge_scheduled = true;
         dispatch_to_background_after(g_PurgeDelay, [&] { Purge(_cache); });
@@ -128,7 +128,7 @@ void TextWidthsCache::PurgeIfNeeded(Cache &_cache)
 void TextWidthsCache::Purge(Cache &_cache)
 {
     {
-        auto lock = std::lock_guard{_cache.lock};
+        const auto lock = std::lock_guard{_cache.lock};
         _cache.widths.clear();
     }
     _cache.purge_scheduled = false;

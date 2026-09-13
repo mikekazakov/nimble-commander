@@ -92,7 +92,7 @@ std::optional<std::string> TemporaryFileStorageImpl::FindSuitableExistingTempDir
 
     // traverse each temp dir to check if this entry is already in there
     for( size_t i = 0, e = m_TempDirectories.size(); i != e; ++i ) {
-        auto &directory = m_TempDirectories[i];
+        const auto &directory = m_TempDirectories[i];
         if( !CheckRWAccess(directory) ) {
             // either this directory was purged or tampered in some other way - so remove it
             indices_to_remove.push_back(i);
@@ -227,10 +227,10 @@ static std::string MakeRandomFilename()
 
 static int RMRF(const std::string &_path)
 {
-    auto unlink_cb = [](const char *fpath,
-                        [[maybe_unused]] const struct stat *sb,
-                        int typeflag,
-                        [[maybe_unused]] struct FTW *ftwbuf) {
+    const auto unlink_cb = [](const char *fpath,
+                              [[maybe_unused]] const struct stat *sb,
+                              int typeflag,
+                              [[maybe_unused]] struct FTW *ftwbuf) {
         if( typeflag == FTW_F || typeflag == FTW_SL || typeflag == FTW_SLN )
             return unlink(fpath);
         else if( typeflag == FTW_D || typeflag == FTW_DNR || typeflag == FTW_DP )

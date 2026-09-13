@@ -46,7 +46,7 @@ static std::string NextName(const std::string &_initial, int _index)
 {
     std::filesystem::path p = _initial;
     if( p.has_extension() ) {
-        auto ext = p.extension();
+        const auto ext = p.extension();
         p.replace_extension();
         return p.native() + " " + std::to_string(_index) + ext.native();
     }
@@ -65,7 +65,7 @@ static bool HasEntry(const std::string &_name, const VFSListing &_listing, bool 
         }
     }
     else {
-        auto name = [NSString stringWithUTF8StdString:_name];
+        const auto name = [NSString stringWithUTF8StdString:_name];
         for( unsigned i = 0; i != size; ++i ) {
             if( [name compare:_listing.FilenameNS(i) options:NSCaseInsensitiveSearch] == NSOrderedSame )
                 return true;
@@ -125,7 +125,7 @@ void MakeNewFile::Perform(PanelController *_target, id /*_sender*/) const
 
     dispatch_to_background([=] {
         const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
-        auto name = FindSuitableName(g_InitialFileName, *listing, case_sensitive);
+        const auto name = FindSuitableName(g_InitialFileName, *listing, case_sensitive);
         if( name.empty() )
             return;
 
@@ -183,7 +183,7 @@ void MakeNewFolder::Perform(PanelController *_target, id /*_sender*/) const
 
 bool MakeNewFolderWithSelection::Predicate(PanelController *_target) const
 {
-    auto item = _target.view.item;
+    const auto item = _target.view.item;
     return _target.isUniform && _target.vfs->IsWritable() && item &&
            (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
 }
@@ -243,7 +243,7 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id /*_sender*/) const
 
     cd.validationCallback = ValidateDirectoryInput;
 
-    auto handler = ^(NSModalResponse returnCode) {
+    const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
           const std::string name = cd.result;
           const std::string dir = _target.currentDirectoryPath;
@@ -271,7 +271,7 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id /*_sender*/) const
 
 static PanelController *FindOppositeController(PanelController *_source)
 {
-    auto state = _source.state;
+    const auto state = _source.state;
     if( !state.bothPanelsAreVisible )
         return nil;
     if( [state isLeftController:_source] )
@@ -302,7 +302,7 @@ void MakeNewNamedFolderInOppositePanel::Perform(PanelController *_target, id /*_
 
     cd.validationCallback = ValidateDirectoryInput;
 
-    auto handler = ^(NSModalResponse returnCode) {
+    const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
           const std::string name = cd.result;
           const std::string dir = opposite.currentDirectoryPath;

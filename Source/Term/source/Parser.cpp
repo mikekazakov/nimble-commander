@@ -78,7 +78,7 @@ static std::string ToString(const Command::Payload &_payload)
 std::string VerboseDescription(const Command &_command)
 {
     auto type = ToString(_command.type);
-    auto payload = ToString(_command.payload);
+    const auto payload = ToString(_command.payload);
     if( payload.empty() )
         return type;
     else

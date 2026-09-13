@@ -24,8 +24,8 @@ void FixedWidthLayoutEngine::CopyInputData(const Params &_params)
 
 static void FillColumnsPositions(std::vector<int> &_pos, int _number, int _item_width)
 {
-    auto generator = [pos = 0, step = _item_width]() mutable {
-        auto ret = pos;
+    const auto generator = [pos = 0, step = _item_width]() mutable {
+        const auto ret = pos;
         pos += step;
         return ret;
     };

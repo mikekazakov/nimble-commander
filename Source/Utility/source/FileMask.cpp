@@ -38,7 +38,7 @@ static std::vector<std::string> sub_masks(std::string_view _source)
 {
     std::vector<std::string> masks;
     for( const auto mask : std::views::split(_source, ',') )
-        if( auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
+        if( const auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
             masks.emplace_back(trimmed);
 
     for( auto &s : masks ) {
@@ -76,7 +76,7 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
     using base::CFPtr;
     const base::CFStackAllocator allocator;
 
-    auto original =
+    const auto original =
         CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(allocator,
                                                                 reinterpret_cast<const UInt8 *>(_string.data()),
                                                                 _string.length(),
@@ -87,7 +87,8 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
     if( !original )
         return;
 
-    auto mutable_string = CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(allocator, 0, original.get()));
+    const auto mutable_string =
+        CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(allocator, 0, original.get()));
     if( !mutable_string )
         return;
 
@@ -178,8 +179,8 @@ FileMask::FileMask(const std::string_view _mask, const Type _type) : m_Mask(_mas
         return;
 
     if( _type == Type::Mask ) {
-        auto submasks = sub_masks(_mask);
-        for( auto &s : submasks ) {
+        const auto submasks = sub_masks(_mask);
+        for( const auto &s : submasks ) {
             if( s.empty() )
                 continue;
             if( auto sm = GetSimpleMask(s) ) {
@@ -255,7 +256,7 @@ static std::string ToWildCard(const std::string &_mask, const bool _for_extensio
 
     std::vector<std::string> sub_masks;
     for( const auto mask : std::views::split(std::string_view{_mask}, ',') )
-        if( auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
+        if( const auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
             sub_masks.emplace_back(trimmed);
 
     std::string result;

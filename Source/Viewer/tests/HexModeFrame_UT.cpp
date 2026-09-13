@@ -105,8 +105,8 @@ ProduceWorkingSet(const char16_t *_chars, const int _chars_number, long _ws_offs
 static std::shared_ptr<const TextModeWorkingSet>
 ProduceWorkingSet(const char *_chars, const int _chars_number, long _ws_offset)
 {
-    auto utf16_chars = std::make_unique<unsigned short[]>(_chars_number);
-    auto utf16_chars_offsets = std::make_unique<unsigned[]>(_chars_number);
+    const auto utf16_chars = std::make_unique<unsigned short[]>(_chars_number);
+    const auto utf16_chars_offsets = std::make_unique<unsigned[]>(_chars_number);
     size_t utf16_length = 0;
     nc::utility::InterpretAsUnichar(nc::utility::Encoding::ENCODING_UTF8,
                                     reinterpret_cast<const unsigned char *>(_chars),

@@ -58,7 +58,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::FromListing
     if( !_i )
         return std::nullopt;
 
-    auto path = _i.IsDir() ? _i.Path() : _i.Directory();
+    const auto path = _i.IsDir() ? _i.Path() : _i.Directory();
     auto f = m_Storage.ComposeFavoriteLocation(*_i.Host(), path);
     if( !f )
         return std::nullopt;
@@ -70,11 +70,11 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::FromListing
 
 std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
 {
-    auto ff = GetFindersFavorites();
+    const auto ff = GetFindersFavorites();
 
     std::vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = nc::bootstrap::NativeVFSHostInstance();
-    for( auto &f : ff ) {
+    for( const auto &f : ff ) {
         auto fl = m_Storage.ComposeFavoriteLocation(host, f.second, f.first);
 
         if( fl )
@@ -85,11 +85,11 @@ std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorit
 
 std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavorites()
 {
-    auto df = GetDefaultFavorites();
+    const auto df = GetDefaultFavorites();
 
     std::vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = nc::bootstrap::NativeVFSHostInstance();
-    for( auto &f : df ) {
+    for( const auto &f : df ) {
         auto fl = m_Storage.ComposeFavoriteLocation(host, f.second, f.first);
 
         if( fl )
@@ -108,7 +108,7 @@ static std::string StringFromURL(CFURLRef _url)
 
 static std::string TitleForURL(CFURLRef _url)
 {
-    if( auto url = (__bridge NSURL *)_url ) {
+    if( const auto url = (__bridge NSURL *)_url ) {
         NSString *title;
         [url getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
         if( title ) {
@@ -125,7 +125,9 @@ static std::string TitleForURL(CFURLRef _url)
 
 static std::string TitleForPath(const std::string &_path)
 {
-    auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_path.c_str() isDirectory:true relativeToURL:nil];
+    const auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_path.c_str()
+                                                                isDirectory:true
+                                                              relativeToURL:nil];
     if( url ) {
         NSString *title;
         [url getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];

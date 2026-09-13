@@ -19,7 +19,7 @@ bool ShowVolumeInformation::Predicate(PanelController *_target) const
 void ShowVolumeInformation::Perform(PanelController *_target, id /*_sender*/) const
 {
     std::string path;
-    if( auto i = _target.view.item ) {
+    if( const auto i = _target.view.item ) {
         if( !i.Host()->IsNativeFS() )
             return;
         if( !i.IsDotDot() )
@@ -35,7 +35,7 @@ void ShowVolumeInformation::Perform(PanelController *_target, id /*_sender*/) co
     else
         return;
 
-    auto sheet = [[DetailedVolumeInformationSheetController alloc] initWithFSManager:m_NativeFSManager];
+    const auto sheet = [[DetailedVolumeInformationSheetController alloc] initWithFSManager:m_NativeFSManager];
     [sheet showSheetForWindow:_target.window withPath:path];
 }
 

@@ -72,7 +72,7 @@ ArchiveRawHost::Extracted ArchiveRawHost::read_stream(const uint64_t _max_bytes,
     st.outbuf = std::make_unique<std::byte[]>(buf_sz);
     st.cancel_checker = _cancel_checker;
 
-    auto myread = [](struct archive *a, void *client_data, const void **buff) -> ssize_t {
+    const auto myread = [](struct archive *a, void *client_data, const void **buff) -> ssize_t {
         const State &st = *static_cast<State *>(client_data);
         if( st.cancel_checker && st.cancel_checker() ) {
             archive_set_error(a, ECANCELED, "user-canceled");
@@ -88,8 +88,8 @@ ArchiveRawHost::Extracted ArchiveRawHost::read_stream(const uint64_t _max_bytes,
     };
 
     archive *arc = archive_read_new();
-    auto cleanup_arc = at_scope_end([arc] { archive_read_free(arc); });
-    auto require = [](int rc) {
+    const auto cleanup_arc = at_scope_end([arc] { archive_read_free(arc); });
+    const auto require = [](int rc) {
         if( rc != 0 )
             abort();
     };
@@ -215,7 +215,7 @@ void ArchiveRawHost::Init(const VFSCancelChecker &_cancel_checker)
 std::expected<std::shared_ptr<VFSFile>, Error>
 ArchiveRawHost::CreateFile(std::string_view _path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
     if( m_Filename != _path.substr(1) )
@@ -250,7 +250,7 @@ std::expected<void, Error>
 ArchiveRawHost::IterateDirectoryListing(std::string_view _path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( !_path.starts_with("/") || !_handler )
+    if( !_path.starts_with('/') || !_handler )
         return std::unexpected(Error{Error::POSIX, EINVAL});
     if( _path != "/" )
         return std::unexpected(Error{Error::POSIX, ENOENT});

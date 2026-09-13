@@ -139,7 +139,7 @@ static bool IsDark(NSColor *_color);
 
         __weak NCPanelViewHeader *weak_self = self;
         m_Theme->ObserveChanges([weak_self] {
-            if( auto strong_self = weak_self )
+            if( const auto strong_self = weak_self )
                 [strong_self setupAppearance];
         });
     }

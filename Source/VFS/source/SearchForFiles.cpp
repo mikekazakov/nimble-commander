@@ -127,7 +127,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 
         NotifyLookingIn(path.Path().c_str(), *path.Host());
 
-        auto callback = [&](const VFSDirEnt &_dirent) {
+        const auto callback = [&](const VFSDirEnt &_dirent) {
             if( m_Queue.IsStopped() )
                 return false;
 
@@ -196,7 +196,7 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
 
     if( m_SearchOptions & Options::LookInArchives )
         if( _dirent.type == VFSDirEnt::Reg && m_SpawnArchiveCallback )
-            if( auto archive_host = m_SpawnArchiveCallback(_full_path, _in_host) )
+            if( const auto archive_host = m_SpawnArchiveCallback(_full_path, _in_host) )
                 m_DirsFIFO.emplace(archive_host, "/");
 }
 

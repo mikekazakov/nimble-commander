@@ -35,35 +35,35 @@ static IconBuilder::BuildResult CookSomeBuildResult();
 
 TEST_CASE("IconRepositoryImpl allocates a valid slot")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
 
-    auto key = repository.Register(CookListingItem());
+    const auto key = repository.Register(CookListingItem());
 
     CHECK(repository.IsValidSlot(key));
 }
 
 TEST_CASE("IconRepositoryImpl tracks its capacity")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
-    auto some_big_max_length = 500;
+    const auto some_big_max_length = 500;
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor, some_big_max_length, 1};
 
-    auto item = CookListingItem();
+    const auto item = CookListingItem();
     CHECK(repository.IsValidSlot(repository.Register(item)) == true);
     CHECK(repository.IsValidSlot(repository.Register(item)) == false);
 }
 
 TEST_CASE("IconRepositoryImpl does lookup for existing icon when registering")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
 
     EXPECT_CALL(*icon_builder, LookupExistingIcon).Times(1);
@@ -75,8 +75,8 @@ TEST_CASE("IconRepositoryImpl does lookup for existing icon when registering")
 
 TEST_CASE("IconRepositoryImpl returns lookup results got from IconBuilder")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
 
     SECTION("only generic")
@@ -133,13 +133,13 @@ TEST_CASE("IconRepositoryImpl returns lookup results got from IconBuilder")
 
 TEST_CASE("IconRepositoryImpl returns a valid array of registered slot keys")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon).Times(2);
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
 
-    auto item = CookListingItem();
+    const auto item = CookListingItem();
     const auto key1 = repository.Register(item);
     const auto key2 = repository.Register(item);
 
@@ -151,13 +151,13 @@ TEST_CASE("IconRepositoryImpl returns a valid array of registered slot keys")
 
 TEST_CASE("IconRepositoryImpl makes an unregistered key invalid")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
 
-    auto key = repository.Register(CookListingItem());
+    const auto key = repository.Register(CookListingItem());
     repository.Unregister(key);
 
     CHECK(repository.IsValidSlot(key) == false);
@@ -166,8 +166,8 @@ TEST_CASE("IconRepositoryImpl makes an unregistered key invalid")
 
 TEST_CASE("IconRepositoryImpl reuses unregistered keys")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon).Times(AnyNumber());
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
@@ -193,8 +193,8 @@ TEST_CASE("IconRepositoryImpl reuses unregistered keys")
 
 TEST_CASE("IconRepositoryImpl passes the right icon size to IconBuilder")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<LimitedConcurrentQueueMock>();
     const auto px_size = 96;
     EXPECT_CALL(*icon_builder, LookupExistingIcon(_, px_size));
@@ -205,8 +205,8 @@ TEST_CASE("IconRepositoryImpl passes the right icon size to IconBuilder")
 
 TEST_CASE("IconRepositoryImpl uses a concurrent queue to produce real icons")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     EXPECT_CALL(*queue, Execute);
@@ -218,8 +218,8 @@ TEST_CASE("IconRepositoryImpl uses a concurrent queue to produce real icons")
 
 TEST_CASE("IconRepositoryImpl uses updated results from IconBuilder")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
@@ -257,8 +257,8 @@ TEST_CASE("IconRepositoryImpl uses updated results from IconBuilder")
 
 TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently for a single item")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &) { /* no-op */ }));
@@ -276,8 +276,8 @@ TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently for a single
 
 TEST_CASE("IconRepositoryImpl doesn't call IconBuilder again if entry didn't change")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
@@ -295,8 +295,8 @@ TEST_CASE("IconRepositoryImpl doesn't call IconBuilder again if entry didn't cha
 
 TEST_CASE("IconRepositoryImpl call IconBuilder again if entry did change")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
@@ -328,8 +328,8 @@ TEST_CASE("IconRepositoryImpl call IconBuilder again if entry did change")
 
 TEST_CASE("IconRepositoryImpl calls a callback when icon changes")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
@@ -342,7 +342,7 @@ TEST_CASE("IconRepositoryImpl calls a callback when icon changes")
     const auto item = CookListingItem();
     const auto key = repository.Register(item);
     bool called = false;
-    auto callback = [&called, key, br](IconRepository::SlotKey _key, NSImage *_img) -> void {
+    const auto callback = [&called, key, br](IconRepository::SlotKey _key, NSImage *_img) -> void {
         called = true;
         CHECK(_key == key);
         CHECK(_img == br.thumbnail);
@@ -354,12 +354,12 @@ TEST_CASE("IconRepositoryImpl calls a callback when icon changes")
 
 TEST_CASE("IconRepositoryImpl doesn't call a callback when icon is the same")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
     EXPECT_CALL(*executor, Execute).WillRepeatedly(Invoke([](const std::function<void()> &f) { f(); }));
-    auto img = [[NSImage alloc] init];
+    const auto img = [[NSImage alloc] init];
     IconBuilder::LookupResult lr;
     lr.thumbnail = img;
     EXPECT_CALL(*icon_builder, LookupExistingIcon).WillRepeatedly(Return(lr));
@@ -372,7 +372,7 @@ TEST_CASE("IconRepositoryImpl doesn't call a callback when icon is the same")
     const auto item = CookListingItem();
     const auto key = repository.Register(item);
     bool called = false;
-    auto callback = [&called](IconRepository::SlotKey, NSImage *) -> void { called = true; };
+    const auto callback = [&called](IconRepository::SlotKey, NSImage *) -> void { called = true; };
     repository.SetUpdateCallback(callback);
     repository.ScheduleIconProduction(key, item);
     CHECK(called == false);
@@ -380,8 +380,8 @@ TEST_CASE("IconRepositoryImpl doesn't call a callback when icon is the same")
 
 TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently when prod queue is too long")
 {
-    auto icon_builder = std::make_shared<IconBuilderMock>();
-    auto executor = std::make_shared<ExecutorMock>();
+    const auto icon_builder = std::make_shared<IconBuilderMock>();
+    const auto executor = std::make_shared<ExecutorMock>();
     auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute).Times(1);
     EXPECT_CALL(*queue, QueueLength).WillOnce(Return(0)).WillOnce(Return(1));
@@ -419,6 +419,6 @@ static VFSListingItem CookListingItem(uint64_t _size, time_t _mtime, mode_t _mod
     l.sizes.insert(0, _size);
     l.mtimes.insert(0, _mtime);
 
-    auto listing = VFSListing::Build(std::move(l));
+    const auto listing = VFSListing::Build(std::move(l));
     return listing->Item(0);
 }

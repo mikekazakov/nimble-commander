@@ -17,7 +17,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
 
 static bool CommonPredicate(PanelController *_target)
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     if( !i )
         return false;
 
@@ -89,7 +89,7 @@ bool OpenFilesWithDefaultHandler::Predicate(PanelController *_target) const
 
 bool OpenFilesWithDefaultHandler::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    if( auto vfs_item = _target.view.item ) {
+    if( const auto vfs_item = _target.view.item ) {
         _item.title = [NSString
             stringWithFormat:NSLocalizedString(@"Open \u201c%@\u201d", "Open an item"), vfs_item.DisplayNameNS()];
     }
@@ -104,7 +104,7 @@ void OpenFilesWithDefaultHandler::Perform(PanelController *_target, id /*_sender
         return;
     }
 
-    auto entries = _target.selectedEntriesOrFocusedEntryWithDotDot;
+    const auto entries = _target.selectedEntriesOrFocusedEntryWithDotDot;
     PerformOpeningFilesWithDefaultHandler(entries, _target, m_FileOpener);
 }
 

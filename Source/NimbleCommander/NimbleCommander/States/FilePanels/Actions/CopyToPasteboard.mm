@@ -27,7 +27,7 @@ bool CopyToPasteboard::ValidateMenuItem(PanelController *_target, NSMenuItem *_i
                              stats.selected_entries_amount];
     }
     else {
-        if( auto item = _target.view.item ) {
+        if( const auto item = _target.view.item ) {
             _item.title =
                 [NSString stringWithFormat:NSLocalizedStringFromTable(
                                                @"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),

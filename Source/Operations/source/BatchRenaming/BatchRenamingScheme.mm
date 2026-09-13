@@ -33,10 +33,10 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
     }
 
     std::vector<BatchRenamingScheme::MaskDecomposition> result;
-    auto length = mask.length;
+    const auto length = mask.length;
     auto range = NSMakeRange(0, length);
     while( range.length > 0 ) {
-        auto open_r = [mask rangeOfCharacterFromSet:open_br options:0 range:range];
+        const auto open_r = [mask rangeOfCharacterFromSet:open_br options:0 range:range];
         if( open_r.location == range.location ) {
             // this part starts with placeholder
             auto close_r = [mask rangeOfCharacterFromSet:close_br
@@ -47,7 +47,7 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
             while( close_r.location < length - 1 && [mask characterAtIndex:close_r.location + 1] == ']' )
                 close_r.location++;
 
-            auto l = close_r.location - (open_r.location + 1);
+            const auto l = close_r.location - (open_r.location + 1);
             result.emplace_back([mask substringWithRange:NSMakeRange(open_r.location + 1, l)], true);
 
             range.location += l + 2;
@@ -55,7 +55,7 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
         }
         else if( open_r.location == NSNotFound ) {
             // have no more placeholders
-            auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
+            const auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if( close_r.location != NSNotFound )
                 return std::nullopt; // invalid mask
             result.emplace_back([mask substringWithRange:range], false);
@@ -63,10 +63,10 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
         }
         else {
             // we have placeholder somewhere further
-            auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
+            const auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if( close_r.location == NSNotFound || close_r.location < open_r.location )
                 return std::nullopt; // invalid mask
-            auto l = open_r.location - range.location;
+            const auto l = open_r.location - range.location;
             result.emplace_back([mask substringWithRange:NSMakeRange(range.location, l)], false);
             range.location += l;
             range.length -= l;
@@ -98,11 +98,11 @@ bool BatchRenamingScheme::BuildActionsScript(NSString *_mask)
     auto opt_decomposition = DecomposeMaskIntoPlaceholders(_mask);
     if( !opt_decomposition )
         return false;
-    auto decomposition = std::move(*opt_decomposition);
+    const auto decomposition = std::move(*opt_decomposition);
 
     bool ok = true;
 
-    for( auto &di : decomposition ) {
+    for( const auto &di : decomposition ) {
         if( !di.is_placeholder ) {
             AddStaticText(di.string);
         }
@@ -124,7 +124,7 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
     auto position = 0ul;
 
     while( position < length ) {
-        auto c = [_ph characterAtIndex:position];
+        const auto c = [_ph characterAtIndex:position];
         switch( c ) {
             case ' ':
                 position++;
@@ -323,7 +323,7 @@ BatchRenamingScheme::EatIntWithPreffix(NSString *s, const unsigned long pos, cha
     if( n + pos == l )
         return std::nullopt;
 
-    auto c = [s characterAtIndex:pos + n];
+    const auto c = [s characterAtIndex:pos + n];
     if( c != prefix )
         return std::nullopt;
 
@@ -446,7 +446,7 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
                 if( !num_if ) // [N5,  <- invalid
                     return std::nullopt;
 
-                auto second_num = num_if->first; // [N5,10
+                const auto second_num = num_if->first; // [N5,10
                 n += num_if->second;
                 TextExtraction ins;
                 ins.zero_flag = zero_flag;
@@ -486,7 +486,7 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
                 if( !num_if )
                     return std::nullopt; // [N-5,something <- invalid
 
-                auto second_num = num_if->first; // [N-5,4
+                const auto second_num = num_if->first; // [N-5,4
                 n += num_if->second;
 
                 TextExtraction ins;
@@ -554,24 +554,24 @@ BatchRenamingScheme::ParsePlaceholder_Counter(NSString *_ph,
 
 NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction &_te)
 {
-    auto length = static_cast<unsigned short>(_from.length);
+    const auto length = static_cast<unsigned short>(_from.length);
     if( length == 0 )
         return @"";
 
     if( _te.direct_range ) {
-        auto rr = *_te.direct_range;
-        auto sr = Range(0, length);
+        const auto rr = *_te.direct_range;
+        const auto sr = Range(0, length);
         if( !sr.intersects(rr) )
             return @"";
 
-        auto res = sr.intersection(rr);
-        auto str = [_from substringWithRange:res.toNSRange()];
+        const auto res = sr.intersection(rr);
+        const auto str = [_from substringWithRange:res.toNSRange()];
         if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() && str.length < rr.length ) {
             auto insufficient = rr.length - str.length;
             insufficient = std::min<NSUInteger>(insufficient, 300);
 
-            auto padding = [@"" stringByPaddingToLength:insufficient
-                                             withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
+            const auto padding = [@"" stringByPaddingToLength:insufficient
+                                                   withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
             return [padding stringByAppendingString:str];
         }
         else {
@@ -580,7 +580,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
     }
     else if( _te.reverse_range ) {
         auto rr = *_te.reverse_range;
-        auto sr = Range(0, length);
+        const auto sr = Range(0, length);
         if( rr.location + 1 > sr.length )
             rr.location = 0;
         else
@@ -589,7 +589,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         if( !sr.intersects(rr) )
             return @"";
 
-        auto res = sr.intersection(rr);
+        const auto res = sr.intersection(rr);
         return [_from substringWithRange:res.toNSRange()];
     }
     else {
@@ -600,7 +600,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         if( start > end )
             return @"";
 
-        auto res = Range(static_cast<unsigned short>(start), static_cast<unsigned short>(end - start + 1));
+        const auto res = Range(static_cast<unsigned short>(start), static_cast<unsigned short>(end - start + 1));
         return [_from substringWithRange:res.toNSRange()];
     }
 
@@ -669,8 +669,8 @@ BatchRenamingScheme::StringByTransform(NSString *_s, BatchRenamingScheme::CaseTr
     if( _ct == BatchRenamingScheme::CaseTransform::Unchanged )
         return _s;
 
-    static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
-    auto r = [_s rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
+    static const auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
+    const auto r = [_s rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
     const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
     if( !has_ext )
         return StringByTransform(_s, _ct);
@@ -735,7 +735,7 @@ NSString *BatchRenamingScheme::FormatTimeYear4(const struct tm &_t)
 
 NSString *BatchRenamingScheme::FormatDate(time_t _t)
 {
-    static auto formatter = []() {
+    static const auto formatter = []() {
         NSDateFormatter *const fmt = [NSDateFormatter new];
         fmt.dateStyle = NSDateFormatterShortStyle;
         fmt.timeStyle = NSDateFormatterNoStyle;
@@ -752,7 +752,7 @@ NSString *BatchRenamingScheme::FormatDate(time_t _t)
 
 NSString *BatchRenamingScheme::FormatTime(time_t _t)
 {
-    static auto formatter = []() {
+    static const auto formatter = []() {
         NSDateFormatter *const fmt = [NSDateFormatter new];
         fmt.dateStyle = NSDateFormatterNoStyle;
         fmt.timeStyle = NSDateFormatterShortStyle;
@@ -781,8 +781,8 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
 
     NSRange range = NSMakeRange(0, _source.length);
     if( !_opts.search_in_ext ) {
-        static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
-        auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
+        static const auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
+        const auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
         const bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
         if( has_ext )
             range = NSMakeRange(0, r.location);
@@ -796,7 +796,7 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
                                                          range:range];
     }
     else {
-        auto r = [_source rangeOfString:_opts.search_for options:opts range:range];
+        const auto r = [_source rangeOfString:_opts.search_for options:opts range:range];
         if( r.location != NSNotFound )
             result = [_source stringByReplacingCharactersInRange:r withString:_opts.replace_with];
     }
@@ -852,7 +852,7 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
 
     CaseTransform case_transform = CaseTransform::Unchanged;
 
-    for( auto step : m_Steps ) {
+    for( const auto step : m_Steps ) {
         NSString *next = nil;
         switch( step.type ) {
             case ActionType::Static:

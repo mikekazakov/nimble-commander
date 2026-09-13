@@ -64,7 +64,7 @@ std::expected<void, Error> XAttrHost::EnumerateAttrs(int _fd, std::vector<std::p
 
     for( auto s = buf.get(), e = buf.get() + used_size; s < e;
          s += std::string_view{s}.length() + 1 ) { // iterate thru xattr names..
-        auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
+        const auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
         if( xattr_size >= 0 )
             _attrs.emplace_back(s, xattr_size);
     }
@@ -242,7 +242,7 @@ std::expected<VFSStat, Error> XAttrHost::Stat(std::string_view _path,
     }
     else if( _path.length() > 1 ) {
         _path.remove_prefix(1);
-        for( auto &i : m_Attrs )
+        for( const auto &i : m_Attrs )
             if( _path == i.first ) {
                 st.mode = m_RegMode;
                 st.size = i.second;
@@ -265,7 +265,7 @@ std::expected<std::shared_ptr<VFSFile>, Error> XAttrHost::CreateFile(std::string
 std::expected<void, Error> XAttrHost::Unlink(std::string_view _path,
                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     StackAllocator alloc;
@@ -283,7 +283,7 @@ std::expected<void, Error> XAttrHost::Rename(std::string_view _old_path,
                                              std::string_view _new_path,
                                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    if( !_old_path.starts_with("/") || !_new_path.starts_with("/") )
+    if( !_old_path.starts_with('/') || !_new_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 
     StackAllocator alloc;
@@ -345,7 +345,7 @@ std::expected<void, Error> XAttrFile::Open(unsigned long _open_flags,
         m_OpenFlags = _open_flags;
     }
     else if( _open_flags & VFSFlags::OF_Read ) {
-        auto xattr_size = fgetxattr(m_FD, path, nullptr, 0, 0, 0);
+        const auto xattr_size = fgetxattr(m_FD, path, nullptr, 0, 0, 0);
         if( xattr_size < 0 )
             return std::unexpected(nc::Error{nc::Error::POSIX, ENOENT});
 

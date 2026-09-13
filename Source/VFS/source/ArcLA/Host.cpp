@@ -203,7 +203,7 @@ std::expected<void, Error> ArchiveHost::DoInit(const VFSCancelChecker &_cancel_c
         I->m_ArFile = source_file;
     }
     else {
-        auto wrapping = std::make_shared<VFSSeqToRandomROWrapperFile>(source_file);
+        const auto wrapping = std::make_shared<VFSSeqToRandomROWrapperFile>(source_file);
         if( const std::expected<void, Error> rc = wrapping->Open(VFSFlags::OF_Read, _cancel_checker); !rc )
             return rc;
         I->m_ArFile = wrapping;
@@ -532,7 +532,7 @@ std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::stri
         return std::unexpected(rc.error());
 
     if( path.back() != '/' )
-        path += "/";
+        path += '/';
 
     const auto i = I->m_PathToDir.find(path);
     if( i == I->m_PathToDir.end() )
@@ -558,7 +558,7 @@ std::expected<VFSListingPtr, Error> ArchiveHost::FetchDirectoryListing(std::stri
         listing_source.filenames.emplace_back("..");
         listing_source.unix_types.emplace_back(DT_DIR);
         listing_source.unix_modes.emplace_back(S_IRUSR | S_IXUSR | S_IFDIR);
-        auto curtime = time(nullptr); // it's better to show date of archive itself
+        const auto curtime = time(nullptr); // it's better to show date of archive itself
         listing_source.atimes.insert(0, curtime);
         listing_source.btimes.insert(0, curtime);
         listing_source.ctimes.insert(0, curtime);
@@ -657,7 +657,7 @@ std::expected<void, Error>
 ArchiveHost::IterateDirectoryListing(std::string_view _path,
                                      const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
     StackAllocator alloc;
@@ -737,7 +737,7 @@ const arc::DirEntry *ArchiveHost::FindEntry(uint32_t _uid) noexcept
         return nullptr;
 
     auto dir = I->m_EntryByUID[_uid].first;
-    auto ind = I->m_EntryByUID[_uid].second;
+    const auto ind = I->m_EntryByUID[_uid].second;
 
     assert(ind < dir->entries.size());
     return &dir->entries[ind];
@@ -753,7 +753,7 @@ std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std:
     p = p.relative_path();
     std::filesystem::path result_path = "/";
 
-    for( auto i : p ) {
+    for( const auto i : p ) {
         result_path /= i;
 
         const arc::DirEntry *const entry = FindEntry(result_path.native());
@@ -765,7 +765,7 @@ std::expected<void, Error> ArchiveHost::ResolvePath(std::string_view _path, std:
             if( symlink_it == I->m_Symlinks.end() )
                 return std::unexpected(Error{Error::POSIX, ENOENT});
 
-            auto &s = symlink_it->second;
+            const auto &s = symlink_it->second;
             if( s.state == SymlinkState::Unresolved )
                 ResolveSymlink(s.uid);
             if( s.state != SymlinkState::Resolved )
@@ -860,7 +860,7 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
         VFSFilePtr file;
 
         // bad-bad design decision, need to refactor this later
-        if( auto wrapping = std::dynamic_pointer_cast<VFSSeqToRandomROWrapperFile>(I->m_ArFile) )
+        if( const auto wrapping = std::dynamic_pointer_cast<VFSSeqToRandomROWrapperFile>(I->m_ArFile) )
             file = wrapping->Share();
         else
             file = I->m_ArFile->Clone();
@@ -910,7 +910,7 @@ std::expected<std::unique_ptr<arc::State>, Error> ArchiveHost::ArchiveStateForIt
 struct ::archive *ArchiveHost::SpawnLibarchive()
 {
     archive *arc = archive_read_new();
-    auto require = [](int rc) {
+    const auto require = [](int rc) {
         if( rc != 0 )
             abort();
     };
@@ -993,7 +993,7 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
             if( curr_uid == 0 )
                 return;
 
-            if( auto sym_it = I->m_Symlinks.find(curr_uid); sym_it != std::end(I->m_Symlinks) ) {
+            if( const auto sym_it = I->m_Symlinks.find(curr_uid); sym_it != std::end(I->m_Symlinks) ) {
                 // current entry is a symlink - needs an additional processing
                 const auto &s = sym_it->second;
 

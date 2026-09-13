@@ -58,7 +58,7 @@ TEST_CASE(PREFIX "Notify from file events")
     const TempTestDir tmp_dir;
     FSEventsFileUpdateImpl file_update;
     bool fired = false;
-    auto callback = [&] { fired = true; };
+    const auto callback = [&] { fired = true; };
     SECTION("File created")
     {
         const auto path = tmp_dir.directory / "file_0.txt";

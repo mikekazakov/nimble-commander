@@ -32,9 +32,10 @@ static bool GoToFTP(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::FTP>();
     try {
-        auto host = std::make_shared<vfs::FTPHost>(info.host, info.user, _passwd, info.path, info.port, info.active);
+        const auto host =
+            std::make_shared<vfs::FTPHost>(info.host, info.user, _passwd, info.path, info.port, info.active);
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = info.path;
             request->VFS = host;
             request->PerformAsynchronous = true;
@@ -67,9 +68,9 @@ static bool GoToSFTP(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::SFTP>();
     try {
-        auto host = std::make_shared<vfs::SFTPHost>(info.host, info.user, _passwd, info.keypath, info.port);
+        const auto host = std::make_shared<vfs::SFTPHost>(info.host, info.user, _passwd, info.keypath, info.port);
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = host->HomeDir();
             request->VFS = host;
             request->PerformAsynchronous = true;
@@ -102,9 +103,10 @@ static bool GoToWebDAV(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::WebDAV>();
     try {
-        auto host = std::make_shared<vfs::WebDAVHost>(info.host, info.user, _passwd, info.path, info.https, info.port);
+        const auto host =
+            std::make_shared<vfs::WebDAVHost>(info.host, info.user, _passwd, info.path, info.https, info.port);
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = "/";
             request->VFS = host;
             request->PerformAsynchronous = true;
@@ -135,13 +137,13 @@ static void GoToLANShare(PanelController *_target,
                          bool _save_password_on_success,
                          NetworkConnectionsManager &_net_mgr)
 {
-    auto activity = std::make_shared<nc::panel::ActivityTicket>();
+    const auto activity = std::make_shared<nc::panel::ActivityTicket>();
     __weak PanelController *weak_panel = _target;
-    auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success, &_net_mgr](
-                  const std::string &_path, const std::string &_err) {
+    const auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success, &_net_mgr](
+                        const std::string &_path, const std::string &_err) {
         if( PanelController *const panel = weak_panel ) {
             if( !_path.empty() ) {
-                auto request = std::make_shared<DirectoryChangeRequest>();
+                const auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = _path;
                 request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
                 request->PerformAsynchronous = true;
@@ -183,14 +185,14 @@ void OpenNewFTPConnection::Perform(PanelController *_target, id /*_sender*/) con
                if( returnCode != NSModalResponseOK )
                    return;
 
-               auto connection = sheet.connection;
+               const auto connection = sheet.connection;
                const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
 
                dispatch_to_background([=, this] {
-                   auto activity = [_target registerExtActivity];
+                   const auto activity = [_target registerExtActivity];
                    GoToFTP(_target, connection, password, m_NetMgr);
                });
              }];
@@ -209,13 +211,13 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id /*_sender*/) co
                if( returnCode != NSModalResponseOK )
                    return;
 
-               auto connection = sheet.connection;
+               const auto connection = sheet.connection;
                const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
                dispatch_to_background([=, this] {
-                   auto activity = [_target registerExtActivity];
+                   const auto activity = [_target registerExtActivity];
                    GoToSFTP(_target, connection, password, m_NetMgr);
                });
              }];
@@ -234,8 +236,8 @@ void OpenNewLANShare::Perform(PanelController *_target, id /*_sender*/) const
                if( returnCode != NSModalResponseOK )
                    return;
 
-               auto connection = sheet.connection;
-               auto password = sheet.password;
+               const auto connection = sheet.connection;
+               const auto password = sheet.password;
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
 
@@ -256,13 +258,13 @@ void OpenNewWebDAVConnection::Perform(PanelController *_target, id /*_sender*/) 
                if( returnCode != NSModalResponseOK )
                    return;
 
-               auto connection = sheet.connection;
+               const auto connection = sheet.connection;
                const std::string password = sheet.password;
 
                m_NetMgr.InsertConnection(connection);
                m_NetMgr.SetPassword(connection, password);
                dispatch_to_background([=, this] {
-                   auto activity = [_target registerExtActivity];
+                   const auto activity = [_target registerExtActivity];
                    GoToWebDAV(_target, connection, password, m_NetMgr);
                });
              }];
@@ -282,14 +284,14 @@ static void GoToConnection(PanelController *_target,
 
     if( connection.IsType<NetworkConnectionsManager::FTP>() )
         dispatch_to_background([=, &_net_mgr] {
-            auto activity = [_target registerExtActivity];
+            const auto activity = [_target registerExtActivity];
             const bool success = GoToFTP(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
         });
     else if( connection.IsType<NetworkConnectionsManager::SFTP>() )
         dispatch_to_background([=, &_net_mgr] {
-            auto activity = [_target registerExtActivity];
+            const auto activity = [_target registerExtActivity];
             const bool success = GoToSFTP(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
@@ -298,7 +300,7 @@ static void GoToConnection(PanelController *_target,
         GoToLANShare(_target, connection, passwd, should_save_passwd, _net_mgr);
     else if( connection.IsType<NetworkConnectionsManager::WebDAV>() )
         dispatch_to_background([=, &_net_mgr] {
-            auto activity = [_target registerExtActivity];
+            const auto activity = [_target registerExtActivity];
             const bool success = GoToWebDAV(_target, connection, passwd, _net_mgr);
             if( success && should_save_passwd )
                 _net_mgr.SetPassword(connection, passwd);
@@ -331,9 +333,9 @@ OpenExistingNetworkConnection::OpenExistingNetworkConnection(NetworkConnectionsM
 void OpenExistingNetworkConnection::Perform(PanelController *_target, id _sender) const
 {
     AnyHolder *holder = nil;
-    if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
+    if( const auto menuitem = objc_cast<NSMenuItem>(_sender) )
         holder = objc_cast<AnyHolder>(menuitem.representedObject);
-    else if( auto command = objc_cast<NCCommandPopoverItem>(_sender) )
+    else if( const auto command = objc_cast<NCCommandPopoverItem>(_sender) )
         holder = objc_cast<AnyHolder>(command.representedObject);
 
     if( holder ) {

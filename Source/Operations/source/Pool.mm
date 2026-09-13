@@ -191,9 +191,9 @@ void Pool::StopAndWaitForShutdown()
 {
     {
         const auto guard = std::lock_guard{m_Lock};
-        for( auto &o : m_PendingOperations )
+        for( const auto &o : m_PendingOperations )
             o->Stop();
-        for( auto &o : m_RunningOperations )
+        for( const auto &o : m_RunningOperations )
             o->Stop();
     }
 

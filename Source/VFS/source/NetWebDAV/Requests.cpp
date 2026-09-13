@@ -160,7 +160,7 @@ static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse
         throw std::invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
 
     const auto base_path_len = _base_path.length();
-    auto pred = [&](auto &_item) {
+    const auto pred = [&](auto &_item) {
         if( !_item.filename.starts_with(_base_path) )
             return true;
 

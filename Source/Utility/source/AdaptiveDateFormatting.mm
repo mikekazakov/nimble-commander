@@ -163,7 +163,7 @@ static NSString *Long(time_t _time)
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    auto lock = std::lock_guard{formatter_lock};
+    const auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return static_cast<NSString *>(CFBridgingRelease(str));
 }
@@ -179,7 +179,7 @@ static NSString *Medium(time_t _time)
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    auto lock = std::lock_guard{formatter_lock};
+    const auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return static_cast<NSString *>(CFBridgingRelease(str));
 }
@@ -195,7 +195,7 @@ static NSString *Short(time_t _time)
     }();
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    auto lock = std::lock_guard{formatter_lock};
+    const auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return static_cast<NSString *>(CFBridgingRelease(str));
 }
@@ -220,7 +220,7 @@ static NSString *Tiny(time_t _time)
     const auto is_today = [NSCalendar.currentCalendar isDateInToday:date];
     const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    auto lock = std::lock_guard{formatter_lock};
+    const auto lock = std::lock_guard{formatter_lock};
     auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, is_today ? today : general, time);
     return static_cast<NSString *>(CFBridgingRelease(str));
 }

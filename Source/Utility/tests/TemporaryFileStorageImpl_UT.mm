@@ -264,10 +264,10 @@ std::string MakeTempFilesStorage()
 
 int RMRF(const std::string &_path)
 {
-    auto unlink_cb = [](const char *fpath,
-                        [[maybe_unused]] const struct stat *sb,
-                        int typeflag,
-                        [[maybe_unused]] struct FTW *ftwbuf) {
+    const auto unlink_cb = [](const char *fpath,
+                              [[maybe_unused]] const struct stat *sb,
+                              int typeflag,
+                              [[maybe_unused]] struct FTW *ftwbuf) {
         if( typeflag == FTW_F )
             unlink(fpath);
         else if( typeflag == FTW_D || typeflag == FTW_DNR || typeflag == FTW_DP )

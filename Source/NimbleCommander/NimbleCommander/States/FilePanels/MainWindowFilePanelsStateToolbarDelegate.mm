@@ -100,7 +100,7 @@ static NSImage *MakeBackupToolImage()
 {
     const auto path = @"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/"
                       @"GenericQuestionMarkIcon.icns";
-    auto image = [[NSImage alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path isDirectory:false]];
+    const auto image = [[NSImage alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path isDirectory:false]];
     if( !image )
         return nil;
     image.size = NSMakeSize(24, 24);

@@ -67,14 +67,14 @@ ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserve
     if( !_callback || _mask == 0ul )
         return {nullptr, 0};
 
-    auto ticket = m_ObservationTicket++;
+    const auto ticket = m_ObservationTicket++;
 
     Observer o;
     o.callback = std::move(_callback);
     o.ticket = ticket;
     o.mask = _mask;
 
-    auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
+    const auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
@@ -98,7 +98,7 @@ void ScopedObservableBase::AddUnticketedObserver(std::function<void()> _callback
     o.ticket = 0;
     o.mask = _mask;
 
-    auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
+    const auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
@@ -122,7 +122,7 @@ void ScopedObservableBase::FireObservers(const uint64_t _mask) const
     }
 
     if( observers )
-        for( auto &o : *observers )
+        for( const auto &o : *observers )
             if( o->mask & _mask )
                 o->callback();
 }
@@ -137,9 +137,9 @@ void ScopedObservableBase::StopObservation(const uint64_t _ticket)
             return;
         old = m_Observers;
         for( size_t i = 0, e = old->size(); i != e; ++i ) {
-            auto &o = (*old)[i];
+            const auto &o = (*old)[i];
             if( o->ticket == _ticket ) {
-                auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
+                const auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
                 *new_observers = *old;
                 new_observers->erase(next(new_observers->begin(), i));
                 m_Observers = new_observers;

@@ -16,7 +16,7 @@ TextModeFrame::TextModeFrame(const Source &_source)
     const auto tab_width = _source.tab_spaces * monospace_width;
 
     auto attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    auto release_attr_string = at_scope_end([&] { CFRelease(attr_string); });
+    const auto release_attr_string = at_scope_end([&] { CFRelease(attr_string); });
 
     const auto pstyle = CreateParagraphStyleWithRegularTabs(tab_width);
     const auto release_pstyle = at_scope_end([&] { CFRelease(pstyle); });
@@ -155,7 +155,7 @@ void TextModeFrame::ApplyStyles(CFMutableAttributedStringRef _str,
     size_t start = 0;
     size_t i = 0;
     hl::Style current = hl::Style::Default;
-    auto commit = [&] {
+    const auto commit = [&] {
         if( start == i )
             return;
         const auto range = CFRangeMake(start, i - start);

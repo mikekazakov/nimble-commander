@@ -414,7 +414,7 @@ struct TraversedFSEntry {
 static std::optional<std::vector<TraversedFSEntry>>
 Traverse(const std::string &_vfs_dirpath, VFSHost &_host, const std::function<bool()> &_cancel_checker)
 {
-    auto vfs_dirpath = EnsureNoTrailingSlash(_vfs_dirpath);
+    const auto vfs_dirpath = EnsureNoTrailingSlash(_vfs_dirpath);
 
     const std::expected<VFSStat, Error> st_src_dir = _host.Stat(vfs_dirpath, VFSFlags::F_NoFollow, _cancel_checker);
     if( !st_src_dir )

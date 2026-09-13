@@ -21,7 +21,7 @@ TEST_CASE(PREFIX "empty by default")
 
 TEST_CASE(PREFIX "rounds number of rows down")
 {
-    auto widths = std::vector<unsigned short>();
+    const auto widths = std::vector<unsigned short>();
     DynamicWidthLayoutEngine::Params params;
     params.item_height = 20;
     params.clip_view_bounds = NSMakeRect(0.0, 0.0, 100, 65);
@@ -35,7 +35,7 @@ TEST_CASE(PREFIX "rounds number of rows down")
 
 TEST_CASE(PREFIX "handle cases when number of items divises by number of rows")
 {
-    auto widths = std::vector<unsigned short>(30, 50);
+    const auto widths = std::vector<unsigned short>(30, 50);
     DynamicWidthLayoutEngine::Params params;
     params.items_number = 30;
     params.item_height = 20;
@@ -51,7 +51,7 @@ TEST_CASE(PREFIX "handle cases when number of items divises by number of rows")
 
 TEST_CASE(PREFIX "handle cases when number ofI items doesnt divide by number of rows")
 {
-    auto widths = std::vector<unsigned short>(31, 50);
+    const auto widths = std::vector<unsigned short>(31, 50);
     DynamicWidthLayoutEngine::Params params;
     params.items_number = 31;
     params.item_height = 20;

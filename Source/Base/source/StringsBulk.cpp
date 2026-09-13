@@ -203,7 +203,7 @@ StringsBulk::Ctrl *StringsBulk::Allocate(size_t _number_of_strings, size_t _tota
 
 bool operator==(const StringsBulk &_lhs, const StringsBulk &_rhs) noexcept
 {
-    auto comp = [](const char *_1, const char *_2) { return strcmp(_1, _2) == 0; };
+    const auto comp = [](const char *_1, const char *_2) { return strcmp(_1, _2) == 0; };
     return _lhs.size() == _rhs.size() && std::equal(_lhs.begin(), _lhs.end(), _rhs.begin(), comp);
 }
 
@@ -280,7 +280,7 @@ StringsBulk::Iterator &StringsBulk::Iterator::operator++() noexcept
 
 StringsBulk::Iterator StringsBulk::Iterator::operator++(int) noexcept
 {
-    auto t = *this;
+    const auto t = *this;
     operator++();
     return t;
 }
@@ -294,7 +294,7 @@ StringsBulk::Iterator &StringsBulk::Iterator::operator--() noexcept
 
 StringsBulk::Iterator StringsBulk::Iterator::operator--(int) noexcept
 {
-    auto t = *this;
+    const auto t = *this;
     operator++();
     return t;
 }

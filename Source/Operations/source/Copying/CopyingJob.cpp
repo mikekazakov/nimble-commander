@@ -101,7 +101,7 @@ void CopyingJob::Perform()
     m_PathCompositionType = composition_type;
 
     if( m_IsDestinationHostNative ) {
-        auto fs_info = copying::FindFirstFSInfoUpToRoot(*m_NativeFSManager, m_DestinationPath);
+        const auto fs_info = copying::FindFirstFSInfoUpToRoot(*m_NativeFSManager, m_DestinationPath);
         if( !fs_info ) {
             Stop(); // we're totally broken. can't go on
             return;
@@ -156,9 +156,9 @@ void CopyingJob::ProcessItems()
     bool all_matched = true;
     if( !m_Checksums.empty() ) {
         SetStage(Stage::Verify);
-        for( auto &item : m_Checksums ) {
+        for( const auto &item : m_Checksums ) {
             bool matched = false;
-            auto step_result = VerifyCopiedFile(item, matched);
+            const auto step_result = VerifyCopiedFile(item, matched);
             if( step_result != StepResult::Ok || !matched ) {
                 m_OnFileVerificationFailed(item.destination_path, *m_DestinationHost);
                 all_matched = false;
@@ -179,9 +179,9 @@ void CopyingJob::ProcessItems()
 CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
 {
     m_CurrentlyProcessingSourceItemIndex = _item_number;
-    auto source_mode = m_SourceItems.ItemMode(_item_number);
+    const auto source_mode = m_SourceItems.ItemMode(_item_number);
     auto &source_host = m_SourceItems.ItemHost(_item_number);
-    auto source_size = m_SourceItems.ItemSize(_item_number);
+    const auto source_size = m_SourceItems.ItemSize(_item_number);
     auto destination_path = ComposeDestinationNameForItem(_item_number);
     auto source_path = m_SourceItems.ComposeFullPath(_item_number);
     const auto nonexistent_dst_req_handler = RequestNonexistentDst([&] {
@@ -192,7 +192,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
     });
     const auto is_same_native_volume = [&]() {
         assert(m_NativeFSManager);
-        auto src_fsinfo = m_NativeFSManager->VolumeFromPath(source_path);
+        const auto src_fsinfo = m_NativeFSManager->VolumeFromPath(source_path);
         if( src_fsinfo == nullptr )
             return false;
         return src_fsinfo == m_DestinationNativeFSInfo;
@@ -205,7 +205,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
         // Regular files
         /////////////////////////////////////////////////////////////////////////////////////////////////
         std::optional<base::Hash> hash; // this optional will be filled with the first call of hash_feedback
-        auto hash_feedback = [&](const void *_data, unsigned _sz) {
+        const auto hash_feedback = [&](const void *_data, unsigned _sz) {
             if( !hash )
                 hash.emplace(base::Hash::MD5);
             hash->Feed(_data, _sz);
@@ -510,7 +510,7 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     std::ranges::reverse(paths_to_build);
 
     // build absent directories. no skipping here - all or nothing.
-    for( auto &path : paths_to_build ) {
+    for( const auto &path : paths_to_build ) {
         while( true ) {
             const std::expected<void, Error> rc = m_DestinationHost->CreateDirectory(path, copying::g_NewDirectoryMode);
             if( rc )
@@ -530,15 +530,15 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
 std::tuple<CopyingJob::StepResult, copying::SourceItems> CopyingJob::ScanSourceItems()
 {
     copying::SourceItems db;
-    auto stat_flags = m_Options.preserve_symlinks ? VFSFlags::F_NoFollow : 0;
+    const auto stat_flags = m_Options.preserve_symlinks ? VFSFlags::F_NoFollow : 0;
 
     for( auto &i : m_VFSListingItems ) {
         if( BlockIfPaused(); IsStopped() )
             return {StepResult::Stop, {}};
 
-        auto host_indx = db.InsertOrFindHost(i.Host());
+        const auto host_indx = db.InsertOrFindHost(i.Host());
         auto &host = db.Host(host_indx);
-        auto base_dir_indx = db.InsertOrFindBaseDir(i.Directory());
+        const auto base_dir_indx = db.InsertOrFindBaseDir(i.Directory());
         std::function<StepResult(int _parent_ind,
                                  const std::string &_full_relative_path,
                                  const std::string &_item_name)> // need function holder for recursion to work
@@ -637,7 +637,7 @@ std::tuple<CopyingJob::StepResult, copying::SourceItems> CopyingJob::ScanSourceI
             return StepResult::Ok;
         };
 
-        auto result = scan_item(-1, i.Filename(), i.Filename());
+        const auto result = scan_item(-1, i.Filename(), i.Filename());
         if( result != StepResult::Ok )
             return {result, {}};
     }
@@ -722,7 +722,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
 
     // find fs info for source file.
     assert(m_NativeFSManager);
-    auto src_fs_info_holder = m_NativeFSManager->VolumeFromFD(source_fd);
+    const auto src_fs_info_holder = m_NativeFSManager->VolumeFromFD(source_fd);
     if( !src_fs_info_holder ) {
         std::cerr << "Failed to find fs_info for dev_id: " << src_stat_buffer.st_dev << '\n';
         return StepResult::Stop; // something VERY BAD has happened, can't go on
@@ -819,7 +819,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     }
 
     // don't forget ot close destination file descriptor anyway
-    auto close_destination = at_scope_end([&] {
+    const auto close_destination = at_scope_end([&] {
         if( destination_fd != -1 ) {
             close(destination_fd);
             destination_fd = -1;
@@ -844,7 +844,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
     }
 
     // find fs info for destination file.
-    auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD(destination_fd);
+    const auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD(destination_fd);
     if( !dst_fs_info_holder )
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;
@@ -1227,7 +1227,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
 
     // find fs info for destination file.
     assert(m_NativeFSManager);
-    auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD(destination_fd);
+    const auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD(destination_fd);
     if( !dst_fs_info_holder )
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;
@@ -1756,7 +1756,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
 void CopyingJob::EraseXattrsFromNativeFD(int _fd_in) const
 {
     auto xnames = reinterpret_cast<char *>(m_Buffers[0].get());
-    auto xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
+    const auto xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
     for( auto s = xnames, e = xnames + xnamesizes; s < e;
          s += std::string_view{s}.length() + 1 ) // iterate thru xattr names..
         fremovexattr(_fd_in, s, 0);              // ..and remove everyone
@@ -1768,10 +1768,11 @@ void CopyingJob::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) cons
 {
     auto xnames = reinterpret_cast<char *>(m_Buffers[0].get());
     auto xdata = m_Buffers[1].get();
-    auto xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
+    const auto xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
     for( auto s = xnames, e = xnames + xnamesizes; s < e;
-         s += std::string_view{s}.length() + 1 ) {                          // iterate thru xattr names..
-        auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0, 0); // and read all these xattrs
+         s += std::string_view{s}.length() + 1 ) { // iterate thru xattr names..
+        const auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0,
+                                         0);              // and read all these xattrs
         if( xattrsize >= 0 )                              // xattr can be zero-length, just a tag itself
             fsetxattr(_fd_to, s, xdata, xattrsize, 0, 0); // write them into _fd_to
     }
@@ -1846,12 +1847,12 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
     int src_fd = io.open(_src_path.c_str(), O_RDONLY);
     if( src_fd == -1 )
         return StepResult::Ok;
-    auto clean_src_fd = at_scope_end([&] { close(src_fd); });
+    const auto clean_src_fd = at_scope_end([&] { close(src_fd); });
 
     int dst_fd = io.open(_dst_path.c_str(), O_RDONLY); // strangely this works
     if( dst_fd == -1 )
         return StepResult::Ok;
-    auto clean_dst_fd = at_scope_end([&] { close(dst_fd); });
+    const auto clean_dst_fd = at_scope_end([&] { close(dst_fd); });
 
     struct stat src_stat;
     if( fstat(src_fd, &src_stat) != 0 )
@@ -2121,12 +2122,12 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
             int src_fd = io.open(_src_path.c_str(), O_RDONLY);
             if( src_fd == -1 )
                 return {StepResult::Ok, SourceItemAftermath::NoChanges};
-            auto clean_src_fd = at_scope_end([&] { close(src_fd); });
+            const auto clean_src_fd = at_scope_end([&] { close(src_fd); });
 
             int dst_fd = io.open(_dst_path.c_str(), O_RDONLY); // strangely this works
             if( dst_fd == -1 )
                 return {StepResult::Ok, SourceItemAftermath::NoChanges};
-            auto clean_dst_fd = at_scope_end([&] { close(dst_fd); });
+            const auto clean_dst_fd = at_scope_end([&] { close(dst_fd); });
 
             struct stat src_stat;
             if( fstat(src_fd, &src_stat) != 0 )
@@ -2481,9 +2482,9 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
 void CopyingJob::ClearSourceItems()
 {
     for( const unsigned int index : std::ranges::reverse_view(m_SourceItemsToDelete) ) {
-        auto mode = m_SourceItems.ItemMode(index);
+        const auto mode = m_SourceItems.ItemMode(index);
         auto &host = m_SourceItems.ItemHost(index);
-        auto source_path = m_SourceItems.ComposeFullPath(index);
+        const auto source_path = m_SourceItems.ComposeFullPath(index);
 
         ClearSourceItem(source_path, mode, host);
 
@@ -2539,15 +2540,15 @@ void CopyingJob::ApplyPermissionFixups()
     // TODO: should NC bark at perms fixup errors?
     if( m_IsDestinationHostNative ) {
         auto &io = routedio::RoutedIO::Default;
-        for( auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
+        for( const auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
             if( const int fd = io.open(i.path.c_str(), O_RDONLY); fd >= 0 ) {
-                auto close_fd = at_scope_end([fd] { close(fd); });
+                const auto close_fd = at_scope_end([fd] { close(fd); });
                 fchmod(fd, i.mode);
             }
         }
     }
     else {
-        for( auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
+        for( const auto &i : std::ranges::reverse_view(m_TargetPermissionsFixupEpilogue) ) {
             // TODO: currently silently ignoring the result of chmod, that's wrong
             // NOLINTBEGIN(bugprone-unused-return-value)
             m_DestinationHost->SetPermissions(i.path.c_str(), i.mode);
@@ -2561,10 +2562,10 @@ void CopyingJob::ApplyTimestampsFixups()
     // TODO: should NC bark at timestamp fixup errors?
     if( m_IsDestinationHostNative ) {
         auto &io = routedio::RoutedIO::Default;
-        for( auto &i : std::ranges::reverse_view(m_TargetTimestampFixupEpilogue) ) {
+        for( const auto &i : std::ranges::reverse_view(m_TargetTimestampFixupEpilogue) ) {
 
             if( const int fd = io.open(i.path.c_str(), O_RDONLY); fd >= 0 ) {
-                auto close_fd = at_scope_end([fd] { close(fd); });
+                const auto close_fd = at_scope_end([fd] { close(fd); });
                 struct stat st;
                 memset(&st, 0, sizeof(st));
                 st.st_atimespec = i.atime;
@@ -2989,7 +2990,7 @@ bool CopyingJob::IsNativeLockedItemNoFollow(const Error &_error, const std::stri
 CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_path,
                                                             vfs::NativeHost &_native_host) const
 {
-    auto unlock = [&]() -> std::expected<void, Error> {
+    const auto unlock = [&]() -> std::expected<void, Error> {
         const std::expected<VFSStat, Error> st = _native_host.Stat(_path, VFSFlags::F_NoFollow);
         if( !st )
             return std::unexpected(st.error());

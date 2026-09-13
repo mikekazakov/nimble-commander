@@ -68,7 +68,7 @@ struct PanelViewFooterVolumeInfoFetcherInternals {
 
         g_Queue.after(_hurry ? 0s : g_Delay, [=] {
             std::expected<VFSStatFS, Error> stat;
-            if( auto h = host.lock() )
+            if( const auto h = host.lock() )
                 stat = h->StatFS(path);
             dispatch_to_main_queue(
                 [=] { AcceptResult(host, path, stat ? std::optional<VFSStatFS>{*stat} : std::nullopt); });

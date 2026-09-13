@@ -75,7 +75,7 @@ public:
     ~FindFilesSheetComboHistory()
     {
         nc::config::Value arr(rapidjson::kArrayType);
-        for( auto &s : *this )
+        for( const auto &s : *this )
             arr.PushBack(nc::config::Value(s.c_str(), nc::config::g_CrtAllocator), nc::config::g_CrtAllocator);
         StateConfig().Set(m_Path, arr);
     }
@@ -519,7 +519,7 @@ private:
     auto finish_callback = [=] { [self onSearchFinished]; };
     auto lookin_in_callback = [=](const char *_path, VFSHost &_in_host) {
         auto verbose_path = _in_host.MakePathVerbose(_path);
-        auto lock = std::lock_guard{m_LookingInPathGuard};
+        const auto lock = std::lock_guard{m_LookingInPathGuard};
         m_LookingInPath = std::move(verbose_path);
     };
     auto spawn_archive_callback = [=](const char *_for_path, VFSHost &_in_host) -> VFSHostPtr {

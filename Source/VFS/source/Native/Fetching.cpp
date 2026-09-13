@@ -107,7 +107,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
 
         return error;
     }
-    auto close_fd = at_scope_end([fd] { close(fd); });
+    const auto close_fd = at_scope_end([fd] { close(fd); });
 
     constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
 
@@ -207,7 +207,7 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
     // initial directory lookup
     std::vector<std::tuple<std::string, uint64_t, uint8_t>> dirents; // name, inode, entry_type
     if( auto dirp = fdopendir(dup(_dir_fd)) ) {
-        auto close_dir = at_scope_end([=] { closedir(dirp); });
+        const auto close_dir = at_scope_end([=] { closedir(dirp); });
         static const auto dirents_reserve_amount = 64;
         dirents.reserve(dirents_reserve_amount);
         while( auto entp = ::readdir(dirp) ) {

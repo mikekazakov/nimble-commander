@@ -103,7 +103,7 @@ TEST_CASE(PREFIX "Enable -> Disable -> Fire => not scheduled ")
     BlinkScheduler bs([] {}, 500ms, io);
     bs.Enable(true);
     bs.Enable(false);
-    auto dispatched = io.dispatched;
+    const auto dispatched = io.dispatched;
     io.dispatched.reset();
     dispatched->what();
     CHECK(io.dispatched == nullptr);
@@ -115,7 +115,7 @@ TEST_CASE(PREFIX "Enable -> Disable -> Fire -> Enable => scheduled ")
     BlinkScheduler bs([] {}, 500ms, io);
     bs.Enable(true);
     bs.Enable(false);
-    auto dispatched = io.dispatched;
+    const auto dispatched = io.dispatched;
     io.dispatched.reset();
     dispatched->what();
     bs.Enable(true);
@@ -127,7 +127,7 @@ TEST_CASE(PREFIX "Enable -> Fire => scheduled ")
     StubIO io;
     BlinkScheduler bs([] {}, 500ms, io);
     bs.Enable(true);
-    auto dispatched = io.dispatched;
+    const auto dispatched = io.dispatched;
     io.dispatched.reset();
     dispatched->what();
     CHECK(io.dispatched);
@@ -140,7 +140,7 @@ TEST_CASE(PREFIX "Enable -> Fire (Disable) => not scheduled ")
     BlinkScheduler bs([&bsp] { bsp->Enable(false); }, 500ms, io);
     bsp = &bs;
     bs.Enable(true);
-    auto dispatched = io.dispatched;
+    const auto dispatched = io.dispatched;
     io.dispatched.reset();
     dispatched->what();
     CHECK(io.dispatched == nullptr);
@@ -150,7 +150,7 @@ TEST_CASE(PREFIX "Disabling after enabling returns in callback not executed")
 {
     StubIO io;
     bool fired = false;
-    auto on_blink = [&fired] { fired = true; };
+    const auto on_blink = [&fired] { fired = true; };
     BlinkScheduler bs(on_blink, 500ms, io);
     bs.Enable(true);
     bs.Enable(false);
@@ -164,7 +164,7 @@ TEST_CASE(PREFIX "Shedules the right callback")
 {
     StubIO io;
     bool fired = false;
-    auto on_blink = [&fired] { fired = true; };
+    const auto on_blink = [&fired] { fired = true; };
     BlinkScheduler bs(on_blink, 500ms, io);
     bs.Enable(true);
     REQUIRE(io.dispatched);

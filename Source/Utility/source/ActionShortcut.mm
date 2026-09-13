@@ -46,7 +46,7 @@ ActionShortcut::ActionShortcut(std::string_view _from) noexcept : ActionShortcut
     std::u16string_view v(utf16);
     uint64_t mod_flags = 0;
     while( !v.empty() ) {
-        auto c = v.front();
+        const auto c = v.front();
         if( c == u'⇧' )
             mod_flags |= NSEventModifierFlagShift;
         else if( c == u'^' )
@@ -107,7 +107,7 @@ std::string ActionShortcut::ToPersString() const noexcept
     if( modifiers & NSEventModifierFlagShift )
         result += "⇧";
     if( modifiers & NSEventModifierFlagControl )
-        result += "^";
+        result += '^';
     if( modifiers & NSEventModifierFlagOption )
         result += "⌥";
     if( modifiers & NSEventModifierFlagCommand )
@@ -203,7 +203,7 @@ NSString *ActionShortcut::PrettyString() const noexcept
         return @"";
 
     NSString *vis_key;
-    if( auto it = g_UnicodeToNiceString.find(unicode); it != std::end(g_UnicodeToNiceString) )
+    if( const auto it = g_UnicodeToNiceString.find(unicode); it != std::end(g_UnicodeToNiceString) )
         vis_key = it->second;
     else
         vis_key = Key().uppercaseString;

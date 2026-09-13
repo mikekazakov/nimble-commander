@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "Name placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 6);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(!a.direct_range);
             REQUIRE(!a.reverse_range);
             REQUIRE(a.from_first == 11);
@@ -162,7 +162,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 11);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.start == -763);
             REQUIRE(a.step == 3);
             REQUIRE(a.stripe == 99);
@@ -175,7 +175,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 4);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.start == -763);
         }
     }
@@ -185,7 +185,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 3);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.start == 763);
         }
     }
@@ -195,7 +195,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 4);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.step == -13);
         }
     }
@@ -205,7 +205,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 3);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.stripe == 71);
         }
     }
@@ -215,7 +215,7 @@ TEST_CASE(PREFIX "Counter Placeholders")
         REQUIRE(v);
         if( v ) {
             REQUIRE(v->second == 3);
-            auto a = v->first;
+            const auto a = v->first;
             REQUIRE(a.width == 12);
         }
     }
@@ -225,7 +225,7 @@ TEST_CASE(PREFIX "Text extraction")
 {
     {
         const BatchRenamingScheme::TextExtraction te;
-        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@"1234567890"]);
     }
 
@@ -233,21 +233,21 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 4;
         te.direct_range->length = 1;
-        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@"5"]);
     }
 
     {
         BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 4;
-        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@"567890"]);
     }
 
     {
         BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 10000;
-        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@""]);
     }
 
@@ -255,7 +255,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 0;
         te.direct_range->length = 0;
-        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         REQUIRE([r isEqualToString:@""]);
     }
 
@@ -264,7 +264,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range->location = 1;
         te.direct_range->length = 8;
         te.zero_flag = true;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"000000bc"]);
     }
 
@@ -273,7 +273,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range->location = 1;
         te.direct_range->length = 8;
         te.space_flag = true;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"      bc"]);
     }
 
@@ -281,7 +281,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(0, 1);
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"c"]);
     }
 
@@ -289,7 +289,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(0, BatchRenamingScheme::Range::max_length());
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"c"]);
     }
 
@@ -297,7 +297,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(100, BatchRenamingScheme::Range::max_length());
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"abc"]);
     }
 
@@ -305,7 +305,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(2, 3);
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"abc"]);
     }
 
@@ -313,7 +313,7 @@ TEST_CASE(PREFIX "Text extraction")
         BatchRenamingScheme::TextExtraction te;
         te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(2, 0);
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@""]);
     }
 
@@ -322,7 +322,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range = std::nullopt;
         te.from_first = 0;
         te.to_last = 0;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"abc"]);
     }
 
@@ -331,7 +331,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range = std::nullopt;
         te.from_first = 2;
         te.to_last = 0;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@"c"]);
     }
 
@@ -340,7 +340,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range = std::nullopt;
         te.from_first = 3;
         te.to_last = 0;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@""]);
     }
 
@@ -349,7 +349,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range = std::nullopt;
         te.from_first = 0;
         te.to_last = 5;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@""]);
     }
 
@@ -358,7 +358,7 @@ TEST_CASE(PREFIX "Text extraction")
         te.direct_range = std::nullopt;
         te.from_first = 100;
         te.to_last = 100;
-        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
+        const auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@""]);
     }
 }
@@ -389,7 +389,7 @@ TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
 TEST_CASE(PREFIX "Renaming - simple cases")
 {
     const TempTestDir tmp_dir;
-    auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
+    const auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
     REQUIRE(std::filesystem::create_directories(item_dir));
     const auto item = GetRegListingItem("filename.txt", item_dir);
     struct Case {

@@ -16,8 +16,8 @@ TEST_CASE(PREFIX "XNUSource - TAR")
 {
     const TestDir dir;
     auto url = "https://opensource.apple.com/tarballs/xnu/xnu-3248.20.55.tar.gz";
-    auto path = dir.directory / "xnu-3248.20.55.tar.gz";
-    auto cmd = fmt::format("/usr/bin/curl -s -L -o {} {}", path.native(), url);
+    const auto path = dir.directory / "xnu-3248.20.55.tar.gz";
+    const auto cmd = fmt::format("/usr/bin/curl -s -L -o {} {}", path.native(), url);
     REQUIRE(system(cmd.c_str()) == 0);
 
     std::shared_ptr<ArchiveHost> host;

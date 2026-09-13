@@ -60,7 +60,7 @@ TEST_CASE(PREFIX "Can rename a regular file across firmlink injection points")
     const std::string target_dir = "/Applications/";
     auto rm_result = [&] { unlink((target_dir + filename).c_str()); };
     rm_result();
-    auto clean_afterward = at_scope_end([&] { rm_result(); });
+    const auto clean_afterward = at_scope_end([&] { rm_result(); });
 
     const TempTestDir test_dir;
 
@@ -72,7 +72,7 @@ TEST_CASE(PREFIX "Can rename a regular file across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
 
@@ -90,7 +90,7 @@ TEST_CASE(PREFIX "Can rename a directory across firmlink injection points")
     const std::string target_dir = "/Applications/";
     auto rm_result = [&] { rmdir((target_dir + filename).c_str()); };
     rm_result();
-    auto clean_afterward = at_scope_end([&] { rm_result(); });
+    const auto clean_afterward = at_scope_end([&] { rm_result(); });
 
     const TempTestDir test_dir;
 
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Can rename a directory across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
 
@@ -124,7 +124,7 @@ TEST_CASE(PREFIX "Can rename a non-empty directory across firmlink injection poi
         rmdir((target_dir + filename).c_str());
     };
     rm_result();
-    auto clean_afterward = at_scope_end([&] { rm_result(); });
+    const auto clean_afterward = at_scope_end([&] { rm_result(); });
 
     const TempTestDir test_dir;
 
@@ -137,7 +137,7 @@ TEST_CASE(PREFIX "Can rename a non-empty directory across firmlink injection poi
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
 
@@ -155,7 +155,7 @@ TEST_CASE(PREFIX "Can rename a symlink across firmlink injection points")
     const std::string target_dir = "/Applications/";
     auto rm_result = [&] { unlink((target_dir + filename).c_str()); };
     rm_result();
-    auto clean_afterward = at_scope_end([&] { rm_result(); });
+    const auto clean_afterward = at_scope_end([&] { rm_result(); });
 
     const TempTestDir test_dir;
 
@@ -167,7 +167,7 @@ TEST_CASE(PREFIX "Can rename a symlink across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
 
@@ -189,7 +189,7 @@ TEST_CASE(PREFIX "Can rename a regular file on injected data volume")
         unlink((target_dir + filename_dst).c_str());
     };
     rm_result();
-    auto clean_afterward = at_scope_end([&] { rm_result(); });
+    const auto clean_afterward = at_scope_end([&] { rm_result(); });
 
     const TempTestDir test_dir;
 
@@ -201,7 +201,7 @@ TEST_CASE(PREFIX "Can rename a regular file on injected data volume")
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename_src}, *host), target_dir + filename_dst, host, opts);
     RunOperationAndCheckSuccess(op);
 
@@ -228,7 +228,7 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
     CopyingOptions opts;
     opts.docopy = false;
 
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(
         FetchItems(test_dir.directory, {filename}, *host), test_dir.directory / target_dir / filename, host, opts);
     RunOperationAndCheckSuccess(op);
@@ -354,7 +354,7 @@ TEST_CASE(PREFIX "case renaming")
     }
 
     {
-        auto src = dir / "filename";
+        const auto src = dir / "filename";
         close(open(src.c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
         CopyingOptions opts;
@@ -410,7 +410,7 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
 TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
 {
     const TempTestDir tmp_dir;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
 
     REQUIRE(
         easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
@@ -435,7 +435,7 @@ TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
 {
     // Copies "Mail.app" to "Mail2.app" in the same dir
     const TempTestDir tmp_dir;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
 
     REQUIRE(
         easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
@@ -454,8 +454,8 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
     const TempTestDir tmp_dir;
-    auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
-    auto host = TestEnv().vfs_native;
+    const auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
+    const auto host = TestEnv().vfs_native;
 
     REQUIRE(
         easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
@@ -474,7 +474,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
     const TempTestDir tmp_dir;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
 
     REQUIRE(
         easy::VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host));
@@ -497,7 +497,7 @@ TEST_CASE(PREFIX "symlinks overwriting")
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir, {"file2"}, *host), tmp_dir.directory / "file1", host, opts);
 
     op.Start();
@@ -518,7 +518,7 @@ TEST_CASE(PREFIX "overwriting of symlinks in subdir")
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "D2", {"D1"}, *host), tmp_dir.directory, host, opts);
 
     op.Start();
@@ -534,7 +534,7 @@ TEST_CASE(PREFIX "symlink renaming")
 
     CopyingOptions opts;
     opts.docopy = false;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir, {"file1"}, *host), tmp_dir.directory / "file2", host, opts);
 
     op.Start();
@@ -569,7 +569,7 @@ TEST_CASE(PREFIX "rename dir into existing dir")
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteOld;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"TestDir"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -595,7 +595,7 @@ TEST_CASE(PREFIX "renaming dir into existing reg")
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -622,7 +622,7 @@ TEST_CASE(PREFIX "renaming non-empty dir into existing reg")
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -641,7 +641,7 @@ TEST_CASE(PREFIX "copied application has a valid signature")
     const TempTestDir tmp_dir;
     CopyingOptions opts;
     opts.docopy = true;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems("/System/Applications", {"Mail.app"}, *host), tmp_dir, host, opts);
     op.Start();
     op.Wait();
@@ -663,7 +663,7 @@ TEST_CASE(PREFIX "copying to existing item with KeepBoth results in orig copied 
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -686,7 +686,7 @@ TEST_CASE(PREFIX "renaming to existing item with KeepiBoth results in orig renam
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -711,7 +711,7 @@ TEST_CASE(PREFIX "copying symlink to existing item with KeepBoth results in orig
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -734,7 +734,7 @@ TEST_CASE(PREFIX "renaming symlink to existing item with KeepBoth results in ori
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
@@ -825,7 +825,7 @@ TEST_CASE(PREFIX "Copy to local FTP")
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
 
-    for( auto &i : files ) {
+    for( const auto &i : files ) {
         REQUIRE(easy::VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/" + i).c_str(),
                                           TestEnv().vfs_native,
                                           ("/Public/!FilesTesting/" + i).c_str(),
@@ -934,11 +934,11 @@ TEST_CASE(PREFIX "Renaming a locked native regular item")
     const auto filename = "old_name";
     const auto filename_new = "new_name";
     const auto path = dir.directory / filename;
-    auto exists = [](const std::string &_path) -> bool {
+    const auto exists = [](const std::string &_path) -> bool {
         struct stat st;
         return lstat(_path.c_str(), &st) == 0;
     };
-    auto setup = [&] {
+    const auto setup = [&] {
         SECTION("Regular file")
         {
             REQUIRE(close(creat(path.c_str(), 0755)) == 0);
@@ -960,7 +960,7 @@ TEST_CASE(PREFIX "Renaming a locked native regular item")
     opts.docopy = false;
 
     std::unique_ptr<Copying> op;
-    auto run = [&] {
+    const auto run = [&] {
         op = std::make_unique<Copying>(
             FetchItems(dir.directory, {filename}, *host), dir.directory / filename_new, host, opts);
         op->Start();
@@ -1016,11 +1016,11 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
     const auto old_sz = ssize_t(76);
     const auto new_sz = ssize_t(33);
 
-    auto exists = [](const std::filesystem::path &_path) -> bool {
+    const auto exists = [](const std::filesystem::path &_path) -> bool {
         struct stat st;
         return lstat(_path.c_str(), &st) == 0;
     };
-    auto file_size = [](const std::filesystem::path &_path) -> ssize_t {
+    const auto file_size = [](const std::filesystem::path &_path) -> ssize_t {
         struct stat st;
         return (lstat(_path.c_str(), &st) == 0) ? st.st_size : -1;
     };
@@ -1129,14 +1129,14 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
     const auto path = dir.directory / filename;
     const auto new_path = dmg.directory / new_filename;
 
-    auto exists = [](const std::string &_path) -> bool {
+    const auto exists = [](const std::string &_path) -> bool {
         struct stat st;
         return ::lstat(_path.c_str(), &st) == 0;
     };
-    auto remove = [](const std::string &_path) -> bool {
+    const auto remove = [](const std::string &_path) -> bool {
         return ::lchflags(_path.c_str(), 0) == 0 && ::remove(_path.c_str()) == 0;
     };
-    auto run = [&](CopyingOptions &opts) -> std::unique_ptr<Copying> {
+    const auto run = [&](CopyingOptions &opts) -> std::unique_ptr<Copying> {
         auto op = std::make_unique<Copying>(FetchItems(dir.directory, {filename}, *host), new_path, host, opts);
         op->Start();
         op->Wait();
@@ -1209,12 +1209,12 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (native -> nati
     REQUIRE(mkdir((dir.directory / "dir").c_str(), S_IRWXU) == 0);
     REQUIRE(close(open((dir.directory / "dir/file").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR)) == 0);
     REQUIRE(chmod((dir.directory / "dir").c_str(), S_IRUSR | S_IXUSR) == 0);
-    auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
-    auto host = TestEnv().vfs_native;
-    auto eq = [](const struct timespec &_lhs, const struct timespec &_rhs) {
+    const auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
+    const auto host = TestEnv().vfs_native;
+    const auto eq = [](const struct timespec &_lhs, const struct timespec &_rhs) {
         return _lhs.tv_sec == _rhs.tv_sec && _lhs.tv_nsec == _rhs.tv_nsec;
     };
-    auto less = [](const struct timespec &_lhs, const struct timespec &_rhs) {
+    const auto less = [](const struct timespec &_lhs, const struct timespec &_rhs) {
         return _lhs.tv_sec < _rhs.tv_sec || (_lhs.tv_sec == _rhs.tv_sec && _lhs.tv_nsec < _rhs.tv_nsec);
     };
 
@@ -1384,7 +1384,7 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
     REQUIRE(mkdir((dir.directory / "dir").c_str(), S_IRWXU) == 0);
     REQUIRE(close(open((dir.directory / "dir/file").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR)) == 0);
     REQUIRE(chmod((dir.directory / "dir").c_str(), S_IRUSR | S_IXUSR) == 0);
-    auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
+    const auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
 
     auto host = TestEnvironment::SpawnSFTPHost();
     REQUIRE(host);
@@ -1448,7 +1448,7 @@ TEST_CASE(PREFIX "Copying a native file that is being written to")
 
     CopyingOptions opts;
     opts.docopy = true;
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
     Copying op(FetchItems(dir.directory, {"a"}, *host), dir.directory / "b", host, opts);
     op.Start();
     op.Wait();

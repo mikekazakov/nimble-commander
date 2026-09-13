@@ -1333,6 +1333,7 @@ void InterpretUTF8BufferAsIndexedUTF16(const unsigned char *_input,
     //    *_output_buf = 0;
 }
 
+// NOLINTNEXTLINE(misc-const-correctness)
 void InterpretUTF16LEBufferAsUniChar(const unsigned char *_input,
                                      size_t _input_size,
                                      unsigned short *_output_buf, // should be at least _input_size/2 16b words long
@@ -1388,6 +1389,7 @@ void InterpretUTF16LEBufferAsUniChar(const unsigned char *_input,
     *_output_sz = total;
 }
 
+// NOLINTNEXTLINE(misc-const-correctness)
 void InterpretUTF16BEBufferAsUniChar(const unsigned char *_input,
                                      size_t _input_size,
                                      unsigned short *_output_buf, // should be at least _input_size/2 16b words long

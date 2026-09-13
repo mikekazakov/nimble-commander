@@ -79,8 +79,7 @@ using SelPoint = term::ScreenPoint;
 
         __weak NCTermView *weak_self = self;
         m_BlinkScheduler = utility::BlinkScheduler([weak_self] {
-            if( auto me = weak_self ) {
-                //                std::cerr << "Blink! " << (__bridge void*)me << std::endl;
+            if( const auto me = weak_self ) {
                 [me->m_FPS invalidate];
             }
         });
@@ -323,7 +322,7 @@ struct LazyLineRectFiller {
     {
         if( clr ) {
             CGContextSetFillColorWithColor(ctx, clr);
-            auto rc =
+            const auto rc =
                 CGRectMake(origin_x + (start * cell_width), origin_y, (end - start + 1) * cell_width, cell_height);
             CGContextFillRect(ctx, rc);
             clr = nullptr;
@@ -686,11 +685,11 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                                options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
                             usingBlock:[&](NSString *, NSRange wordRange, NSRange, BOOL *stop) {
                                 if( wordRange.location < layout.size() ) {
-                                    auto begin = layout[wordRange.location];
+                                    const auto begin = layout[wordRange.location];
                                     if( position >= begin ) {
-                                        auto end = wordRange.location + wordRange.length < layout.size()
-                                                       ? layout[wordRange.location + wordRange.length]
-                                                       : layout.back();
+                                        const auto end = wordRange.location + wordRange.length < layout.size()
+                                                             ? layout[wordRange.location + wordRange.length]
+                                                             : layout.back();
                                         if( position < end ) {
                                             search_result = std::make_pair(begin, end);
                                             *stop = true;
@@ -846,7 +845,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     __weak NCTermView *weak_self = self;
     m_SettingsNotificationTicket = settings->StartChangesObserving([weak_self] {
-        if( auto s = weak_self )
+        if( const auto s = weak_self )
             [s loadSettings];
     });
 }

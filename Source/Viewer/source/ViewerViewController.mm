@@ -708,7 +708,7 @@ std::expected<void, Error> BackgroundFileOpener::Open(VFSHostPtr _vfs,
         proc.title = localizable::ViewControllerOpeningFileTitle();
         [proc Show];
 
-        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);
+        const auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);
         const std::expected<void, Error> open_rc = wrapper->Open(
             VFSFlags::OF_Read | VFSFlags::OF_ShLock,
             [=] { return proc.userCancelled; },

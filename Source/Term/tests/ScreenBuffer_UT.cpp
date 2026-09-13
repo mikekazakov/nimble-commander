@@ -32,11 +32,11 @@ TEST_CASE(PREFIX "Init")
         ScreenBuffer buffer(0, 0);
         REQUIRE(buffer.Width() == 0);
         REQUIRE(buffer.Height() == 0);
-        auto l1 = buffer.LineFromNo(0);
+        const auto l1 = buffer.LineFromNo(0);
         REQUIRE(l1.empty());
-        auto l2 = buffer.LineFromNo(10);
+        const auto l2 = buffer.LineFromNo(10);
         REQUIRE(l2.empty());
-        auto l3 = buffer.LineFromNo(-1);
+        const auto l3 = buffer.LineFromNo(-1);
         REQUIRE(l3.empty());
         REQUIRE(l3.data() == nullptr);
     }
@@ -45,8 +45,8 @@ TEST_CASE(PREFIX "Init")
         ScreenBuffer buffer(0, 2);
         REQUIRE(buffer.Width() == 0);
         REQUIRE(buffer.Height() == 2);
-        auto l1 = buffer.LineFromNo(0);
-        auto l2 = buffer.LineFromNo(1);
+        const auto l1 = buffer.LineFromNo(0);
+        const auto l2 = buffer.LineFromNo(1);
         REQUIRE(l1.data() == l1.data());
         REQUIRE(l1.empty());
         REQUIRE(l2.empty());

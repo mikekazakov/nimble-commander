@@ -70,7 +70,7 @@ void DeselectAll::Perform(PanelController *_target, id /*_sender*/) const
 
 void InvertSelection::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto selector = data::SelectionBuilder(_target.data);
+    const auto selector = data::SelectionBuilder(_target.data);
     [_target setEntriesSelection:selector.InvertSelection()];
 }
 
@@ -85,13 +85,13 @@ bool SelectAllByExtension::Predicate(PanelController *_target) const
 
 void SelectAllByExtension::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto item = _target.view.item;
+    const auto item = _target.view.item;
     if( !item )
         return;
 
     const std::string extension = item.HasExtension() ? item.Extension() : "";
-    auto selector = data::SelectionBuilder(_target.data, _target.ignoreDirectoriesOnSelectionByMask);
-    auto selection = selector.SelectionByExtension(extension, m_ResultSelection);
+    const auto selector = data::SelectionBuilder(_target.data, _target.ignoreDirectoriesOnSelectionByMask);
+    const auto selection = selector.SelectionByExtension(extension, m_ResultSelection);
     [_target setEntriesSelection:selection];
 }
 
@@ -135,8 +135,8 @@ void SelectAllByMask::Perform(PanelController *_target, id /*_sender*/) const
                 match_mask = FileMask(_mask.string, FileMask::Type::RegEx);
             }
 
-            auto selector = data::SelectionBuilder(panel.data, panel.ignoreDirectoriesOnSelectionByMask);
-            auto selection = selector.SelectionByMask(match_mask, m_ResultSelection);
+            const auto selector = data::SelectionBuilder(panel.data, panel.ignoreDirectoriesOnSelectionByMask);
+            const auto selection = selector.SelectionByMask(match_mask, m_ResultSelection);
             [panel setEntriesSelection:selection];
         }
     };

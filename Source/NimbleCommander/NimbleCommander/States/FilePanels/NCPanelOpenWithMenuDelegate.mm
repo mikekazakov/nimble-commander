@@ -30,8 +30,8 @@ void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
         _handlers, [](const auto &_1st, const auto &_2nd) { return [_1st.Name() localizedCompare:_2nd.Name()] < 0; });
 
     for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
-        auto &first = _handlers[i];
-        auto &second = _handlers[i + 1];
+        const auto &first = _handlers[i];
+        const auto &second = _handlers[i + 1];
         if( [first.Name() isEqualToString:second.Name()] && [first.Identifier() isEqualToString:second.Identifier()] ) {
             // choose the latest version
             if( nc::utility::VersionCompare::Compare(first.Version(), second.Version()) >= 0 ) {
@@ -133,7 +133,7 @@ FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB
                             : std::make_shared<std::vector<VFSListingItem>>(m_ContextItems);
 
     m_FetchQueue.Run([source_items, self] {
-        auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items, *m_UTIDB));
+        const auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items, *m_UTIDB));
         dispatch_to_main_queue([f, self] { [self acceptFetchResult:f]; });
     });
 }

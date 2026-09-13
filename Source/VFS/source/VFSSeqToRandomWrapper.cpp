@@ -51,8 +51,8 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
                                          VFSCancelChecker _cancel_checker,
                                          std::function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    auto ggg = at_scope_end([this] { m_SeqFile.reset(); }); // ony any result wrapper won't hold any reference to
-                                                            // VFSFile after this function ends
+    const auto ggg = at_scope_end([this] { m_SeqFile.reset(); }); // ony any result wrapper won't hold any reference to
+                                                                  // VFSFile after this function ends
     if( !m_SeqFile )
         return std::unexpected(Error{Error::POSIX, EINVAL});
     if( m_SeqFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential )
@@ -70,7 +70,7 @@ VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
     if( !seq_file_size )
         return std::unexpected(seq_file_size.error());
 
-    auto backend = std::make_shared<Backend>();
+    const auto backend = std::make_shared<Backend>();
     m_Pos = 0;
 
     if( *seq_file_size <= MaxCachedInMem ) {

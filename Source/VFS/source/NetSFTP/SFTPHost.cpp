@@ -410,7 +410,7 @@ SFTPHost::FetchDirectoryListing(std::string_view _path,
             conn.sftp, _path.data(), static_cast<unsigned>(_path.length()), 0, 0, LIBSSH2_SFTP_OPENDIR);
         if( !sftp_handle )
             return std::unexpected(ErrorForConnection(conn));
-        auto close_sftp_handle = at_scope_end([=] { libssh2_sftp_closedir(sftp_handle); });
+        const auto close_sftp_handle = at_scope_end([=] { libssh2_sftp_closedir(sftp_handle); });
 
         const bool should_have_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/";
         if( should_have_dot_dot ) {

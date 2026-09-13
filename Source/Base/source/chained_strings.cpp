@@ -180,7 +180,7 @@ bool chained_strings::empty() const
 unsigned chained_strings::size() const
 {
     unsigned stock = 0;
-    auto *p = m_Begin;
+    const auto *p = m_Begin;
     while( p ) {
         stock += p->amount;
         p = p->next;

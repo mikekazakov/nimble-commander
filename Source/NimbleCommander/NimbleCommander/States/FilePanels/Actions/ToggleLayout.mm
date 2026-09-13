@@ -11,7 +11,7 @@ ToggleLayout::ToggleLayout(int _layout_index) : m_Index(_layout_index)
 
 bool ToggleLayout::Predicate(PanelController *_target) const
 {
-    if( auto l = _target.layoutStorage.GetLayout(m_Index) )
+    if( const auto l = _target.layoutStorage.GetLayout(m_Index) )
         return !l->is_disabled();
     return false;
 }

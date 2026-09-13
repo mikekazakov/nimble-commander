@@ -309,7 +309,7 @@ static NSTextField *SpawnLabelForTool(const ToolShortcutNode &_node)
 
 static NSImageView *SpawnCautionSign()
 {
-    auto iv = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    const auto iv = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     iv.image = [NSImage imageNamed:@"AlertCaution"];
     return iv;
 }
@@ -576,9 +576,9 @@ static bool ValidateNodeForFilter(const std::any &_node, NSString *_filter)
 
 static NSString *LabelTitleForAction(const std::string &_action, NSMenuItem *_item_for_tag)
 {
-    if( auto menu_item_title = ComposeVerboseMenuItemTitle(_item_for_tag) )
+    if( const auto menu_item_title = ComposeVerboseMenuItemTitle(_item_for_tag) )
         return menu_item_title;
-    else if( auto action_title = ComposeVerboseNonMenuActionTitle(_action) )
+    else if( const auto action_title = ComposeVerboseNonMenuActionTitle(_action) )
         return action_title;
     else
         return [NSString stringWithUTF8StdString:_action];

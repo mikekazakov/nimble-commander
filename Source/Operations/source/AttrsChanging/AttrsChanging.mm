@@ -33,7 +33,7 @@ AttrsChanging::AttrsChanging(AttrsChangingCommand _command)
     m_Job->m_OnTimesError = [this](Error _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::TimesErrorResolution)OnTimesError(_err, _path, _vfs);
     };
-    auto title = localizable::AttrChangingAlteringFileAttributesTitle();
+    const auto title = localizable::AttrChangingAlteringFileAttributesTitle();
     SetTitle(title.UTF8String);
 }
 

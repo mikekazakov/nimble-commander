@@ -26,7 +26,7 @@ ListingPromiseFormatter::Representation ListingPromiseFormatter::Render(RenderOp
     Representation rep;
 
     // yes, i know about std::visit, but libc++ on macOS requires 10.14+ to use it.
-    auto visit_uniform_listing = [&](const ListingPromise::UniformListing &l) {
+    const auto visit_uniform_listing = [&](const ListingPromise::UniformListing &l) {
         if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
             const auto title = l.promise.verbose_title() + l.directory;
             rep.menu_title = NonNull([NSString stringWithUTF8StdString:title]);
@@ -35,10 +35,10 @@ ListingPromiseFormatter::Representation ListingPromiseFormatter::Render(RenderOp
         if( _options & RenderMenuIcon )
             rep.menu_icon = ImageForPromiseAndPath(l.promise, l.directory);
     };
-    auto visit_nonuniform_listing = [&](const ListingPromise::NonUniformListing &l) {
+    const auto visit_nonuniform_listing = [&](const ListingPromise::NonUniformListing &l) {
         if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
             static const auto formatter = [] {
-                auto fmt = [[NSNumberFormatter alloc] init];
+                const auto fmt = [[NSNumberFormatter alloc] init];
                 fmt.usesGroupingSeparator = true;
                 fmt.groupingSize = 3;
                 return fmt;
@@ -142,7 +142,7 @@ VolumeFormatter::Representation VolumeFormatter::Render(RenderOptions _options,
         rep.menu_title = [NSString stringWithUTF8StdString:_volume.verbose.name];
 
     if( _options & RenderMenuTooltip ) {
-        auto tooltip = _volume.mounted_at_path + "\n" + _volume.mounted_from_name;
+        const auto tooltip = _volume.mounted_at_path + "\n" + _volume.mounted_from_name;
         rep.menu_tooltip = NonNull([NSString stringWithUTF8StdString:tooltip]);
     }
 
@@ -160,7 +160,7 @@ VFSPromiseFormatter::Render(RenderOptions _options, const core::VFSInstancePromi
     Representation rep;
 
     if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
-        auto str = _promise.verbose_title() + _path;
+        const auto str = _promise.verbose_title() + _path;
         rep.menu_title = NonNull([NSString stringWithUTF8StdString:str]);
         rep.menu_tooltip = rep.menu_title;
     }
@@ -182,7 +182,7 @@ VFSPathFormatter::Render(RenderOptions _options, const VFSHost &_vfs, const std:
 
     if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
         PanelDataPersistency persistency(m_NetworkConnectionsManager);
-        auto str = persistency.MakeVerbosePathString(_vfs, _path);
+        const auto str = persistency.MakeVerbosePathString(_vfs, _path);
         rep.menu_title = NonNull([NSString stringWithUTF8StdString:str]);
         rep.menu_tooltip = rep.menu_title;
     }
@@ -217,17 +217,17 @@ static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
 {
     if( _promise.tag() == VFSNativeHost::UniqueTag ) {
         static const auto workspace = NSWorkspace.sharedWorkspace;
-        if( auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
+        if( const auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
             image.size = g_IconSize;
             return image;
         }
     }
 
-    if( auto image = NetworkConnectionIconProvider::Icon16px(_promise) )
+    if( const auto image = NetworkConnectionIconProvider::Icon16px(_promise) )
         return image;
 
     static const auto fallback = [] {
-        auto image = [NSImage imageNamed:NSImageNameFolder];
+        const auto image = [NSImage imageNamed:NSImageNameFolder];
         image.size = g_IconSize;
         return image;
     }();
@@ -238,17 +238,17 @@ static NSImage *ImageForVFSPath(const VFSHost &_vfs, const std::string &_path)
 {
     if( _vfs.IsNativeFS() ) {
         static const auto workspace = NSWorkspace.sharedWorkspace;
-        if( auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
+        if( const auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
             image.size = g_IconSize;
             return image;
         }
     }
 
-    if( auto image = NetworkConnectionIconProvider::Icon16px(_vfs) )
+    if( const auto image = NetworkConnectionIconProvider::Icon16px(_vfs) )
         return image;
 
     static const auto fallback = [] {
-        auto image = [NSImage imageNamed:NSImageNameFolder];
+        const auto image = [NSImage imageNamed:NSImageNameFolder];
         image.size = g_IconSize;
         return image;
     }();
@@ -258,9 +258,9 @@ static NSImage *ImageForVFSPath(const VFSHost &_vfs, const std::string &_path)
 static NSImage *ImageForLocation(const PersistentLocation &_location, NetworkConnectionsManager &_conn_mgr)
 {
     if( _location.is_native() ) {
-        auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()
-                                                              isDirectory:true
-                                                            relativeToURL:nil];
+        const auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()
+                                                                    isDirectory:true
+                                                                  relativeToURL:nil];
         if( url ) {
             NSImage *img;
             [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
@@ -275,13 +275,13 @@ static NSImage *ImageForLocation(const PersistentLocation &_location, NetworkCon
         if( auto connection = persistancy.ExtractConnectionFromLocation(_location) )
             return NetworkConnectionIconProvider::Icon16px(*connection);
         else {
-            auto img = [NSImage imageNamed:NSImageNameNetwork];
+            const auto img = [NSImage imageNamed:NSImageNameNetwork];
             img.size = g_IconSize;
             return img;
         }
     }
 
-    auto img = [NSImage imageNamed:NSImageNameFolder];
+    const auto img = [NSImage imageNamed:NSImageNameFolder];
     img.size = g_IconSize;
     return img;
 }

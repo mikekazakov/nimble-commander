@@ -201,7 +201,7 @@
                                                       m_VSep4,
                                                       m_VSep5);
     const auto add = [&](NSString *_vf) {
-        auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
+        const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
         [self addConstraints:constraints];
     };
 

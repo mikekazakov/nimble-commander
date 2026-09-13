@@ -258,14 +258,16 @@ bool RoutedIO::AskToInstallHelper()
         Log::Info("Successfully installed a privileged helper");
     }
     else if( error != nullptr ) {
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
             Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with error: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
-            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with failure reason: {}. ",
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
+            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with "
+                       "failure reason: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
-            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
+            Log::Error("RoutedIO::AskToInstallHelper() SMJobBless failed with "
+                       "recovery suggestion: {}. ",
                        base::CFStringGetUTF8StdString(desc.get()));
         CFRelease(error);
     }
@@ -394,7 +396,7 @@ bool RoutedIO::IsHelperAlive()
 
 PosixIOInterface &RoutedIO::InterfaceForAccess(const char *_path, int _mode) noexcept
 {
-    auto &instance = Instance();
+    const auto &instance = Instance();
     if( instance.m_Sandboxed )
         return Direct;
 
@@ -437,11 +439,11 @@ void RoutedIO::InstallViaRootCLI()
     CFErrorRef error = nullptr;
     const bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, auth_ref, &error);
     if( !result && error != nullptr ) {
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
             std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
             std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
-        if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
+        if( const auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
             std::cerr << base::CFStringGetUTF8StdString(desc.get()) << '\n';
         CFRelease(error);
     }

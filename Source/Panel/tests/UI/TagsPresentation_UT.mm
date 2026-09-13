@@ -50,7 +50,7 @@ TEST_CASE(PREFIX "TrailingTagsInplaceDisplay::Place")
          .exp_width = D + S + S,
          .exp_margin = M}};
     for( const auto &tc : tcs ) {
-        auto geom = TrailingTagsInplaceDisplay::Place(tc.tags);
+        const auto geom = TrailingTagsInplaceDisplay::Place(tc.tags);
         CHECK(geom.width == tc.exp_width);
         CHECK(geom.margin == tc.exp_margin);
     }

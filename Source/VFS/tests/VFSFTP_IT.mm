@@ -180,7 +180,7 @@ TEST_CASE(PREFIX "listing")
         VFSHostPtr host;
         REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_FtpAddress, g_FtpUser, g_FtpPassword, "/", g_FtpPort));
         std::ignore = easy::VFSEasyDelete("/Test", host);
-        auto touch = [&](const char *_path) {
+        const auto touch = [&](const char *_path) {
             const VFSFilePtr file = host->CreateFile(_path).value();
             REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create));
         };

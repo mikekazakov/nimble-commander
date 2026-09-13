@@ -22,7 +22,7 @@ public:
 private:
     void ConfigChanged()
     {
-        auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:m_Config];
+        const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:m_Config];
         if( const id v = [bridge valueForKeyPath:[NSString stringWithUTF8String:m_ConfigPath]] )
             [m_Object setValue:v forKey:m_ObjectKey];
     }

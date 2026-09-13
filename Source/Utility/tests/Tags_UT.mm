@@ -276,7 +276,7 @@ TEST_CASE(PREFIX "Can parse muliple labels at once")
                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4d};
     auto tags = Tags::ParseMDItemUserTags({reinterpret_cast<std::byte *>(plist), sizeof(plist)});
     std::set<std::string> labels;
-    auto label = [&labels](const char *_l) { return &*labels.emplace(_l).first; };
+    const auto label = [&labels](const char *_l) { return &*labels.emplace(_l).first; };
     CHECK(tags == std::vector<Tags::Tag>{{label("Blue"), Tags::Color::Blue},
                                          {label("Grey"), Tags::Color::Gray},
                                          {label("Green"), Tags::Color::Green},
@@ -332,7 +332,7 @@ TEST_CASE(PREFIX "Can read from a file")
 TEST_CASE(PREFIX "BuildMDItemUserTags")
 {
     std::set<std::string> labels;
-    auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
+    const auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
 
     struct TC {
         std::vector<Tags::Tag> labels;
@@ -457,7 +457,7 @@ TEST_CASE(PREFIX "BuildMDItemUserTags")
 TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
 {
     std::set<std::string> labels;
-    auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
+    const auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
     const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
@@ -509,9 +509,9 @@ TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
 TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
-    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    const auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
     std::filesystem::create_directory(basepath);
-    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
 
     const std::string label =
         fmt::format("Hello! This is a new tag created via Nimble Commander! My PID is {}", getpid());
@@ -538,9 +538,9 @@ TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC", "[!mayf
 TEST_CASE(PREFIX "GatherAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
-    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    const auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
     std::filesystem::create_directory(basepath);
-    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
     const std::set<std::filesystem::path> filepaths = {basepath / "f1.txt", basepath / "f2.txt", basepath / "f3.txt"};
 
     const std::string labels[] = {
@@ -581,9 +581,9 @@ TEST_CASE(PREFIX "GatherAllItemsWithTag", "[!mayfail]")
 TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
-    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    const auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
     std::filesystem::create_directory(basepath);
-    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
     const std::filesystem::path p1 = basepath / "f1";
     const std::filesystem::path p2 = basepath / "f2";
     const std::filesystem::path p3 = basepath / "f3";
@@ -624,9 +624,9 @@ TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag", "[!mayfail]")
 TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
-    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    const auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
     std::filesystem::create_directory(basepath);
-    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
     const std::filesystem::path p1 = basepath / "f1";
     const std::filesystem::path p2 = basepath / "f2";
     const std::filesystem::path p3 = basepath / "f3";
@@ -668,7 +668,7 @@ TEST_CASE(PREFIX "AddTag")
 {
     // TODO: add a unit test for directories as well
     using C = Tags::Color;
-    auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
+    const auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
     const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
@@ -699,7 +699,7 @@ TEST_CASE(PREFIX "RemoveTag")
 {
     // TODO: add a unit test for directories as well
     using C = Tags::Color;
-    auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
+    const auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
     const TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
@@ -727,9 +727,9 @@ TEST_CASE(PREFIX "RemoveTag")
 TEST_CASE(PREFIX "RemoveTagFromAllItems", "[!mayfail]")
 {
     // Need to place these temp files into an indexable location (which the temp dir is not)
-    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    const auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
     std::filesystem::create_directory(basepath);
-    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
     const std::filesystem::path p1 = basepath / "f1";
     const std::filesystem::path p2 = basepath / "f2";
     const std::filesystem::path p3 = basepath / "f3";

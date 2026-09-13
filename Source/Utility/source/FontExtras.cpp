@@ -29,7 +29,7 @@ static double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_
     ascent = floor(ascent + 0.5);
     descent = floor(descent + 0.5);
 
-    auto lineHeight = ascent + descent + leading;
+    const auto lineHeight = ascent + descent + leading;
 
     // in case if not sure that font line is calculating ok -
     // use the following block to compare, should be the same.

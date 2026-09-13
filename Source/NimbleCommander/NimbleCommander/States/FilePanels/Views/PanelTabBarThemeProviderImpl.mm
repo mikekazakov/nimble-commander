@@ -68,7 +68,7 @@
     return nc::CurrentTheme().FilePanelsTabsPictogramColor();
 }
 
-- (void)observeChangesWith:(void (^)(void))_callback
+- (void)observeChangesWith:(void (^)())_callback
 {
     assert(_callback);
     m_ThemeChangesObservation =

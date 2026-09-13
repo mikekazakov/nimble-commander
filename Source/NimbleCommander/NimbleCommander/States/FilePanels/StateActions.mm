@@ -25,7 +25,7 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
                                      const nc::panel::TagsStorage &_tags_storage)
 {
     StateActionsMap m;
-    auto add = [&](SEL _sel, actions::StateAction *_action) { m[_sel].reset(_action); };
+    const auto add = [&](SEL _sel, actions::StateAction *_action) { m[_sel].reset(_action); };
 
     add(@selector(OnFileNewTab:), new AddNewTab);
     add(@selector(performClose:), new CloseTab);

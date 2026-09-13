@@ -10,15 +10,15 @@ bool ShouldPreallocateSpace(uint64_t _bytes_to_write, const utility::NativeFileS
 bool TryToPreallocateSpace(uint64_t _preallocate_delta, int _file_des) noexcept;
 bool SupportsFastTruncationAfterPreallocation(const utility::NativeFileSystemInfo &_fs_info) noexcept;
 
-void AdjustFileTimesForNativePath(const char *_target_path, struct stat &_with_times);
+void AdjustFileTimesForNativePath(const char *_target_path, struct stat const &_with_times);
 void AdjustFileTimesForNativePath(const char *_target_path, const VFSStat &_with_times);
-void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times);
+void AdjustFileTimesForNativeFD(int _target_fd, struct stat const &_with_times);
 void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times);
 
 bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
                                           const VFSStat &_st,
-                                          nc::utility::NativeFSManager *_native_fs_man);
+                                          const nc::utility::NativeFSManager *_native_fs_man);
 
 }; // namespace nc::ops::copying

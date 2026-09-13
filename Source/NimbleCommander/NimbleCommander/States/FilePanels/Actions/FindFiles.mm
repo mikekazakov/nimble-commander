@@ -73,7 +73,7 @@ void FindFiles::Perform(PanelController *_target, id /*_sender*/) const
     sheet.onPanelize = [wp](const std::vector<vfs::VFSPath> &_paths) {
         if( PanelController *const panel = wp ) {
             auto task = [=](const std::function<bool()> &_cancelled) {
-                auto l = FetchSearchResultsAsListing(_paths, panel.vfsFetchingFlags, _cancelled);
+                const auto l = FetchSearchResultsAsListing(_paths, panel.vfsFetchingFlags, _cancelled);
                 if( l )
                     dispatch_to_main_queue([=] { [panel loadListing:l]; });
             };
@@ -81,9 +81,9 @@ void FindFiles::Perform(PanelController *_target, id /*_sender*/) const
         }
     };
     sheet.onView = [this](const FindFilesSheetViewRequest &_request) { OnView(_request); };
-    auto handler = ^([[maybe_unused]] NSModalResponse returnCode) {
+    const auto handler = ^([[maybe_unused]] NSModalResponse returnCode) {
       if( auto item = sheet.selectedItem ) {
-          auto request = std::make_shared<DirectoryChangeRequest>();
+          const auto request = std::make_shared<DirectoryChangeRequest>();
           request->RequestedDirectory = item->dir_path;
           request->VFS = item->host;
           request->RequestFocusedEntry = item->filename;
@@ -109,7 +109,7 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
                 if( success ) {
                     [sheet beginSheetForWindow:_request.sender.window];
                     if( _request.content_mark ) {
-                        auto range =
+                        const auto range =
                             CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
                         [sheet markInitialSelection:range searchTerm:_request.content_mark->search_term];
                     }
@@ -118,11 +118,12 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
         });
     }
     else { // as a window
-        auto window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_request.path onVFS:_request.vfs];
+        const auto window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_request.path onVFS:_request.vfs];
         if( window.internalViewerController.isOpened ) {
             [window showWindow:_request.sender];
             if( _request.content_mark ) {
-                auto range = CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
+                const auto range =
+                    CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
                 [window markInitialSelection:range searchTerm:_request.content_mark->search_term];
             }
         }
@@ -133,7 +134,7 @@ void FindFiles::OnView(const FindFilesSheetViewRequest &_request) const
                     if( opening_result ) {
                         [window showAsFloatingWindow];
                         if( _request.content_mark ) {
-                            auto range =
+                            const auto range =
                                 CFRangeMake(_request.content_mark->bytes_offset, _request.content_mark->bytes_length);
                             [window markInitialSelection:range searchTerm:_request.content_mark->search_term];
                         }

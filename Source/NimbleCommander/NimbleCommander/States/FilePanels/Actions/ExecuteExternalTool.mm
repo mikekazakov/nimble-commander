@@ -39,7 +39,7 @@ void ExecuteExternalTool::Perform(MainWindowFilePanelState *_target, id _sender)
 #pragma clang diagnostic ignored "-Wstrict-selector-match"
         const id rep_obj = [_sender representedObject];
 #pragma clang diagnostic pop
-        if( auto any_holder = objc_cast<AnyHolder>(rep_obj) )
+        if( const auto any_holder = objc_cast<AnyHolder>(rep_obj) )
             if( auto tool = std::any_cast<std::shared_ptr<const ExternalTool>>(&any_holder.any) )
                 if( tool->get() )
                     Execute(*tool->get(), _target);
@@ -62,12 +62,12 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool, MainWindowFilePanel
     ctx.focus = _target.activePanelController == _target.leftPanelController ? ExternalToolExecution::PanelFocus::left
                                                                              : ExternalToolExecution::PanelFocus::right;
     ctx.temp_storage = &m_TempFileStorage;
-    auto payload = std::make_shared<Payload>(_tool, ctx, _target);
+    const auto payload = std::make_shared<Payload>(_tool, ctx, _target);
 
     if( payload->exec.RequiresUserInput() ) {
-        auto prompts = payload->exec.UserInputPrompts();
+        const auto prompts = payload->exec.UserInputPrompts();
 
-        auto sheet = [[ExternalToolParameterValueSheetController alloc]
+        const auto sheet = [[ExternalToolParameterValueSheetController alloc]
             initWithValueNames:std::vector<std::string>{prompts.begin(), prompts.end()}
                       toolName:_tool.m_Title];
         [sheet beginSheetForWindow:_target.window
@@ -95,7 +95,7 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload)
             return;
         const auto path = _payload->exec.ExecutablePath();
         const auto args = _payload->exec.BuildArguments();
-        if( auto ctrl = objc_cast<NCMainWindowController>(_payload->target.window.delegate) )
+        if( const auto ctrl = objc_cast<NCMainWindowController>(_payload->target.window.delegate) )
             [ctrl requestTerminalExecutionWithFullPath:path andArguments:args];
     }
     else if( startup_mode == ExternalTool::StartupMode::RunDeatached ) {

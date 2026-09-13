@@ -203,7 +203,7 @@ static NSRange NextFilenameSelectionRange(NSString *_Nonnull _string, NSRange _c
 
 static NSRange NextFilenameSelectionRange(NSString *_Nonnull _string, NSRange _current_selection)
 {
-    static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
+    static const auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
 
     // disassemble filename into parts
     const auto length = _string.length;

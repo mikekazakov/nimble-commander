@@ -47,8 +47,8 @@ static std::string CookSpotlightSearchQuery(const std::string &_format, const st
 
 static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
 {
-    auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? GlobalConfig().GetString(g_ConfigSpotlightFormat)
-                                                           : "kMDItemFSName == '*#{query}*'cd";
+    const auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? GlobalConfig().GetString(g_ConfigSpotlightFormat)
+                                                                 : "kMDItemFSName == '*#{query}*'cd";
 
     const std::string format = CookSpotlightSearchQuery(fmt, _query);
 
@@ -56,7 +56,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
         MDQueryCreate(nullptr, static_cast<CFStringRef>([NSString stringWithUTF8StdString:format]), nullptr, nullptr);
     if( !query )
         return {};
-    auto clear_query = at_scope_end([=] { CFRelease(query); });
+    const auto clear_query = at_scope_end([=] { CFRelease(query); });
 
     MDQuerySetMaxCount(query, GlobalConfig().GetInt(g_ConfigSpotlightMaxCount));
 
@@ -70,7 +70,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
         MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query, i)));
 
         CFStringRef item_path = static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath));
-        auto clear_item_path = at_scope_end([=] { CFRelease(item_path); });
+        const auto clear_item_path = at_scope_end([=] { CFRelease(item_path); });
 
         result.emplace_back(base::CFStringGetUTF8StdString(item_path));
     }
@@ -106,10 +106,10 @@ void SpotlightSearch::Perform(PanelController *_target, id /*_sender*/) const
     view.handler = [wp](const std::string &_query) {
         if( PanelController *const panel = wp ) {
             auto task = [=](const std::function<bool()> &_cancelled) {
-                if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
-                                                         nc::bootstrap::NativeVFSHostInstance(),
-                                                         panel.vfsFetchingFlags,
-                                                         _cancelled) )
+                if( const auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
+                                                               nc::bootstrap::NativeVFSHostInstance(),
+                                                               panel.vfsFetchingFlags,
+                                                               _cancelled) )
                     dispatch_to_main_queue([=] { [panel loadListing:l]; });
             };
             [panel commitCancelableLoadingTask:std::move(task)];

@@ -14,17 +14,17 @@ OpenWithExternalEditor::OpenWithExternalEditor(FileOpener &_file_opener) : m_Fil
 
 bool OpenWithExternalEditor::Predicate(PanelController *_target) const
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     return i && !i.IsDotDot();
 }
 
 void OpenWithExternalEditor::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto item = _target.view.item;
+    const auto item = _target.view.item;
     if( !item || item.IsDotDot() )
         return;
 
-    auto ed = NCAppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
+    const auto ed = NCAppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
     if( !ed ) {
         NSBeep();
         return;

@@ -8,7 +8,7 @@ using nc::utility::FileMask;
 
 TEST_CASE(PREFIX "MatchName - old file masks")
 {
-    auto ch = [](const char8_t *str) -> const char * { return reinterpret_cast<const char *>(str); };
+    const auto ch = [](const char8_t *str) -> const char * { return reinterpret_cast<const char *>(str); };
 
     struct TC {
         const char *mask;
@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "MatchName - old file masks")
         {.mask = ",,", .name = "meow.txt", .result = false},
     };
 
-    for( auto &tc : cases ) {
+    for( const auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
         const FileMask mask(tc.mask);
@@ -166,7 +166,7 @@ TEST_CASE(PREFIX "MatchName - regexes")
         {.mask = "(meow|woof)\\.txt", .name = "woof.txt", .result = true},
         {.mask = "(meow|woof)\\.txt", .name = "blah.txt", .result = false},
     };
-    for( auto &tc : cases ) {
+    for( const auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
         const FileMask mask(tc.mask, FileMask::Type::RegEx);

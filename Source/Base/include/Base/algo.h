@@ -24,9 +24,9 @@ auto linear_generator(T _base, T _step)
 template <typename C, typename T>
 size_t linear_find_or_insert(C &_c, const T &_v)
 {
-    auto b = std::begin(_c);
-    auto e = std::end(_c);
-    auto it = std::find(b, e, _v);
+    const auto b = std::begin(_c);
+    const auto e = std::end(_c);
+    const auto it = std::find(b, e, _v);
     if( it != e )
         return std::distance(b, it);
 

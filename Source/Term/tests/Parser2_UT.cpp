@@ -307,7 +307,7 @@ TEST_CASE(PREFIX "Handles control characters")
     }
     SECTION("go into escape mode")
     {
-        auto r = parser.Parse(to_bytes("\x1B"));
+        const auto r = parser.Parse(to_bytes("\x1B"));
         REQUIRE(r.empty());
         CHECK(parser.GetEscState() == ParserImpl::EscState::Esc);
         parser.Parse(to_bytes("\x18"));
@@ -830,8 +830,8 @@ TEST_CASE(PREFIX "CSI J")
     }
     SECTION("ESC [ 4 J")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[4J"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[4J"));
         REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
@@ -875,8 +875,8 @@ TEST_CASE(PREFIX "CSI K")
     }
     SECTION("ESC [ 3 K")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[3K"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[3K"));
         REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
@@ -1110,8 +1110,8 @@ TEST_CASE(PREFIX "CSI c")
     }
     SECTION("ESC [ 1 c")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[1c"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[1c"));
         REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
@@ -1226,14 +1226,14 @@ TEST_CASE(PREFIX "CSI g")
     }
     SECTION("ESC [ 1 g")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[1g"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[1g"));
         CHECK(r.empty());
     }
     SECTION("ESC [ 2 g")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[2g"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[2g"));
         CHECK(r.empty());
     }
     SECTION("ESC [ 3 g")
@@ -1251,7 +1251,7 @@ TEST_CASE(PREFIX "CSI hl")
 {
     ParserImpl parser;
     using Kind = ModeChange::Kind;
-    auto verify = [&](const char *_cmd, Kind _kind, bool _status) {
+    const auto verify = [&](const char *_cmd, Kind _kind, bool _status) {
         auto r = parser.Parse(to_bytes(_cmd));
         REQUIRE(r.size() == 1);
         CHECK(r[0].type == Type::change_mode);
@@ -1570,8 +1570,8 @@ TEST_CASE(PREFIX "CSI m")
 {
     ParserImpl parser;
     using CA = CharacterAttributes;
-    auto ignores = [&](const char *_cmd) { CHECK(parser.Parse(to_bytes(_cmd)).empty()); };
-    auto verify = [&](const char *_cmd, CA _ca) {
+    const auto ignores = [&](const char *_cmd) { CHECK(parser.Parse(to_bytes(_cmd)).empty()); };
+    const auto verify = [&](const char *_cmd, CA _ca) {
         auto r = parser.Parse(to_bytes(_cmd));
         REQUIRE(r.size() == 1);
         CHECK(r[0].type == Type::set_character_attributes);
@@ -1874,14 +1874,14 @@ TEST_CASE(PREFIX "CSI n")
     }
     SECTION("ESC [ n")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[n"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[n"));
         REQUIRE(r.empty());
     }
     SECTION("ESC [ 0 n")
     {
-        auto r = parser.Parse(to_bytes("\x1B"
-                                       "[0n"));
+        const auto r = parser.Parse(to_bytes("\x1B"
+                                             "[0n"));
         REQUIRE(r.empty());
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
@@ -2169,17 +2169,17 @@ TEST_CASE(PREFIX "CSIParamsScanner")
     using S = ParserImpl::CSIParamsScanner;
     SECTION("")
     {
-        auto p = S::Parse("");
+        const auto p = S::Parse("");
         CHECK(p.count == 0);
     }
     SECTION("A")
     {
-        auto p = S::Parse("A");
+        const auto p = S::Parse("A");
         CHECK(p.count == 0);
     }
     SECTION("A11")
     {
-        auto p = S::Parse("A");
+        const auto p = S::Parse("A");
         CHECK(p.count == 0);
     }
     SECTION("39A")
@@ -2218,7 +2218,7 @@ TEST_CASE(PREFIX "CSIParamsScanner")
     }
     SECTION("99999999999999999999999999999999999")
     {
-        auto p = S::Parse("99999999999999999999999999999999999");
+        const auto p = S::Parse("99999999999999999999999999999999999");
         CHECK(p.count == 0);
     }
     SECTION("7;99999999999999999999999999999999999")
@@ -2234,7 +2234,7 @@ TEST_CASE(PREFIX "Properly handles torn sequences")
     ParserImpl parser;
     SECTION("ESC [ 34 P")
     {
-        auto r1 = parser.Parse(to_bytes("\x1B"));
+        const auto r1 = parser.Parse(to_bytes("\x1B"));
         REQUIRE(r1.empty());
         auto r2 = parser.Parse(to_bytes("[34P"));
         REQUIRE(r2.size() == 1);
@@ -2243,7 +2243,7 @@ TEST_CASE(PREFIX "Properly handles torn sequences")
     }
     SECTION("\xf0\x9f\x98\xb1")
     { // 😱
-        auto r1 = parser.Parse(to_bytes("\xf0\x9f"));
+        const auto r1 = parser.Parse(to_bytes("\xf0\x9f"));
         REQUIRE(r1.empty());
         auto r2 = parser.Parse(to_bytes("\x98\xb1\xf0\x9f\x98"));
         REQUIRE(r2.size() == 1);

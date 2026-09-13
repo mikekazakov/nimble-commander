@@ -151,7 +151,7 @@ QLThumbnailsCacheImpl::Produce(const std::string &_filename, int _px_size, const
     auto lock = std::unique_lock{m_ItemsLock};
     if( m_Items.count(temp_key) ) { // O(1)
         Log::Debug("found a cached item for '{}' ({}px)", _filename, _px_size);
-        auto info = m_Items[temp_key]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
+        const auto info = m_Items[temp_key]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
         lock.unlock();
         assert(info != nullptr);
         CheckCacheAndUpdateIfNeeded(_filename, _px_size, *info, _hint);
@@ -165,7 +165,7 @@ QLThumbnailsCacheImpl::Produce(const std::string &_filename, int _px_size, const
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources
         auto key = Key{_filename, _px_size};
-        auto info = base::intrusive_ptr{new Info};
+        const auto info = base::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert(std::move(key), info); // O(1)
         lock.unlock();
@@ -195,7 +195,7 @@ void QLThumbnailsCacheImpl::CheckCacheAndUpdateIfNeeded(const std::string &_file
 {
     Log::Trace("CheckCacheAndUpdateIfNeeded(): called for '{}' ({}px)", _filename, _px_size);
     if( !_info.is_in_work.test_and_set() ) {
-        auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
+        const auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
         // we're first to take control of this item
 
         const auto file_state_hint = _hint ? _hint : ReadFileState(_filename);
@@ -215,7 +215,7 @@ void QLThumbnailsCacheImpl::CheckCacheAndUpdateIfNeeded(const std::string &_file
 
         // we prefer to keep the previous version of a thumbnail in case if QL can't produce a new
         // version for the changed file.
-        if( auto new_image = BuildRep(_filename, _px_size) ) {
+        if( const auto new_image = BuildRep(_filename, _px_size) ) {
             Log::Info("CheckCacheAndUpdateIfNeeded(): update the image for '{}'", _filename);
             _info.image = new_image;
         }
@@ -233,7 +233,7 @@ void QLThumbnailsCacheImpl::ProduceNew(const std::string &_filename, int _px_siz
 {
     Log::Trace("ProduceNew(): called for '{}' ({}px)", _filename, _px_size);
     assert(_info.is_in_work.test_and_set() == true); // _info should be locked initially
-    auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
+    const auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
 
     // file must exist and be accessible
     struct stat st;
@@ -251,10 +251,10 @@ NSImage *QLThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_filename, int
 {
     Log::Trace("ThumbnailIfHas(): called for '{}' ({}px)", _filename, _px_size);
     const auto temp_key = Key{std::string_view{_filename}, _px_size, Key::no_ownership};
-    auto lock = std::lock_guard{m_ItemsLock};
+    const auto lock = std::lock_guard{m_ItemsLock};
     if( m_Items.count(temp_key) != 0 ) { // O(1)
         Log::Trace("ThumbnailIfHas(): found a cached entry for '{}' ({}px)", _filename, _px_size);
-        auto &info = m_Items[temp_key]; // O(1)
+        const auto &info = m_Items[temp_key]; // O(1)
         assert(info != nullptr);
         return info->image;
     }

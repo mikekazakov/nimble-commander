@@ -176,7 +176,7 @@ static const std::string *InternalizeString(std::string_view _str) noexcept
     [[clang::no_destroy]] static std::mutex mut;
 
     const std::lock_guard lock{mut};
-    if( auto it = strings.find(_str); it != strings.end() ) {
+    if( const auto it = strings.find(_str); it != strings.end() ) {
         return &*it;
     }
     else {
@@ -215,7 +215,7 @@ static std::optional<Tags::Tag> ParseTag(std::u16string_view _tag_rep) noexcept
     }
 
     const base::CFStackAllocator alloc;
-    auto cf_str =
+    const auto cf_str =
         base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
                                                                       reinterpret_cast<const UInt8 *>(_tag_rep.data()),
                                                                       _tag_rep.length() * 2,
@@ -499,7 +499,7 @@ static std::pmr::vector<std::byte> WritePListObject(const Tags::Tag &_tag, std::
     else {
         // Build CF strings out of our label
         const base::CFStackAllocator alloc;
-        auto cf_str =
+        const auto cf_str =
             base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
                                                                           reinterpret_cast<const UInt8 *>(label.data()),
                                                                           label.length(),
@@ -800,7 +800,7 @@ std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
 void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept
 {
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
-    auto change = [_tag, _color](const std::filesystem::path &_path) {
+    const auto change = [_tag, _color](const std::filesystem::path &_path) {
         if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
             if( auto tags = ReadTags(fd); !tags.empty() ) {
                 for( auto &tag : tags ) {
@@ -823,7 +823,7 @@ void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view 
         return;
     const std::string *const internalized = Tags::Tag::Internalize(_new_name);
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
-    auto change = [_tag, internalized](const std::filesystem::path &_path) {
+    const auto change = [_tag, internalized](const std::filesystem::path &_path) {
         if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
             if( auto tags = ReadTags(fd); !tags.empty() ) {
                 for( auto &tag : tags ) {
@@ -846,14 +846,14 @@ bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexc
     const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
-    auto cleanup = at_scope_end([fd] { close(fd); });
+    const auto cleanup = at_scope_end([fd] { close(fd); });
 
     auto tags = ReadTags(fd);
     if( std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag == _new_tag; }) != tags.end() ) {
         return true; // an exact tag is already present in this item, so there's nothing to do
     }
 
-    if( auto it = std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag.Label() == _new_tag.Label(); });
+    if( const auto it = std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag.Label() == _new_tag.Label(); });
         it != tags.end() ) {
         // there's a tag with the same name, but with a different color - override it
         *it = _new_tag;
@@ -871,9 +871,9 @@ bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label
     const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
-    auto cleanup = at_scope_end([fd] { close(fd); });
+    const auto cleanup = at_scope_end([fd] { close(fd); });
     auto tags = ReadTags(fd);
-    auto it = std::ranges::find_if(tags, [_label](const Tag &_tag) { return _tag.Label() == _label; });
+    const auto it = std::ranges::find_if(tags, [_label](const Tag &_tag) { return _tag.Label() == _label; });
     if( it == tags.end() )
         return true; // nothing to do - there's no tag with this label in the fs item
     tags.erase(it);
@@ -883,7 +883,7 @@ bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label
 void Tags::RemoveTagFromAllItems(std::string_view _tag) noexcept
 {
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
-    auto change = [_tag](const std::filesystem::path &_path) { RemoveTag(_path, _tag); };
+    const auto change = [_tag](const std::filesystem::path &_path) { RemoveTag(_path, _tag); };
     pstld::for_each(paths.begin(), paths.end(), change);
 }
 

@@ -103,7 +103,7 @@ void BlinkScheduler::Impl::Schedule()
     const auto after = NextFireAfter();
     const std::weak_ptr<Impl> impl = weak_from_this();
     m_IO->Dispatch(after, [impl] {
-        if( auto me = impl.lock() )
+        if( const auto me = impl.lock() )
             me->Fire();
     });
     m_Scheduled = true;
@@ -139,7 +139,7 @@ std::chrono::nanoseconds BlinkScheduler::Impl::NextFireAfter() const noexcept
 bool BlinkScheduler::Impl::VisibleNow() const noexcept
 {
     const auto now = m_IO->Now();
-    auto n = std::chrono::duration_cast<std::chrono::milliseconds>(now) / m_BlinkTime;
+    const auto n = std::chrono::duration_cast<std::chrono::milliseconds>(now) / m_BlinkTime;
     return n % 2 == 0;
 }
 

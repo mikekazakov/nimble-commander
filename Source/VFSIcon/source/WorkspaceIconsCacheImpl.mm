@@ -18,9 +18,9 @@ WorkspaceIconsCacheImpl::~WorkspaceIconsCacheImpl() = default;
 NSImage *WorkspaceIconsCacheImpl::IconIfHas(const std::string &_file_path)
 {
     Log::Trace("IconIfHas() called for '{}'", _file_path);
-    auto lock = std::lock_guard{m_ItemsLock};
-    if( m_Items.count(_file_path) != 0 ) { // O(1)
-        auto &info = m_Items[_file_path];  // O(1)
+    const auto lock = std::lock_guard{m_ItemsLock};
+    if( m_Items.count(_file_path) != 0 ) {      // O(1)
+        const auto &info = m_Items[_file_path]; // O(1)
         assert(info != nullptr);
         Log::Trace("found, image={}", objc_bridge_cast<void>(info->image));
         return info->image;
@@ -33,8 +33,8 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
 {
     Log::Trace("ProduceIcon() called for '{}'", _file_path);
     auto lock = std::unique_lock{m_ItemsLock};
-    if( m_Items.count(_file_path) ) {    // O(1)
-        auto info = m_Items[_file_path]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
+    if( m_Items.count(_file_path) ) {          // O(1)
+        const auto info = m_Items[_file_path]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
         lock.unlock();
         assert(info != nullptr);
         Log::Trace("found, image={}", objc_bridge_cast<void>(info->image));
@@ -45,7 +45,7 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources
         Log::Trace("wasn't found");
-        auto info = base::intrusive_ptr{new Info};
+        const auto info = base::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert(_file_path, info); // O(1)
         lock.unlock();
@@ -57,7 +57,7 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
 void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info &_info)
 {
     if( !_info.is_in_work.test_and_set() ) {
-        auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
+        const auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
         // we're first to take control of this item
 
         const auto file_state_hint = m_FileStateReader.ReadState(_file_path);
@@ -78,7 +78,7 @@ void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info
 
         // we prefer to keep the previous version of an icon in case if QL can't produce a new
         // version for the changed file.
-        if( auto new_image = m_IconBuilder.Build(_file_path) ) {
+        if( const auto new_image = m_IconBuilder.Build(_file_path) ) {
             _info.image = new_image;
         }
         else {
@@ -94,7 +94,7 @@ void WorkspaceIconsCacheImpl::UpdateIfNeeded(const std::string &_file_path, Info
 void WorkspaceIconsCacheImpl::ProduceNew(const std::string &_file_path, Info &_info)
 {
     assert(_info.is_in_work.test_and_set() == true); // _info should be locked initially
-    auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
+    const auto clear_lock = at_scope_end([&] { _info.is_in_work.clear(); });
 
     // file must exist and be accessible
     const auto file_state_hint = m_FileStateReader.ReadState(_file_path);
@@ -138,7 +138,7 @@ WorkspaceIconsCacheImplBase::FileStateReaderImpl::ReadState(const std::string &_
 NSImage *WorkspaceIconsCacheImplBase::IconBuilderImpl::Build(const std::string &_file_path)
 {
     static const auto workspace = NSWorkspace.sharedWorkspace;
-    auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_file_path]];
+    const auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_file_path]];
     return image;
 }
 

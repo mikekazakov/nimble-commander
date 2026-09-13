@@ -168,7 +168,7 @@ std::shared_ptr<const std::string> FileSettingsStorage::Settings(std::string_vie
 {
     Log::Trace("Settings() called");
 
-    if( auto sett_it = m_Settings.find(_lang); sett_it != m_Settings.end() ) {
+    if( const auto sett_it = m_Settings.find(_lang); sett_it != m_Settings.end() ) {
         Log::Trace("Retreived the syntax settings for the language '{}'", _lang);
         return sett_it->second;
     }

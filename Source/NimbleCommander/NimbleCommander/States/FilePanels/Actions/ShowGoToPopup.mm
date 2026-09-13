@@ -131,7 +131,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
     auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager, *m_NetMgr);
     auto handler = [path = _location.path, panel = m_Panel](VFSHostPtr _host) {
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
@@ -148,7 +148,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
     auto restorer = AsyncVFSPromiseRestorer(m_Panel, m_Panel.vfsInstanceManager);
     auto handler = [path = _path, panel = m_Panel](VFSHostPtr _host) {
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
@@ -187,7 +187,7 @@ static GoToPopupListActionMediator *g_CurrentMediator = nil;
         // Combine the listings into a single non-uniform one and load it in the main thread
         auto listing_input = VFSListing::Compose(listings);
         listing_input.title = tag.Label();
-        if( auto combined_listing = VFSListing::Build(std::move(listing_input)) )
+        if( const auto combined_listing = VFSListing::Build(std::move(listing_input)) )
             dispatch_to_main_queue([=] { [panel loadListing:combined_listing]; });
     };
     [m_Panel commitCancelableLoadingTask:std::move(task)];
@@ -210,10 +210,10 @@ namespace nc::panel::actions {
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
 static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>>
-VolumesToShow(utility::NativeFSManager &_native_fs_manager)
+VolumesToShow(const utility::NativeFSManager &_native_fs_manager)
 {
     std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
-    for( auto &i : _native_fs_manager.Volumes() )
+    for( const auto &i : _native_fs_manager.Volumes() )
         if( !i->mount_flags.dont_browse )
             volumes.emplace_back(i);
     return volumes;
@@ -224,7 +224,7 @@ LimitedRecentConnections(const NetworkConnectionsManager &_manager)
 {
     auto connections = _manager.AllConnectionsByMRU();
 
-    auto limit = std::max(GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
+    const auto limit = std::max(GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
     if( static_cast<int>(connections.size()) > limit )
         connections.resize(limit);
 
@@ -238,8 +238,8 @@ static std::vector<vfs::VFSPath> OtherWindowsPaths(MainWindowFilePanelState *_cu
         current_paths.emplace_back(std::get<1>(p), std::get<0>(p));
 
     std::vector<vfs::VFSPath> other_paths;
-    for( auto ctr : NCAppDelegate.me.mainWindowControllers )
-        if( auto state = ctr.filePanelsState; state != _current )
+    for( const NCMainWindowController *ctr : NCAppDelegate.me.mainWindowControllers )
+        if( const MainWindowFilePanelState *state = ctr.filePanelsState; state != _current )
             for( auto &p : state.filePanelsCurrentPaths )
                 other_paths.emplace_back(std::get<1>(p), std::get<0>(p));
 
@@ -323,7 +323,9 @@ std::pair<NCCommandPopover *, GoToPopupListActionMediator *>
 GoToPopupsBase::BuidInitialPopover(MainWindowFilePanelState *_state, PanelController *_panel, NSString *_title) const
 {
     NCCommandPopover *const popover = [[NCCommandPopover alloc] initWithTitle:_title];
-    auto mediator = [[GoToPopupListActionMediator alloc] initWithState:_state andPanel:_panel networkMgr:m_NetMgr];
+    const auto mediator = [[GoToPopupListActionMediator alloc] initWithState:_state
+                                                                    andPanel:_panel
+                                                                  networkMgr:m_NetMgr];
     popover.delegate = mediator;
     return {popover, mediator};
 }
@@ -340,31 +342,30 @@ GoToPopupsBase::BuildGoToMenu(MainWindowFilePanelState *_state, PanelController 
     [popover addItem:[NCCommandPopoverItem
                          sectionHeaderWithTitle:NSLocalizedString(@"Favorites",
                                                                   "Favorites popup menu subtitle in file panels")]];
-    for( auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
+    for( const auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [popover addItem:builder.ItemForFavorite(f)];
 
     [popover addItem:NCCommandPopoverItem.separatorItem];
     [popover
         addItem:[NCCommandPopoverItem
                     sectionHeaderWithTitle:NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels")]];
-    for( auto &i : VolumesToShow(m_NativeFSMgr) )
+    for( const auto &i : VolumesToShow(m_NativeFSMgr) )
         [popover addItem:builder.ItemForVolume(*i)];
 
     if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) )
-        if( auto connections = LimitedRecentConnections(m_NetMgr); !connections.empty() ) {
+        if( const auto connections = LimitedRecentConnections(m_NetMgr); !connections.empty() ) {
             [popover addItem:NCCommandPopoverItem.separatorItem];
-            [popover
-                addItem:[NCCommandPopoverItem
-                            sectionHeaderWithTitle:NSLocalizedString(@"Connections",
-                                                                     "Connections popup menu title in file panels")]];
-            for( auto &c : connections )
+            [popover addItem:[NCCommandPopoverItem sectionHeaderWithTitle:NSLocalizedString(@"Connections",
+                                                                                            "Connections popup menu "
+                                                                                            "title in file panels")]];
+            for( const auto &c : connections )
                 [popover addItem:builder.ItemForConnection(c)];
         }
 
     if( GlobalConfig().GetBool(g_ConfigShowOthersKey) )
-        if( auto paths = OtherWindowsPaths(_state); !paths.empty() ) {
+        if( const auto paths = OtherWindowsPaths(_state); !paths.empty() ) {
             [popover addItem:NCCommandPopoverItem.separatorItem];
-            for( auto &p : paths )
+            for( const auto &p : paths )
                 [popover addItem:builder.ItemForPath(p)];
         }
 
@@ -379,7 +380,7 @@ GoToPopupsBase::BuildConnectionsQuickList(PanelController *_panel) const
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 
-    for( auto &c : m_NetMgr.AllConnectionsByMRU() )
+    for( const auto &c : m_NetMgr.AllConnectionsByMRU() )
         [popover addItem:builder.ItemForConnection(c)];
 
     return {popover, mediator};
@@ -393,17 +394,17 @@ GoToPopupsBase::BuildFavoritesQuickList(PanelController *_panel) const
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 
-    for( auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
+    for( const auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [popover addItem:builder.ItemForFavorite(f)];
 
-    auto frequent = NCAppDelegate.me.favoriteLocationsStorage->FrecentlyUsed(10);
+    const auto frequent = NCAppDelegate.me.favoriteLocationsStorage->FrecentlyUsed(10);
     if( !frequent.empty() ) {
         [popover addItem:NCCommandPopoverItem.separatorItem];
         [popover addItem:[NCCommandPopoverItem
                              sectionHeaderWithTitle:NSLocalizedString(
                                                         @"Frequently Visited",
                                                         "Frequently Visited popup menu subtitle in file panels")]];
-        for( auto &f : frequent )
+        for( const auto &f : frequent )
             [popover addItem:builder.ItemForLocation(*f)];
     }
 
@@ -418,7 +419,7 @@ GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 
-    for( auto &i : VolumesToShow(m_NativeFSMgr) )
+    for( const auto &i : VolumesToShow(m_NativeFSMgr) )
         [popover addItem:builder.ItemForVolume(*i)];
 
     return {popover, mediator};
@@ -446,7 +447,7 @@ GoToPopupsBase::BuildParentFoldersQuickList(PanelController *_panel) const
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 
-    for( auto &i : ProduceLocationsForParentDirectories(_panel.data.Listing(), _panel.vfsInstanceManager) )
+    for( const auto &i : ProduceLocationsForParentDirectories(_panel.data.Listing(), _panel.vfsInstanceManager) )
         [popover addItem:builder.ItemForPromiseAndPath(i.first, i.second)];
 
     return {popover, mediator};
@@ -465,7 +466,7 @@ GoToPopupsBase::BuildHistoryQuickList(PanelController *_panel) const
 
     CommandItemBuilder builder{m_NetMgr, mediator};
 
-    for( auto &i : history )
+    for( const auto &i : history )
         [popover addItem:builder.ItemForListingPromise(i.get())];
 
     return {popover, mediator};
@@ -499,7 +500,7 @@ void ShowLeftGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) c
     g_CurrentPopover = menu.first;
     g_CurrentMediator = menu.second;
 
-    if( auto button = objc_cast<NSButton>(_sender) ) {
+    if( const auto button = objc_cast<NSButton>(_sender) ) {
         [g_CurrentPopover showRelativeToRect:button.bounds ofView:button alignment:NCCommandPopoverAlignment::Left];
     }
     else {
@@ -538,7 +539,7 @@ void ShowRightGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) 
     g_CurrentPopover = menu.first;
     g_CurrentMediator = menu.second;
 
-    if( auto button = objc_cast<NSButton>(_sender) ) {
+    if( const auto button = objc_cast<NSButton>(_sender) ) {
         [g_CurrentPopover showRelativeToRect:button.bounds ofView:button alignment:NCCommandPopoverAlignment::Right];
     }
     else {
@@ -619,11 +620,11 @@ CommandItemBuilder::CommandItemBuilder(NetworkConnectionsManager &_conn_manager,
 
 NCCommandPopoverItem *CommandItemBuilder::ItemForFavorite(const FavoriteLocationsStorage::Favorite &_f)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_f.location}];
-    auto rep = loc_fmt::FavoriteFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
+    const auto rep = loc_fmt::FavoriteFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -632,11 +633,11 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForFavorite(const FavoriteLocation
 
 NCCommandPopoverItem *CommandItemBuilder::ItemForLocation(const FavoriteLocationsStorage::Location &_f)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_f}];
-    auto rep = loc_fmt::FavoriteLocationFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
+    const auto rep = loc_fmt::FavoriteLocationFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -645,11 +646,11 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForLocation(const FavoriteLocation
 
 NCCommandPopoverItem *CommandItemBuilder::ItemForVolume(const utility::NativeFileSystemInfo &_volume)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_volume.mounted_at_path}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = nc::panel::loc_fmt::VolumeFormatter::Render(m_FmtOpts, _volume);
+    const auto rep = nc::panel::loc_fmt::VolumeFormatter::Render(m_FmtOpts, _volume);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -658,11 +659,11 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForVolume(const utility::NativeFil
 
 NCCommandPopoverItem *CommandItemBuilder::ItemForConnection(const NetworkConnectionsManager::Connection &_c)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_c}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = nc::panel::loc_fmt::NetworkConnectionFormatter::Render(m_FmtOpts, _c);
+    const auto rep = nc::panel::loc_fmt::NetworkConnectionFormatter::Render(m_FmtOpts, _c);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -671,11 +672,11 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForConnection(const NetworkConnect
 
 NCCommandPopoverItem *CommandItemBuilder::ItemForPath(const vfs::VFSPath &_p)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_p}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = loc_fmt::VFSPathFormatter{m_ConnectionManager}.Render(m_FmtOpts, *_p.Host(), _p.Path());
+    const auto rep = loc_fmt::VFSPathFormatter{m_ConnectionManager}.Render(m_FmtOpts, *_p.Host(), _p.Path());
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -685,12 +686,12 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForPath(const vfs::VFSPath &_p)
 NCCommandPopoverItem *CommandItemBuilder::ItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
                                                                 const std::string &_path)
 {
-    auto menu_item = [[NCCommandPopoverItem alloc] init];
+    const auto menu_item = [[NCCommandPopoverItem alloc] init];
     auto data = std::pair<core::VFSInstanceManager::Promise, std::string>{_promise, _path};
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{std::move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = nc::panel::loc_fmt::VFSPromiseFormatter::Render(m_FmtOpts, _promise, _path);
+    const auto rep = nc::panel::loc_fmt::VFSPromiseFormatter::Render(m_FmtOpts, _promise, _path);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -703,7 +704,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForListingPromise(const ListingPro
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_promise}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = nc::panel::loc_fmt::ListingPromiseFormatter::Render(m_FmtOpts, _promise);
+    const auto rep = nc::panel::loc_fmt::ListingPromiseFormatter::Render(m_FmtOpts, _promise);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;
@@ -716,7 +717,7 @@ NCCommandPopoverItem *CommandItemBuilder::ItemForFinderTags(const utility::Tags:
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_tag}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    auto rep = nc::panel::loc_fmt::VFSFinderTagsFormatter::Render(m_FmtOpts, _tag);
+    const auto rep = nc::panel::loc_fmt::VFSFinderTagsFormatter::Render(m_FmtOpts, _tag);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;

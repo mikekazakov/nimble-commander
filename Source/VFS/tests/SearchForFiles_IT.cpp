@@ -31,7 +31,7 @@ TEST_CASE(PREFIX "Test basic searching")
     };
 
     SearchForFiles search;
-    auto do_search = [&](int _flags) {
+    const auto do_search = [&](int _flags) {
         search.Go(test_dir.directory, host, _flags, callback, {});
         search.Wait();
     };
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Test size filter")
     };
 
     SearchForFiles search;
-    auto do_search = [&](int _flags) {
+    const auto do_search = [&](int _flags) {
         search.Go(test_dir.directory, host, _flags, callback, {});
         search.Wait();
     };
@@ -148,7 +148,7 @@ TEST_CASE(PREFIX "Test content filter")
     };
 
     SearchForFiles search;
-    auto do_search = [&](int _flags) {
+    const auto do_search = [&](int _flags) {
         search.Go(test_dir.directory, host, _flags, callback, {});
         search.Wait();
     };

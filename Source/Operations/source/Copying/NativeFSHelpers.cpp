@@ -47,7 +47,7 @@ bool SupportsFastTruncationAfterPreallocation(const utility::NativeFileSystemInf
            _fs_info.fs_type_name == apfs;
 }
 
-void AdjustFileTimesForNativePath(const char *_target_path, struct stat &_with_times)
+void AdjustFileTimesForNativePath(const char *_target_path, struct stat const &_with_times)
 {
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -60,11 +60,11 @@ void AdjustFileTimesForNativePath(const char *_target_path, struct stat &_with_t
 
 void AdjustFileTimesForNativePath(const char *_target_path, const VFSStat &_with_times)
 {
-    auto st = _with_times.SysStat();
+    const auto st = _with_times.SysStat();
     AdjustFileTimesForNativePath(_target_path, st);
 }
 
-void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
+void AdjustFileTimesForNativeFD(int _target_fd, struct stat const &_with_times)
 {
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -77,7 +77,7 @@ void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
 
 void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)
 {
-    auto st = _with_times.SysStat();
+    const auto st = _with_times.SysStat();
     AdjustFileTimesForNativeFD(_target_fd, st);
 }
 
@@ -85,7 +85,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
                                           const VFSStat &_st,
-                                          nc::utility::NativeFSManager *_native_fs_man)
+                                          const nc::utility::NativeFSManager *_native_fs_man)
 {
     // currently we think that ExtEAs can be only on native VFS
     if( !_host.IsNativeFS() )
@@ -100,7 +100,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
 
     // check if current filesystem uses external eas
     assert(_native_fs_man);
-    auto fs_info = _native_fs_man->VolumeFromPath(_path);
+    const auto fs_info = _native_fs_man->VolumeFromPath(_path);
     if( !fs_info || fs_info->interfaces.extended_attr )
         return false;
 

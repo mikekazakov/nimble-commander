@@ -26,7 +26,7 @@ IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon
 
 IconRepositoryImpl::~IconRepositoryImpl()
 {
-    for( auto &slot : m_Slots ) {
+    for( const auto &slot : m_Slots ) {
         if( slot.state == SlotState::Production ) {
             if( slot.production != nullptr )
                 slot.production->must_stop = true;
@@ -98,7 +98,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( !IsValidSlot(_key) )
         return;
 
-    auto slot_index = ToIndex(_key);
+    const auto slot_index = ToIndex(_key);
     auto &slot = m_Slots[slot_index];
 
     if( slot.production != nullptr )
@@ -110,7 +110,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
         return; // sorry, too busy atm
 
-    auto context = base::intrusive_ptr{new WorkerContext};
+    const auto context = base::intrusive_ptr{new WorkerContext};
     context->item = _item;
 
     slot.production = context;
@@ -136,7 +136,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
 
 void IconRepositoryImpl::ProduceRealIcon(WorkerContext &_ctx)
 {
-    auto build_result = m_IconBuilder->BuildRealIcon(_ctx.item, m_IconPxSize);
+    const auto build_result = m_IconBuilder->BuildRealIcon(_ctx.item, m_IconPxSize);
     _ctx.result_filetype = build_result.filetype;
     _ctx.result_thumbnail = build_result.thumbnail;
 }
@@ -153,7 +153,7 @@ void IconRepositoryImpl::CommitProductionResult(int _slot_index, WorkerContext &
     const bool updated = RefreshImages(slot, _ctx);
 
     if( updated ) {
-        auto callback = m_IconUpdatedCallback;
+        const auto callback = m_IconUpdatedCallback;
         if( callback && *callback )
             (*callback)(FromIndex(_slot_index), slot.icon);
     }

@@ -10,7 +10,7 @@ namespace nc {
 
 std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const char *_path)
 {
-    auto cr = _doc.FindMember(_path);
+    const auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return std::nullopt;
 
@@ -29,7 +29,7 @@ std::optional<unsigned> ThemePersistence::ExtractUInt(const Value &_doc, const c
 
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 {
-    auto cr = _doc.FindMember(_path);
+    const auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return nil;
 
@@ -41,7 +41,7 @@ NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 
 NSFont *ThemePersistence::ExtractFont(const Value &_doc, const char *_path)
 {
-    auto cr = _doc.FindMember(_path);
+    const auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return nil;
 
@@ -98,7 +98,7 @@ ThemeAppearance ThemePersistence::ExtractAppearance(const Value &_doc, const cha
 {
     using namespace std::literals;
 
-    auto cr = _doc.FindMember(_path);
+    const auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return ThemeAppearance::Light;
 

@@ -63,14 +63,14 @@ void Progress::CommitProcessed(uint64_t _delta)
 
 void Progress::ReportSleptDelta(std::chrono::nanoseconds _delta)
 {
-    auto lock = std::lock_guard{m_TimepointsLock};
+    const auto lock = std::lock_guard{m_TimepointsLock};
     m_LastCommitTimePoint += _delta;
     m_BaseTimePoint += _delta;
 }
 
 void Progress::SetupTiming()
 {
-    auto lock = std::lock_guard{m_TimepointsLock};
+    const auto lock = std::lock_guard{m_TimepointsLock};
     m_BaseTimePoint = base::machtime();
     m_LastCommitTimePoint = m_BaseTimePoint;
 }
@@ -79,7 +79,7 @@ double Progress::VolumePerSecondDirect() const noexcept
 {
     if( m_Processed == 0 )
         return 0.;
-    auto lock = std::lock_guard{m_TimepointsLock};
+    const auto lock = std::lock_guard{m_TimepointsLock};
     const auto dt = m_LastCommitTimePoint - m_BaseTimePoint;
     if( dt.count() == 0 )
         return 0;

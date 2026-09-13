@@ -27,7 +27,7 @@ HexModeFrame::HexModeFrame(const Source &_source)
 
     m_Rows.resize(rows.size());
     RowsBuilder rows_builder(_source);
-    auto block = [this, &rows, &rows_builder](size_t _index) {
+    const auto block = [this, &rows, &rows_builder](size_t _index) {
         const auto &split = rows[_index];
         m_Rows[_index] = rows_builder.Build(std::make_pair(split.chars_start, split.chars_num),
                                             std::make_pair(split.string_bytes_start, split.string_bytes_num),
@@ -95,8 +95,8 @@ int HexModeFrame::FindClosest(const Row *_first, const Row *_last, int _bytes_of
         }
         else {
             // or check distance with a previous line and choose which is closer
-            auto delta_1 = _first[index].BytesStart() - _bytes_offset;
-            auto delta_2 = _bytes_offset - _first[index - 1].BytesStart();
+            const auto delta_1 = _first[index].BytesStart() - _bytes_offset;
+            const auto delta_2 = _bytes_offset - _first[index - 1].BytesStart();
             if( delta_1 <= delta_2 )
                 return index;
             else

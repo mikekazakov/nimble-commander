@@ -42,7 +42,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
         REQUIRE(listing->Count() == 1);
         REQUIRE(listing->HasCommonDirectory());
         REQUIRE(listing->Directory() == "/my/");
-        auto item = listing->Item(0);
+        const auto item = listing->Item(0);
         REQUIRE(item.Directory() == "/my/");
         REQUIRE(item.Filename() == "file.txt");
         REQUIRE(item.Size() == 42);
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
         listing = host->FetchSingleItemListing("/my/file.txt///", VFSFlags::None).value();
         REQUIRE(listing);
         REQUIRE(listing->Directory() == "/my/");
-        auto item = listing->Item(0);
+        const auto item = listing->Item(0);
         REQUIRE(item.Directory() == "/my/");
         REQUIRE(item.Filename() == "file.txt");
     }
@@ -71,7 +71,7 @@ TEST_CASE(PREFIX "FetchSingleItemListing")
 
 TEST_CASE(PREFIX "Unsupported methods")
 {
-    auto host = std::make_shared<Host>("/", nullptr, "dummy");
+    const auto host = std::make_shared<Host>("/", nullptr, "dummy");
     const Error enotsup = Error{Error::POSIX, ENOTSUP};
     // ...
     REQUIRE(host->FetchDirectoryListing("/some/path", 0).error() == enotsup);

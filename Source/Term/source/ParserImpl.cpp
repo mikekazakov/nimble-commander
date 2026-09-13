@@ -27,7 +27,7 @@ void ParserImpl::Reset()
 
 std::vector<input::Command> ParserImpl::Parse(Bytes _to_parse)
 {
-    for( auto c : _to_parse )
+    for( const auto c : _to_parse )
         EatByte(static_cast<unsigned char>(c));
     FlushCompleteText();
 
@@ -460,7 +460,7 @@ void ParserImpl::SSOSCSubmit() noexcept
 {
     // parse the following format: Ps ; Pt
     const std::string_view s = m_OSCState.buffer;
-    auto sc_pos = s.find(';');
+    const auto sc_pos = s.find(';');
     if( sc_pos == std::string_view::npos )
         return;
     const std::string_view pt = s.substr(sc_pos + 1);
@@ -494,7 +494,7 @@ void ParserImpl::LogMissedOSCRequest(unsigned _ps, std::string_view _pt)
 {
     if( m_ErrorLog ) {
         using namespace std::string_literals;
-        auto msg = "Missed an OSC: "s + std::to_string(_ps) + ": "s + std::string(_pt);
+        const auto msg = "Missed an OSC: "s + std::to_string(_ps) + ": "s + std::string(_pt);
         m_ErrorLog(msg);
     }
 }
@@ -513,7 +513,7 @@ constexpr static std::array<bool, 256> Make8BitBoolTable(std::string_view _on)
 {
     std::array<bool, 256> flags{};
     std::ranges::fill(flags, false);
-    for( auto c : _on )
+    for( const auto c : _on )
         flags[static_cast<unsigned char>(c)] = true;
     return flags;
 }
@@ -708,7 +708,7 @@ void ParserImpl::SSCSISubmit() noexcept
 void ParserImpl::LogMissedCSIRequest(std::string_view _request)
 {
     if( m_ErrorLog ) {
-        auto msg = std::string("Missed a CSI: ") + std::string(_request);
+        const auto msg = std::string("Missed a CSI: ") + std::string(_request);
         m_ErrorLog(msg);
     }
 }
@@ -1370,7 +1370,7 @@ void ParserImpl::CSI_n() noexcept
     //          Result is CSI r ; c R
     const std::string_view s = m_CSIState.buffer;
     int ps = 0;
-    auto result = std::from_chars(s.data(), s.data() + s.size(), ps);
+    const auto result = std::from_chars(s.data(), s.data() + s.size(), ps);
     if( result.ec == std::errc{} ) {
         if( ps == 5 ) {
             input::DeviceReport dr;
@@ -1624,7 +1624,7 @@ ParserImpl::CSIParamsScanner::Params ParserImpl::CSIParamsScanner::Parse(std::st
         if( p.count == p.values.size() )
             break;
         unsigned value = 0;
-        auto result = std::from_chars(string.data(), string.data() + string.size(), value);
+        const auto result = std::from_chars(string.data(), string.data() + string.size(), value);
         if( result.ec == std::errc{} ) {
             p.values[p.count++] = value;
 

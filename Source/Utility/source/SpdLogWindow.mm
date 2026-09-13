@@ -43,7 +43,7 @@ void SpdLogUISink::sink_it_(const spdlog::details::log_msg &msg)
     spdlog::sinks::base_sink<std::mutex>::formatter_->format(msg, formatted);
     std::string str = fmt::to_string(formatted);
     dispatch_async(m_Que, [wp = std::weak_ptr<SpdLogUISink>(shared_from_this()), str = std::move(str)] {
-        if( auto me = wp.lock() ) {
+        if( const auto me = wp.lock() ) {
             me->Accept(str);
         }
     });
@@ -64,7 +64,7 @@ void SpdLogUISink::FlushFromUIThread()
 {
     dispatch_assert_main_queue();
     dispatch_async(m_Que, [wp = std::weak_ptr<SpdLogUISink>(shared_from_this())] {
-        if( auto me = wp.lock() ) {
+        if( const auto me = wp.lock() ) {
             me->DoFlush();
         }
     });
@@ -75,8 +75,8 @@ void SpdLogUISink::DoFlush()
     dispatch_assert_background_queue();
     if( m_Stock.empty() )
         return;
-    if( auto s = [NSString stringWithUTF8String:m_Stock.c_str()] ) {
-        auto callback = m_CB;
+    if( const auto s = [NSString stringWithUTF8String:m_Stock.c_str()] ) {
+        const auto callback = m_CB;
         dispatch_to_main_queue([s, callback] { callback(s); });
     }
     else {
@@ -116,7 +116,7 @@ void SpdLogUISink::DoFlush()
 
         __weak NCSpdLogWindowController *weak_self = self;
         auto callback = [weak_self](NSString *_str) {
-            if( auto me = weak_self )
+            if( const auto me = weak_self )
                 [me acceptNewString:_str];
         };
         m_Sink = std::make_shared<nc::utility::SpdLogUISink>(callback);

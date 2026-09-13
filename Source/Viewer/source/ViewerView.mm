@@ -99,7 +99,7 @@ static const auto g_ConfigEnableSyntaxHighlighting = "viewer.enableHighlighting"
 
     __weak NCViewerView *weak_self = self;
     m_Theme->ObserveChanges([weak_self] {
-        if( auto strong_self = weak_self )
+        if( const auto strong_self = weak_self )
             [strong_self reloadAppearance];
     });
 

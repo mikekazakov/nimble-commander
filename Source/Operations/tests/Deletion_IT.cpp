@@ -42,7 +42,7 @@ TEST_CASE(PREFIX "Regular file removal - locked file")
     REQUIRE(close(creat(path.c_str(), 0755)) == 0);
     REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
     DeletionOptions options;
-    auto set_type = [&]() {
+    const auto set_type = [&]() {
         SECTION("Permanent")
         {
             options.type = DeletionType::Permanent;
@@ -93,7 +93,7 @@ TEST_CASE(PREFIX "Directory removal - locked file")
     REQUIRE_NOTHROW(std::filesystem::create_directory(path));
     REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
     DeletionOptions options;
-    auto set_type = [&]() {
+    const auto set_type = [&]() {
         SECTION("Permanent")
         {
             options.type = DeletionType::Permanent;
@@ -144,7 +144,7 @@ TEST_CASE(PREFIX "Symlink removal - locked file")
     REQUIRE_NOTHROW(std::filesystem::create_symlink("/bin/sh", path));
     REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
     DeletionOptions options;
-    auto set_type = [&]() {
+    const auto set_type = [&]() {
         SECTION("Permanent")
         {
             options.type = DeletionType::Permanent;

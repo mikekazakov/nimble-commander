@@ -253,8 +253,8 @@ static void TestAlpineLayoutWithHost(SFTPHost &_host)
     // Get the listing of a root directory
     VFSListingPtr root_listing = _host.FetchDirectoryListing("/", 0).value();
     REQUIRE(root_listing);
-    auto at = [&](VFSListingPtr _listing, std::string_view _fn) {
-        auto it = std::find_if(
+    const auto at = [&](VFSListingPtr _listing, std::string_view _fn) {
+        const auto it = std::find_if(
             _listing->begin(), _listing->end(), [_fn](const auto &_entry) { return _entry.Filename() == _fn; });
         if( it != _listing->end() )
             return *it;
@@ -318,56 +318,56 @@ static void TestAlpineLayoutWithHost(SFTPHost &_host)
 
 TEST_CASE(PREFIX "auth via plain password")
 {
-    auto host = hostForAlpine_User1_Pwd();
+    const auto host = hostForAlpine_User1_Pwd();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user1");
 }
 
 TEST_CASE(PREFIX "auth via RSA key")
 {
-    auto host = hostForAlpine_User2_RSA();
+    const auto host = hostForAlpine_User2_RSA();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user2");
 }
 
 TEST_CASE(PREFIX "auth via ECDSA key")
 {
-    auto host = hostForAlpine_User3_ECDSA();
+    const auto host = hostForAlpine_User3_ECDSA();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user3");
 }
 
 TEST_CASE(PREFIX "auth via ED25519 key")
 {
-    auto host = hostForAlpine_User4_ED25519();
+    const auto host = hostForAlpine_User4_ED25519();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user4");
 }
 
 TEST_CASE(PREFIX "auth via password for SSH-less SFTP")
 {
-    auto host = hostForAlpine_User6_Passwd();
+    const auto host = hostForAlpine_User6_Passwd();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user6");
 }
 
 TEST_CASE(PREFIX "auth via password-protected RSA key")
 {
-    auto host = hostForAlpine_User7_RSA_Passwd();
+    const auto host = hostForAlpine_User7_RSA_Passwd();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user7");
 }
 
 TEST_CASE(PREFIX "auth via password-protected ECDSA key")
 {
-    auto host = hostForAlpine_User8_ECDSA_Passwd();
+    const auto host = hostForAlpine_User8_ECDSA_Passwd();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user8");
 }
 
 TEST_CASE(PREFIX "auth via password-protected ED25519 key")
 {
-    auto host = hostForAlpine_User9_ED25519_Passwd();
+    const auto host = hostForAlpine_User9_ED25519_Passwd();
     TestAlpineLayoutWithHost(*host);
     CHECK(host->HomeDir() == "/home/user9");
 }
@@ -517,11 +517,11 @@ TEST_CASE(PREFIX "FetchGroups")
 // That behaviour occured in VFSSeqToRandomWrapper
 TEST_CASE(PREFIX "RandomWrappers")
 {
-    auto host = hostForAlpine_User2_RSA();
+    const auto host = hostForAlpine_User2_RSA();
 
     const VFSFilePtr seq_file = host->CreateFile(host->HomeDir() + "/.ssh/authorized_keys").value();
 
-    auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
+    const auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(seq_file);
     REQUIRE(wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr, nullptr));
 }
 

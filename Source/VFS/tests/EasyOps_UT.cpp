@@ -27,7 +27,7 @@ TEST_CASE(PREFIX "CopyFileToTempStorage works")
     auto storage = nc::utility::TemporaryFileStorageImpl{test_dir.directory.native(), "some_prefix"};
     const auto content = "Hello, world!";
     Save(test_dir.directory / "aaa.txt", content);
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
 
     const auto copied_path = CopyFileToTempStorage(test_dir.directory / "aaa.txt", *host, storage);
     REQUIRE(copied_path != std::nullopt);
@@ -47,7 +47,7 @@ TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
     const auto content2 = "Goodbye, world!";
     Save(test_dir.directory / "A/B/aaa.txt", content1);
     Save(test_dir.directory / "A/C/bbb.txt", content2);
-    auto host = TestEnv().vfs_native;
+    const auto host = TestEnv().vfs_native;
 
     const auto copied_path =
         CopyDirectoryToTempStorage(test_dir.directory / "A", *host, std::numeric_limits<uint64_t>::max(), storage);

@@ -20,7 +20,7 @@ static const auto g_Message = "Command-line options:                            
 void ProcessCLIUsage(int argc, char *argv[])
 {
     const std::vector<std::string_view> args(argv, argv + argc);
-    for( auto arg : args ) {
+    for( const auto arg : args ) {
         if( arg == "--help" ) {
             std::cout << g_Message << std::flush;
             std::exit(0);

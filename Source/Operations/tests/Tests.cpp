@@ -112,7 +112,7 @@ static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
 static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &volume_path,
                                                  std::chrono::nanoseconds _time_limit)
 {
-    auto predicate = [volume_path] {
+    const auto predicate = [volume_path] {
         auto volumes = TestEnv().native_fs_man->Volumes();
         return std::ranges::any_of(volumes,
                                    [volume_path](auto _fs_info) { return _fs_info->mounted_at_path == volume_path; });

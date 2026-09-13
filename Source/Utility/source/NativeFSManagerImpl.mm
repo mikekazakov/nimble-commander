@@ -352,7 +352,7 @@ void NativeFSManagerImpl::OnDidMount(const std::string &_on_path)
 {
     // presumably called from main thread, so go async to keep UI smooth
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), [=, this] {
-        auto volume = std::make_shared<NativeFileSystemInfo>();
+        const auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume);
 
@@ -400,7 +400,7 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
         const std::lock_guard lock{m_Lock};
 
         const auto pred = [=](std::shared_ptr<NativeFileSystemInfo> &_v) { return _v->mounted_at_path == _old_path; };
-        auto it = std::ranges::find_if(m_Volumes, pred);
+        const auto it = std::ranges::find_if(m_Volumes, pred);
         if( it != std::end(m_Volumes) ) {
             const auto &volume = *it;
             volume->mounted_at_path = _new_path;
@@ -510,7 +510,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromPath(std::string_view _path
 
 bool NativeFSManagerImpl::IsVolumeContainingPathEjectable(const std::string &_path)
 {
-    auto volume = VolumeFromPath(_path);
+    const auto volume = VolumeFromPath(_path);
 
     if( !volume )
         return false;
@@ -598,7 +598,7 @@ void NativeFSManagerImpl::InjectRootFirmlinks(const APFSTree &_tree)
         m_VolumeLookup.Insert(data_volume_ptr, EnsureTrailingSlash(firmlink.target));
 }
 
-static void GenericDiskUnmountCallback(DADiskRef _disk, DADissenterRef _dissenter, [[maybe_unused]] void *_context)
+static void GenericDiskUnmountCallback(DADiskRef _disk, DADissenterRef _dissenter, void * /*_context*/)
 {
     if( _dissenter != nullptr )
         return;
@@ -606,7 +606,7 @@ static void GenericDiskUnmountCallback(DADiskRef _disk, DADissenterRef _dissente
     const auto whole_disk = DADiskCopyWholeDisk(_disk);
     if( whole_disk == nullptr )
         return;
-    auto release_disk = at_scope_end([=] { CFRelease(whole_disk); });
+    const auto release_disk = at_scope_end([=] { CFRelease(whole_disk); });
 
     DADiskEject(whole_disk, kDADiskEjectOptionDefault, nullptr, nullptr);
 }
@@ -616,10 +616,10 @@ void NativeFSManagerImpl::PerformGenericUnmounting(const Info &_volume)
     const auto session = DASessionForMainThread();
 
     const auto url = (__bridge CFURLRef)_volume->verbose.url;
-    const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+    const DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
     if( disk == nullptr )
         return;
-    auto release_disk = at_scope_end([=] { CFRelease(disk); });
+    const auto release_disk = at_scope_end([=] { CFRelease(disk); });
 
     if( _volume->mount_flags.ejectable ) {
         DADiskUnmount(disk, kDADiskUnmountOptionForce, GenericDiskUnmountCallback, nullptr);
@@ -667,12 +667,12 @@ static void APFSUnmountCallback([[maybe_unused]] DADiskRef _disk, DADissenterRef
             DADiskCreateFromBSDName(kCFAllocatorDefault, DASessionForMainThread(), store.c_str());
         if( store_partition == nullptr )
             continue;
-        auto release_disk = at_scope_end([=] { CFRelease(store_partition); });
+        const auto release_disk = at_scope_end([=] { CFRelease(store_partition); });
 
         const auto whole_disk = DADiskCopyWholeDisk(store_partition);
         if( whole_disk == nullptr )
             continue;
-        auto release_whole_disk = at_scope_end([=] { CFRelease(whole_disk); });
+        const auto release_whole_disk = at_scope_end([=] { CFRelease(whole_disk); });
 
         DADiskEject(whole_disk, kDADiskEjectOptionDefault, nullptr, nullptr);
     }
@@ -684,7 +684,7 @@ void NativeFSManagerImpl::PerformAPFSUnmounting(const Info &_volume)
     const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, DASessionForMainThread(), url);
     if( disk == nullptr )
         return;
-    auto release_disk = at_scope_end([=] { CFRelease(disk); });
+    const auto release_disk = at_scope_end([=] { CFRelease(disk); });
 
     if( _volume->mount_flags.ejectable ) {
         const auto apfs_plist = nc::utility::DiskUtility::ListAPFSObjects();
@@ -756,7 +756,7 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
 static std::optional<APFSTree> FetchAPFSTree() noexcept
 {
     try {
-        auto dictionary = nc::utility::DiskUtility::ListAPFSObjects();
+        const auto dictionary = nc::utility::DiskUtility::ListAPFSObjects();
         if( dictionary == nil )
             return std::nullopt;
         return APFSTree{dictionary};

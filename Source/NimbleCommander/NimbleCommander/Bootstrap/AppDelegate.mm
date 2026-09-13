@@ -328,8 +328,8 @@ static NCAppDelegate *g_Me = nil;
     connections_menu_item.menu.delegate = conn_delegate;
 
     auto panels_locator = []() -> MainWindowFilePanelState * {
-        if( auto wnd = nc::objc_cast<NCMainWindow>(NSApp.keyWindow) )
-            if( auto ctrl = nc::objc_cast<NCMainWindowController>(wnd.delegate) )
+        if( const auto wnd = nc::objc_cast<NCMainWindow>(NSApp.keyWindow) )
+            if( const auto ctrl = nc::objc_cast<NCMainWindowController>(wnd.delegate) )
                 return ctrl.filePanelsState;
         return nil;
     };
@@ -358,7 +358,7 @@ static NCAppDelegate *g_Me = nil;
     auto tag_from_lit = [&](const char *s) { return self.actionsShortcutsManager.TagFromAction(s).value(); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto hide = [&](const char *s) {
-        auto item = current_menuitem(s);
+        const auto item = current_menuitem(s);
         item.alternate = false;
         item.hidden = true;
     };
@@ -763,8 +763,8 @@ static NCAppDelegate *g_Me = nil;
     auto provide_panel = []() -> std::vector<std::pair<VFSHostPtr, std::string>> {
         std::vector<std::pair<VFSHostPtr, std::string>> panel_paths;
         for( const auto &ctr : NCAppDelegate.me.mainWindowControllers ) {
-            auto state = ctr.filePanelsState;
-            auto paths = state.filePanelsCurrentPaths;
+            const auto state = ctr.filePanelsState;
+            const auto paths = state.filePanelsCurrentPaths;
             for( const auto &p : paths )
                 panel_paths.emplace_back(std::get<1>(p), std::get<0>(p));
         }
@@ -871,7 +871,7 @@ static void DoTemporaryFileStoragePurge()
     static const auto history_state_path = "viewer.history";
     static const auto instance = [] {
         auto inst = new nc::viewer::History(*g_Config, *g_State, history_state_path);
-        auto center = NSNotificationCenter.defaultCenter;
+        const auto center = NSNotificationCenter.defaultCenter;
         // Save the history upon application shutdown
         [center addObserverForName:NSApplicationWillTerminateNotification
                             object:nil

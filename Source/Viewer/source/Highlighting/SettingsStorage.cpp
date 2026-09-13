@@ -37,7 +37,7 @@ std::shared_ptr<const std::string> DummySettingsStorage::Settings(std::string_vi
             "SCE_C_STRINGEOL": "string"
         }
     })";
-    [[clang::no_destroy]] static auto ptr = std::make_shared<std::string>(settings);
+    [[clang::no_destroy]] static const auto ptr = std::make_shared<std::string>(settings);
     return ptr;
 }
 

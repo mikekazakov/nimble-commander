@@ -19,7 +19,7 @@ static std::string CopyingDialogMakeCanonicPath(std::string _input)
     const auto dotdot = "/../"s;
     auto pos = _input.find(dotdot);
     if( pos != std::string::npos && pos > 0 ) {
-        auto sl = _input.rfind('/', pos - 1);
+        const auto sl = _input.rfind('/', pos - 1);
         if( sl != std::string::npos ) {
             _input.erase(sl + 1, pos - sl + dotdot.size() - 1);
             return CopyingDialogMakeCanonicPath(std::move(_input));
@@ -207,7 +207,7 @@ static std::string CopyingDialogMakeCanonicPath(std::string _input)
 
         if( m_SourceHost->IsNativeFS() && _input.starts_with("~/") ) // input is relative to home dir
             input.replace(0, 2, nc::base::CommonPaths::Home());
-        else if( m_SourceHost->IsNativeFS() && _input.starts_with("~") ) // input is relative to home dir
+        else if( m_SourceHost->IsNativeFS() && _input.starts_with('~') ) // input is relative to home dir
             input.replace(0, 1, nc::base::CommonPaths::Home());
         else // input is relative to source base dir
             input = m_SourceDirectory + input;

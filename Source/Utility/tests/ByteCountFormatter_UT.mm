@@ -44,7 +44,7 @@ TEST_CASE(PREFIX "Adaptive6")
         {.size = static_cast<uint64_t>(1024ull * 1024ull * 1024ull * 1024ull * 2.3), .expected = @"2.3 TB"},
         {.size = 1055872262ull, .expected = @"1.0 GB"},
     };
-    for( auto &tc : tcs ) {
+    for( const auto &tc : tcs ) {
         CHECK([f.ToNSString(tc.size, ByteCountFormatter::Adaptive6) isEqualToString:tc.expected]);
     }
 }
@@ -115,7 +115,7 @@ TEST_CASE(PREFIX "Fixed6")
         {.size = 11257873168519397375ull, .expected = @"9999 P"},
         {.size = 11257873168519397376ull, .expected = @""},
     };
-    for( auto &tc : tcs ) {
+    for( const auto &tc : tcs ) {
         CHECK([f.ToNSString(tc.size, ByteCountFormatter::Fixed6) isEqualToString:tc.expected]);
     }
 }
@@ -139,7 +139,7 @@ TEST_CASE(PREFIX "SpaceSeparated")
         {.size = 999'999'999'999'999ull, .expected = @"999 999 999 999 999 bytes"},
         {.size = 1'000'000'000'000'000ull, .expected = @"bytes"},
     };
-    for( auto &tc : tcs ) {
+    for( const auto &tc : tcs ) {
         CHECK([f.ToNSString(tc.size, ByteCountFormatter::SpaceSeparated) isEqualToString:tc.expected]);
     }
 }

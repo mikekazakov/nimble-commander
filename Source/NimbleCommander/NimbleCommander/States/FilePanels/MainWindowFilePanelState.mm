@@ -63,7 +63,7 @@ static bool GoToForcesPanelActivation()
 {
     static const auto fetch = [] { return GlobalConfig().GetBool(g_ConfigGoToActivation); };
     static bool force = [] {
-        [[clang::no_destroy]] static auto ticket =
+        [[clang::no_destroy]] static const auto ticket =
             GlobalConfig().Observe(g_ConfigGoToActivation, [] { force = fetch(); });
         return fetch();
     }();
@@ -249,7 +249,7 @@ static NSString *TitleForData(const data::Model *_data);
 
     const auto try_to_load = [&](const std::vector<std::string> &_paths_to_try, PanelController *_panel) {
         for( auto &p : _paths_to_try ) {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = p;
             request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
             request->PerformAsynchronous = false;
@@ -540,11 +540,11 @@ static nc::config::Value EncodePanelsStates(const std::vector<PanelController *>
     const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
     PanelDataPersistency persistency(*NCAppDelegate.me.networkConnectionsManager); // TODO: evil, fix
 
-    for( auto pc : _left )
+    for( PanelController *pc : _left )
         if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             left.PushBack(std::move(v), nc::config::g_CrtAllocator);
 
-    for( auto pc : _right )
+    for( PanelController *pc : _right )
         if( auto v = ControllerStateJSONEncoder{pc, persistency}.Encode(encoding_opts); v.GetType() != kNullType )
             right.PushBack(std::move(v), nc::config::g_CrtAllocator);
 
@@ -1020,7 +1020,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window, std::function<v
 static bool RouteKeyboardInputIntoTerminal()
 {
     static bool route = GlobalConfig().GetBool(g_ConfigRouteKeyboardInputIntoTerminal);
-    [[clang::no_destroy]] static auto observe_ticket =
+    [[clang::no_destroy]] static const auto observe_ticket =
         GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal,
                                [] { route = GlobalConfig().GetBool(g_ConfigRouteKeyboardInputIntoTerminal); });
     return route;

@@ -89,7 +89,7 @@ void SandboxManager::LoadSecurityScopeBookmarks_Unlocked()
 {
     assert(m_Bookmarks.empty());
 
-    auto bookmarks = nc::objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey]);
+    const auto bookmarks = nc::objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey]);
     if( !bookmarks )
         return;
 
@@ -118,9 +118,9 @@ void SandboxManager::SaveSecurityScopeBookmarks()
 {
     NSMutableArray *array;
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         array = [NSMutableArray arrayWithCapacity:m_Bookmarks.size()];
-        for( auto &i : m_Bookmarks )
+        for( const auto &i : m_Bookmarks )
             [array addObject:i.data];
     }
 
@@ -184,7 +184,7 @@ bool SandboxManager::AskAccessForPathSync(const std::string &_path, bool _mandat
                     bm.url = scoped_url;
                     bm.path = EnsureNoTrailingSlash(scoped_url.path.fileSystemRepresentation);
                     {
-                        auto lock = std::lock_guard{m_Lock};
+                        const auto lock = std::lock_guard{m_Lock};
                         m_Bookmarks.emplace_back(bm);
                     }
 
@@ -230,28 +230,28 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const std::string &_p) const
 
 bool SandboxManager::CanAccessFolder(const std::string &_path) const
 {
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     return HasAccessToFolder_Unlocked(_path);
     return false;
 }
 
 bool SandboxManager::CanAccessFolder(const char *_path) const
 {
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     return _path != nullptr ? HasAccessToFolder_Unlocked(_path) : false;
 }
 
 std::string SandboxManager::FirstFolderWithAccess() const
 {
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     return m_Bookmarks.empty() ? "" : m_Bookmarks.front().path;
 }
 
 void SandboxManager::ResetBookmarks()
 {
     {
-        auto lock = std::lock_guard{m_Lock};
-        for( auto &i : m_Bookmarks )
+        const auto lock = std::lock_guard{m_Lock};
+        for( const auto &i : m_Bookmarks )
             [i.url stopAccessingSecurityScopedResource];
         m_Bookmarks.clear();
     }
@@ -260,8 +260,8 @@ void SandboxManager::ResetBookmarks()
 
 void SandboxManager::StopUsingBookmarks()
 {
-    auto lock = std::lock_guard{m_Lock};
-    for( auto &i : m_Bookmarks )
+    const auto lock = std::lock_guard{m_Lock};
+    for( const auto &i : m_Bookmarks )
         [i.url stopAccessingSecurityScopedResource];
 }
 

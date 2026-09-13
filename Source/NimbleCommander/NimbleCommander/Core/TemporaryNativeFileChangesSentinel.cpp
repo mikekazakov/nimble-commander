@@ -24,7 +24,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
     if( !file.Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) )
         return std::nullopt;
 
-    auto buf = std::make_unique<uint8_t[]>(chunk_sz);
+    const auto buf = std::make_unique<uint8_t[]>(chunk_sz);
     nc::base::Hash h(nc::base::Hash::MD5);
 
     std::expected<size_t, Error> rn;
@@ -70,7 +70,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string &_path,
 
     ScheduleItemDrop(current);
 
-    auto lock = std::lock_guard{m_WatchesLock};
+    const auto lock = std::lock_guard{m_WatchesLock};
     m_Watches.emplace_back(std::move(current));
     return true;
 }
@@ -89,8 +89,8 @@ void TemporaryNativeFileChangesSentinel::ScheduleItemDrop(const std::shared_ptr<
 bool TemporaryNativeFileChangesSentinel::StopFileWatch(const std::string &_path)
 {
     auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
-    auto lock = std::lock_guard{m_WatchesLock};
-    auto it = std::ranges::find_if(m_Watches, [&](const auto &_i) { return _i->path == _path; });
+    const auto lock = std::lock_guard{m_WatchesLock};
+    const auto it = std::ranges::find_if(m_Watches, [&](const auto &_i) { return _i->path == _path; });
     if( it != end(m_Watches) ) {
         const auto &meta = *it;
         dir_update.RemoveWatchPathWithTicket(meta->fswatch_ticket);
@@ -115,7 +115,7 @@ void TemporaryNativeFileChangesSentinel::FSEventCallback(std::shared_ptr<Meta> _
 void TemporaryNativeFileChangesSentinel::BackgroundItemCheck(std::shared_ptr<Meta> _meta)
 {
     dispatch_assert_background_queue();
-    auto clear_flag = at_scope_end([&] { _meta->checking_now = false; });
+    const auto clear_flag = at_scope_end([&] { _meta->checking_now = false; });
 
     auto current_hash = CalculateFileHash(_meta->path);
     if( !current_hash )
@@ -125,7 +125,7 @@ void TemporaryNativeFileChangesSentinel::BackgroundItemCheck(std::shared_ptr<Met
         _meta->last_md5_hash = std::move(*current_hash);
         ScheduleItemDrop(_meta);
 
-        auto client_callback = _meta->callback;
+        const auto client_callback = _meta->callback;
         dispatch_to_main_queue([=] { (*client_callback)(); });
     }
 }

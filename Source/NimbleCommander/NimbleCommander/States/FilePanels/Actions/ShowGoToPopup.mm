@@ -499,6 +499,7 @@ void ShowLeftGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) c
 
     g_CurrentPopover = menu.first;
     g_CurrentMediator = menu.second;
+    (void)g_CurrentMediator; // keep clang happy: clang-diagnostic-unused-but-set-global
 
     if( const auto button = objc_cast<NSButton>(_sender) ) {
         [g_CurrentPopover showRelativeToRect:button.bounds ofView:button alignment:NCCommandPopoverAlignment::Left];

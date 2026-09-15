@@ -14,7 +14,7 @@ TEST_CASE(PREFIX "MatchName - old file masks")
         const char *mask;
         const char *name;
         bool result;
-    } cases[] = {
+    } const cases[] = {
         // primitive *.ext mask
         {.mask = "*.jpg", .name = "1.jpg", .result = true},
         {.mask = "*.jpg", .name = "11.jpg", .result = true},
@@ -146,7 +146,7 @@ TEST_CASE(PREFIX "MatchName - regexes")
         const char *mask;
         const char *name;
         bool result;
-    } cases[] = {
+    } const cases[] = {
         {.mask = ".*", .name = "", .result = false},
         {.mask = ".*", .name = "a", .result = true},
         {.mask = ".*", .name = "ab", .result = true},

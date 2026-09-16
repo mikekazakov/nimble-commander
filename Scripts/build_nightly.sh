@@ -55,6 +55,19 @@ APP_PATH="${BUILT_PATH}/${APP_NAME}"
 VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "${APP_PATH}/Contents/Info.plist" )
 BUILD=$( $PBUDDY -c "Print CFBundleVersion" "${APP_PATH}/Contents/Info.plist" )
 DMG_NAME="nimble-commander-nightly-${VERSION}(${BUILD}).dmg"
+DSYM_ZIP_NAME="nimble-commander-nightly-${VERSION}(${BUILD}).dSYM.zip"
+DSYM_ZIP_PATH="${PWD}/${DSYM_ZIP_NAME}"
+
+# Package all freshly built dSYM directories for symbolication
+rm -f "${DSYM_ZIP_PATH}"
+for dSYM in "${ARCHIVE_PATH}"/dSYMs/*; do
+    if [ -d "${dSYM}" ]; then
+        dSYM_NAME="$(basename "${dSYM}")"
+        ln -sf "${dSYM}" "${dSYM_NAME}"
+        zip -qr "${DSYM_ZIP_PATH}" "${dSYM_NAME}"
+        rm -f "${dSYM_NAME}"
+    fi
+done
 
 # Wrap the built application into a .dmg disk image
 create-dmg \

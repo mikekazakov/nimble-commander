@@ -53,7 +53,7 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
     auto directory_filenames = ExtractFilenames(_target.data.Listing());
 
     for( const auto &item : _items ) {
-        auto duplicate = FindFreeFilenameToDuplicateIn(item, directory_filenames);
+        const auto duplicate = FindFreeFilenameToDuplicateIn(item, directory_filenames);
         if( duplicate.empty() )
             return;
         directory_filenames.emplace(duplicate);
@@ -121,7 +121,7 @@ static std::pair<int, std::string> ExtractExistingDuplicateInfo(const std::strin
         return {1, _filename.substr(0, suffix_pos + g_Suffix.length())};
 
     try {
-        auto index = stoi(_filename.substr(suffix_pos + g_Suffix.length()));
+        const auto index = stoi(_filename.substr(suffix_pos + g_Suffix.length()));
         return {index, _filename.substr(0, suffix_pos + g_Suffix.length())};
     } catch( ... ) {
         return {-1, {}};

@@ -100,12 +100,13 @@ using namespace nc::term;
         };
 
         m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
-            if( auto strongself = weak_self ) {
-                auto cmds = strongself->m_Parser->Parse({static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            if( const auto strongself = weak_self ) {
+                const auto cmds =
+                    strongself->m_Parser->Parse({static_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
                 if( cmds.empty() )
                     return;
                 dispatch_to_main_queue([=] {
-                    if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
+                    if( const auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
                         strongself->m_Interpreter->Interpret(cmds);
                     [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                     [strongself->m_TermScrollView.view adjustSizes:false];
@@ -114,7 +115,7 @@ using namespace nc::term;
         });
         m_Task->SetOnChildDied([weak_self] {
             dispatch_to_main_queue([=] {
-                if( auto strongself = weak_self )
+                if( const auto strongself = weak_self )
                     [static_cast<NCMainWindowController *>(strongself.window.delegate) ResignAsWindowState:strongself];
             });
         });

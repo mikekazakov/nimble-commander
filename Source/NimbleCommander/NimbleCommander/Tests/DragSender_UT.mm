@@ -34,13 +34,13 @@ TEST_CASE("DragSender::ComposeItemsForDragging")
     { // empty
         data::Model data;
         data.Load(ProduceDummyListing({}), data::Model::PanelType::Directory);
-        auto items = DragSender::Impl::ComposeItemsForDragging(-1, data);
+        const auto items = DragSender::Impl::ComposeItemsForDragging(-1, data);
         CHECK(items.empty());
     }
     { // attempting to drag ".."
         data::Model data;
         data.Load(ProduceDummyListing({"..", "a"}), data::Model::PanelType::Directory);
-        auto items = DragSender::Impl::ComposeItemsForDragging(0, data);
+        const auto items = DragSender::Impl::ComposeItemsForDragging(0, data);
         CHECK(items.empty());
     }
     { // dragging a single non-selected item

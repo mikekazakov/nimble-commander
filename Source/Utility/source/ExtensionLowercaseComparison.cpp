@@ -58,8 +58,8 @@ std::string ExtensionLowercaseComparison::ExtensionToLowercase(std::string_view 
         // we don't cache long extensions
         return ProduceFormCLowercase(_extension);
 
-    auto lock = std::lock_guard{m_Lock};
-    auto it = m_Data.find(_extension);
+    const auto lock = std::lock_guard{m_Lock};
+    const auto it = m_Data.find(_extension);
     if( it != std::end(m_Data) )
         return it->second;
 
@@ -76,17 +76,17 @@ bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext, std::st
         return _filename_ext.empty();
 
     if( _filename_ext.length() <= m_MaxLength ) {
-        auto lock = std::lock_guard{m_Lock};
-        auto it = m_Data.find(_filename_ext);
+        const auto lock = std::lock_guard{m_Lock};
+        const auto it = m_Data.find(_filename_ext);
         if( it != std::end(m_Data) )
             return it->second == _compare_to_formc_lc;
         auto cl = ProduceFormCLowercase(_filename_ext);
-        auto equal = cl == _compare_to_formc_lc;
+        const auto equal = cl == _compare_to_formc_lc;
         m_Data.emplace(_filename_ext, std::move(cl));
         return equal;
     }
     else {
-        auto cl = ProduceFormCLowercase(_filename_ext);
+        const auto cl = ProduceFormCLowercase(_filename_ext);
         return cl == _compare_to_formc_lc;
     }
 }
@@ -99,7 +99,7 @@ ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separat
     for( const auto ext : std::views::split(_comma_separated_list, ',') )
         if( const std::string_view trimmed = base::Trim(std::string_view{ext}); !trimmed.empty() )
             exts.emplace_back(trimmed);
-    for( auto &ext : exts ) {
+    for( const auto &ext : exts ) {
         if( !ext.empty() )
             m_List.emplace(i.ExtensionToLowercase(ext));
     }

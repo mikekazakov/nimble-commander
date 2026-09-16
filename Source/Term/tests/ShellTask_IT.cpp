@@ -85,7 +85,7 @@ static std::vector<int> GetAllFileDescriptors()
         abort();
 
     std::vector<int> res;
-    for( auto &info : fdinfos )
+    for( const auto &info : fdinfos )
         if( info.proc_fdtype == PROX_FDTYPE_VNODE || info.proc_fdtype == PROX_FDTYPE_PIPE ||
             info.proc_fdtype == PROX_FDTYPE_SOCKET )
             res.emplace_back(info.proc_fd);
@@ -258,7 +258,7 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
         if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
-            if( auto lock = screen.AcquireLock() ) {
+            if( const auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
             }
@@ -330,7 +330,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
         if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
-            if( auto lock = screen.AcquireLock() ) {
+            if( const auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
             }
@@ -636,7 +636,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     }
     shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
         if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
-            if( auto lock = screen.AcquireLock() ) {
+            if( const auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
             }
@@ -743,7 +743,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output")
         ctx.shell.ResizeWindow(20, 5);
         ctx.shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
             if( auto cmds = ctx.parser.Parse(_data); !cmds.empty() ) {
-                if( auto lock = ctx.screen.AcquireLock() ) {
+                if( const auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
                     ctx.buffer_dump.store(ctx.screen.Buffer().DumpScreenAsANSI());
                 }
@@ -823,7 +823,7 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
     // [t]csh is out of equation - no such option exists (?)
     shell.SetOnChildOutput([&](const std::span<const std::byte> _data) {
         if( auto cmds = parser.Parse(_data); !cmds.empty() ) {
-            if( auto lock = screen.AcquireLock() ) {
+            if( const auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
             }

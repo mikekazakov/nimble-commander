@@ -81,7 +81,7 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
     }
     else {
         // try to calculate something by ourselves
-        auto font_info = nc::utility::FontGeometryInfo((__bridge CTFontRef)_font);
+        const auto font_info = nc::utility::FontGeometryInfo((__bridge CTFontRef)_font);
         line_height = short(font_info.LineHeight()) + insets[1] + insets[3];
         if( _layout.icon_scale == 1 && line_height < 17 )
             line_height = 17;
@@ -171,7 +171,7 @@ BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout, NSUInteger 
 
     __weak NCPanelBriefView *weak_self = self;
     m_IconsRepository->SetUpdateCallback([=](IconRepository::SlotKey _icon_no, NSImage *_icon) {
-        if( auto strong_self = weak_self )
+        if( const auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(

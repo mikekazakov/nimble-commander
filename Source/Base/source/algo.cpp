@@ -59,7 +59,7 @@ std::string_view TrimRight(std::string_view _str, char _c) noexcept
 std::string ReplaceAll(std::string_view _source, char _what, std::string_view _with) noexcept
 {
     std::string result;
-    for( auto c : _source ) {
+    for( const auto c : _source ) {
         if( c == _what ) {
             result += _with;
         }
@@ -96,7 +96,7 @@ std::vector<std::string> SplitByDelimiters(std::string_view _str, std::string_vi
 {
     std::vector<std::string> res;
     std::string next;
-    for( auto c : _str ) {
+    for( const auto c : _str ) {
         if( _delims.contains(c) ) {
             if( !next.empty() || !_compress ) {
                 res.emplace_back(std::move(next));
@@ -119,7 +119,7 @@ std::vector<std::string> SplitByDelimiter(std::string_view _str, char _delim, bo
 {
     std::vector<std::string> res;
     std::string next;
-    for( auto c : _str ) {
+    for( const auto c : _str ) {
         if( c == _delim ) {
             if( !next.empty() || !_compress ) {
                 res.emplace_back(std::move(next));

@@ -289,12 +289,12 @@ std::string Model::FullPathForEntry(int _raw_index) const
     if( _raw_index < 0 || _raw_index >= static_cast<int>(m_Listing->Count()) )
         return "";
 
-    auto entry = m_Listing->Item(_raw_index);
+    const auto entry = m_Listing->Item(_raw_index);
     if( !entry.IsDotDot() )
         return entry.Path();
     else {
         auto t = entry.Directory();
-        auto i = t.rfind('/');
+        const auto i = t.rfind('/');
         if( i == 0 )
             t.resize(i + 1);
         else if( i != std::string::npos )
@@ -369,7 +369,7 @@ std::string Model::DirectoryPathWithTrailingSlash() const
 std::string Model::DirectoryPathShort() const
 {
     const std::string tmp = DirectoryPathWithoutTrailingSlash();
-    auto i = tmp.rfind('/');
+    const auto i = tmp.rfind('/');
     if( i != std::string::npos )
         return tmp.c_str() + i + 1;
     return "";
@@ -447,7 +447,7 @@ void Model::UpdateStatictics()
         }
 
     // calculate totals for selected. look only for entries which is visible (sorted/filtered ones)
-    for( auto n : m_EntriesByCustomSort ) {
+    for( const auto n : m_EntriesByCustomSort ) {
         const auto &vd = m_VolatileData[n];
         if( vd.is_selected() ) {
             m_Stats.bytes_in_selected_entries += vd.is_size_calculated() ? vd.size : 0;
@@ -519,7 +519,7 @@ void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     if( vd.is_selected() == _is_selected ) // check if item is already selected
         return;
 
-    auto sz = vd.is_size_calculated() ? vd.size : 0;
+    const auto sz = vd.is_size_calculated() ? vd.size : 0;
     if( _is_selected ) {
         m_Stats.bytes_in_selected_entries += sz;
         m_Stats.selected_entries_amount++;
@@ -789,7 +789,7 @@ void Model::DoSortWithHardFiltering()
     }
 
     if( m_HardFiltering.IsFiltering() ) {
-        auto filter = [&](const VFSListingItem &_item) -> std::optional<QuickSearchHighlight> {
+        const auto filter = [&](const VFSListingItem &_item) -> std::optional<QuickSearchHighlight> {
             QuickSearchHighlight found_range;
             const bool valid = m_HardFiltering.IsValidItem(_item, found_range);
             if( valid )
@@ -882,7 +882,7 @@ void Model::BuildSoftFilteringIndeces()
 
 ExternalEntryKey Model::EntrySortKeysAtSortPosition(int _pos) const
 {
-    auto item = EntryAtSortPosition(_pos);
+    const auto item = EntryAtSortPosition(_pos);
     if( !item )
         throw std::invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
     return ExternalEntryKey{item, VolatileDataAtSortPosition(_pos)};

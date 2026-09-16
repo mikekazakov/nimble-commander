@@ -72,7 +72,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     Log::Trace("NativeHost::FetchDirectoryListing() called with path='{}',_flags: {}", _path, _flags);
 
     using namespace native;
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     StackAllocator alloc;
@@ -84,7 +84,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     const int fd = io.open(path.c_str(), O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
         return std::unexpected(Error{Error::POSIX, errno});
-    auto close_fd = at_scope_end([fd] { close(fd); });
+    const auto close_fd = at_scope_end([fd] { close(fd); });
 
     using nc::base::variable_container;
     ListingInput listing_source;
@@ -156,14 +156,14 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     };
 
     size_t next_entry_index = 0;
-    auto cb_param = [&](const Fetching::CallbackParams &_params) { fill(next_entry_index++, _params); };
+    const auto cb_param = [&](const Fetching::CallbackParams &_params) { fill(next_entry_index++, _params); };
 
     if( need_to_add_dot_dot ) {
         Fetching::ReadSingleEntryAttributesByPath(io, path, cb_param);
         listing_source.filenames[0] = "..";
     }
 
-    auto cb_fetch = [&](size_t _fetched_now) {
+    const auto cb_fetch = [&](size_t _fetched_now) {
         // check if final entries count is more than previous approximate
         if( next_entry_index + _fetched_now > allocated_size )
             resize_dense(next_entry_index + _fetched_now);
@@ -190,14 +190,14 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
     const bool tags_reading_enabled = TagsFetchingAllowed(_flags, _path);
     std::mutex listing_source_tags_mut;     // guard access to 'listing_source.tags'
     std::mutex listing_source_symlinks_mut; // guard access to 'listing_source.symlinks'
-    auto epilogue_pass = [fd,
-                          tags_reading_enabled,
-                          is_native_io,
-                          &io,
-                          &listing_source,
-                          &listing_source_tags_mut,
-                          &listing_source_symlinks_mut,
-                          &ext_flags](const std::string &filename) {
+    const auto epilogue_pass = [fd,
+                                tags_reading_enabled,
+                                is_native_io,
+                                &io,
+                                &listing_source,
+                                &listing_source_tags_mut,
+                                &listing_source_symlinks_mut,
+                                &ext_flags](const std::string &filename) {
         // index of the item in the listing
         const size_t n = &filename - listing_source.filenames.data();
 
@@ -242,7 +242,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchDirectoryListing(std::strin
             // TODO: is it worth routing the I/O here? guess not atm
             const int entry_fd = openat(fd, filename.c_str(), O_RDONLY | O_NONBLOCK);
             if( entry_fd >= 0 ) {
-                auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+                const auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
 
                 if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() ) {
                     Log::Debug("Extracted the tags of the file '{}': {}", filename, fmt::join(tags, ", "));
@@ -272,7 +272,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
     Log::Trace("NativeHost::FetchSingleItemListing() called with path='{}',_flags: {}", _path, _flags);
 
     using namespace native;
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::array<char, 512> mem_buffer;
@@ -316,7 +316,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
     listing_source.unix_types.resize(1);
     listing_source.filenames.emplace_back(filename);
 
-    auto cb_param = [&](const Fetching::CallbackParams &_params) {
+    const auto cb_param = [&](const Fetching::CallbackParams &_params) {
         listing_source.inodes[0] = _params.inode;
         listing_source.unix_types[0] = IFTODT(_params.mode);
         listing_source.atimes[0] = _params.acc_time;
@@ -375,7 +375,7 @@ std::expected<VFSListingPtr, Error> NativeHost::FetchSingleItemListing(std::stri
         // TODO: is it worth routing the I/O here? guess not atm
         const int entry_fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
         if( entry_fd >= 0 ) {
-            auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+            const auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
             if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )
                 listing_source.tags.emplace(0, std::move(tags));
         }
@@ -477,7 +477,7 @@ std::expected<uint64_t, Error> NativeHost::CalculateDirectorySize(std::string_vi
     if( _cancel_checker && _cancel_checker() )
         return std::unexpected(nc::Error{nc::Error::POSIX, ECANCELED});
 
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::atomic_bool iscancelling{false};
@@ -594,7 +594,7 @@ std::expected<VFSStatFS, Error> NativeHost::StatFS(std::string_view _path,
     if( statfs(path.c_str(), &info) < 0 )
         return std::unexpected(Error{Error::POSIX, errno});
 
-    auto volume = m_NativeFSManager.VolumeFromMountPoint(info.f_mntonname);
+    const auto volume = m_NativeFSManager.VolumeFromMountPoint(info.f_mntonname);
     if( !volume )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 

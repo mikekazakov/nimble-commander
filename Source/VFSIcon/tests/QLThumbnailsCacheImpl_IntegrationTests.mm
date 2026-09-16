@@ -114,8 +114,8 @@ TEST_CASE("QLThumbnailsCacheImpl doesn't crash under a concurrent load")
             const auto px_size = 32;
             const auto path = g_Paths[index];
             cache.ThumbnailIfHas(path, px_size);
-            if( auto img = cache.ProduceThumbnail(path, px_size) ) {
-                auto lock = std::lock_guard{m}; // Catch is not thread-safe afaik
+            if( const auto img = cache.ProduceThumbnail(path, px_size) ) {
+                const auto lock = std::lock_guard{m}; // Catch is not thread-safe afaik
                 CHECK(int(img.size.width) == px_size);
             }
         });

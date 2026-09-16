@@ -155,7 +155,7 @@ std::string Compression::BuildInitialTitle() const
 
 std::string Compression::BuildTitleWithArchiveFilename() const
 {
-    auto p = std::filesystem::path(m_Job->TargetArchivePath());
+    const auto p = std::filesystem::path(m_Job->TargetArchivePath());
     return [NSString localizedStringWithFormat:localizable::CompressionCompressingToTitle(),
                                                BuildTitlePrefix(),
                                                [NSString stringWithUTF8StdString:p.filename()]]

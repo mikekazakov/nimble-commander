@@ -387,7 +387,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return by_name() > 0;
         }
         case _::SortBySize: {
-            auto s1 = vd[_1].size;
+            const auto s1 = vd[_1].size;
             if( s1 != invalid_size && _val2.size != invalid_size )
                 if( s1 != _val2.size )
                     return s1 > _val2.size;
@@ -398,7 +398,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
             return by_name() < 0; // fallback case
         }
         case _::SortBySizeRev: {
-            auto s1 = vd[_1].size;
+            const auto s1 = vd[_1].size;
             if( s1 != invalid_size && _val2.size != invalid_size )
                 if( s1 != _val2.size )
                     return s1 < _val2.size;

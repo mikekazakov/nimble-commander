@@ -12,12 +12,12 @@ NSBundle *Bundle() noexcept
         const std::filesystem::path non_packaged = "PanelResources.bundle";
         const std::filesystem::path base = nc::base::CommonPaths::AppBundle();
 
-        if( auto path = base / packaged; std::filesystem::is_directory(path) ) {
+        if( const auto path = base / packaged; std::filesystem::is_directory(path) ) {
             // packaged structure
             NSString *const ns_path = [NSString stringWithUTF8String:path.c_str()];
             return [NSBundle bundleWithPath:ns_path];
         }
-        if( auto path = base / non_packaged; std::filesystem::is_directory(path) ) {
+        if( const auto path = base / non_packaged; std::filesystem::is_directory(path) ) {
             // non-packaged structure
             NSString *const ns_path = [NSString stringWithUTF8String:path.c_str()];
             return [NSBundle bundleWithPath:ns_path];

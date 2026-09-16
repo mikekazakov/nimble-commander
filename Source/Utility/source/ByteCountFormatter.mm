@@ -28,7 +28,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
     m_Bytes = {'b', 'y', 't', 'e', 's'};
 
     if( _localized ) {
-        auto bundle = NSBundle.mainBundle;
+        const auto bundle = NSBundle.mainBundle;
         auto language = std::string(bundle.preferredLocalizations.firstObject.UTF8String);
 
         NSNumberFormatter *const def_formatter = [NSNumberFormatter new];

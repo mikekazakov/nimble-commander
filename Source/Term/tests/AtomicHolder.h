@@ -90,7 +90,7 @@ bool AtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _time
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
     } while( deadline > nc::base::machtime() );
     if( _dump_on_fail ) {
-        auto lg = std::lock_guard{mutex};
+        const auto lg = std::lock_guard{mutex};
         std::cerr << value << std::endl;
     }
     return false;
@@ -149,7 +149,7 @@ bool QueuedAtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds
 
     if constexpr( Streamable<T> ) {
         if( _dump_on_fail ) {
-            auto lg = std::lock_guard{m_Mutex};
+            const auto lg = std::lock_guard{m_Mutex};
             std::cerr << m_Value << std::endl;
         }
     }

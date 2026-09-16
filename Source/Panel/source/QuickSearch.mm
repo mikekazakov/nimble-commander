@@ -417,7 +417,7 @@ static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode)
 static bool IsQuickSearchStringCharacter(NSString *_s)
 {
     static const auto chars = [] {
-        auto set = [NSMutableCharacterSet new];
+        const auto set = [NSMutableCharacterSet new];
         [set formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];

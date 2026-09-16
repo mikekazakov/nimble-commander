@@ -30,7 +30,7 @@ void Screen::PutCh(char32_t _char)
     if( line.empty() )
         return;
 
-    auto chars = line.begin();
+    const auto chars = line.begin();
     const int line_len = static_cast<int>(line.size());
 
     Screen::Space sp = m_EraseChar;
@@ -76,7 +76,7 @@ void Screen::DoEraseScreen(int _mode)
     }
     else if( _mode == 2 ) { // clear all screen
         for( int i = 0; i < Height(); ++i ) {
-            auto l = m_Buffer.LineFromNo(i);
+            const auto l = m_Buffer.LineFromNo(i);
             std::ranges::fill(l, m_EraseChar);
             m_Buffer.SetLineWrapped(i, false);
         }
@@ -149,8 +149,8 @@ void Screen::EraseInLineCount(unsigned _n)
     auto line = m_Buffer.LineFromNo(m_PosY);
     if( line.empty() )
         return;
-    auto i = std::begin(line) + m_PosX;
-    auto e = std::min(i + _n, std::end(line));
+    const auto i = std::begin(line) + m_PosX;
+    const auto e = std::min(i + _n, std::end(line));
     std::fill(i, e, m_EraseChar);
 }
 
@@ -268,7 +268,7 @@ void Screen::SetAlternateScreen(bool _is_alternate)
 
 void Screen::DoShiftRowLeft(int _chars)
 {
-    auto line = m_Buffer.LineFromNo(m_PosY);
+    const auto line = m_Buffer.LineFromNo(m_PosY);
     if( line.empty() )
         return;
     auto chars = line.data();
@@ -284,7 +284,7 @@ void Screen::DoShiftRowLeft(int _chars)
 
 void Screen::DoShiftRowRight(int _chars)
 {
-    auto line = m_Buffer.LineFromNo(m_PosY);
+    const auto line = m_Buffer.LineFromNo(m_PosY);
     if( line.empty() )
         return;
     auto chars = line.data();
@@ -301,8 +301,8 @@ void Screen::DoShiftRowRight(int _chars)
 void Screen::EraseAt(unsigned _x, unsigned _y, unsigned _count)
 {
     if( auto line = m_Buffer.LineFromNo(_y); !line.empty() ) {
-        auto i = std::begin(line) + _x;
-        auto e = std::min(i + _count, std::end(line));
+        const auto i = std::begin(line) + _x;
+        const auto e = std::min(i + _count, std::end(line));
         std::fill(i, e, m_EraseChar);
     }
 }
@@ -318,7 +318,7 @@ void Screen::CopyLineChars(int _from, int _to)
 
 void Screen::ClearLine(int _ind)
 {
-    if( auto line = m_Buffer.LineFromNo(_ind); !line.empty() ) {
+    if( const auto line = m_Buffer.LineFromNo(_ind); !line.empty() ) {
         std::ranges::fill(line, m_EraseChar);
         m_Buffer.SetLineWrapped(_ind, false);
     }
@@ -360,7 +360,7 @@ void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsig
     if( top == 0 && bottom == Height() && !m_AlternateScreen )
         for( int i = 0; i < std::min(lines, Height()); ++i ) {
             // we're scrolling up the whole screen - let's feed scrollback with leftover
-            auto line = m_Buffer.LineFromNo(i);
+            const auto line = m_Buffer.LineFromNo(i);
             assert(!line.empty());
             m_Buffer.FeedBackscreen(line, m_Buffer.LineWrapped(i));
         }

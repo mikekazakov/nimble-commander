@@ -67,7 +67,7 @@ TEST_CASE("BriefOnDiskStorageImpl does as many write()s as needed")
     EXPECT_CALL(fs, unlink(_));
 
     auto storage = BriefOnDiskStorageImpl{"/temp/dir/", "prefix", fs};
-    auto placement = storage.Place(data.data(), data.length());
+    const auto placement = storage.Place(data.data(), data.length());
     REQUIRE(placement.has_value());
 }
 

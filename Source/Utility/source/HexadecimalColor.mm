@@ -184,7 +184,7 @@ static NSColor *DecodeSystemColor(std::string_view _color) noexcept
     if( _color.empty() || _color.front() != '@' )
         return nil;
 
-    auto it = g_SystemColors.find(_color);
+    const auto it = g_SystemColors.find(_color);
     if( it != g_SystemColors.end() )
         return it->second;
     return nil;

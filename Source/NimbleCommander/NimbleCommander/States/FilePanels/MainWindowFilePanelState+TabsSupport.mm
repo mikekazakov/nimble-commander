@@ -319,7 +319,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         return;
 
     dispatch_to_background([=] {
-        for( auto it : items )
+        for( NSTabViewItem *it : items )
             dispatch_to_main_queue([=] {
                 if( NSButton *const button = [bar closeButtonOfTabViewItem:it] )
                     [button sendAction:button.action to:button.target];

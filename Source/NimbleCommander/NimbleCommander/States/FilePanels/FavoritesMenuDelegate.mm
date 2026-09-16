@@ -14,12 +14,12 @@ static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Favorite &_favo
     static const auto attributes = @{NSFontAttributeName: [NSFont menuFontOfSize:0]};
     NSMenuItem *const it = [[NSMenuItem alloc] init];
     if( !_favorite.title.empty() ) {
-        if( auto title = [NSString stringWithUTF8StdString:_favorite.title] )
+        if( const auto title = [NSString stringWithUTF8StdString:_favorite.title] )
             it.title = title;
     }
-    else if( auto title = [NSString stringWithUTF8StdString:_favorite.location->verbose_path] )
+    else if( const auto title = [NSString stringWithUTF8StdString:_favorite.location->verbose_path] )
         it.title = StringByTruncatingToWidth(title, 600, kTruncateAtMiddle, attributes);
-    if( auto tt = [NSString stringWithUTF8StdString:_favorite.location->verbose_path] )
+    if( const auto tt = [NSString stringWithUTF8StdString:_favorite.location->verbose_path] )
         it.toolTip = tt;
 
     it.target = nil;
@@ -31,7 +31,7 @@ static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Favorite &_favo
 static NSMenuItem *BuildMenuItem(const FavoriteLocationsStorage::Location &_location)
 {
     NSMenuItem *const it = [[NSMenuItem alloc] init];
-    if( auto title = [NSString stringWithUTF8StdString:_location.verbose_path] )
+    if( const auto title = [NSString stringWithUTF8StdString:_location.verbose_path] )
         it.title = title;
     it.target = nil;
     it.action = @selector(OnGoToFavoriteLocation:);

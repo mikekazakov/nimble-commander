@@ -114,7 +114,7 @@ static constexpr auto g_SmoothScrolling = "filePanel.presentation.smoothScrollin
 
     __weak NCPanelGalleryView *weak_self = self;
     m_IconRepository->SetUpdateCallback([=](vfsicon::IconRepository::SlotKey _icon_no, NSImage *_icon) {
-        if( auto strong_self = weak_self )
+        if( const auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
 

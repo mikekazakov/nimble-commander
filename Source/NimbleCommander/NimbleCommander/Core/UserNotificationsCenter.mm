@@ -20,7 +20,7 @@ namespace nc::core {
 
 UserNotificationsCenter::UserNotificationsCenter() : m_MinElapsedOperationTime{g_DefaultMinElapsedOperationTime}
 {
-    static auto delegate = [[NCCoreUserNotificationCenterDelegate alloc] init];
+    static const auto delegate = [[NCCoreUserNotificationCenterDelegate alloc] init];
     UNUserNotificationCenter *const center = UNUserNotificationCenter.currentNotificationCenter;
     center.delegate = delegate;
     [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound)
@@ -109,7 +109,7 @@ static void MakeWindowKey(unsigned long _wnd_adress)
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
     didReceiveNotificationResponse:(UNNotificationResponse *)response
-             withCompletionHandler:(void (^)(void))completionHandler
+             withCompletionHandler:(void (^)())completionHandler
 {
     if( [response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] ) {
         if( NSDictionary *userInfo = response.notification.request.content.userInfo ) {

@@ -96,7 +96,7 @@ DomainIndices &DomainIndices::Instance() noexcept
 
 DomainIndices::DomainIndices()
 {
-    auto init = [this](const std::string_view _domain) {
+    const auto init = [this](const std::string_view _domain) {
         const uint64_t idx = m_IndexToDomain.size();
         m_DomainToIndex.emplace(_domain, idx);
         m_IndexToDomain.emplace_back(_domain);
@@ -139,7 +139,7 @@ uint64_t DomainIndices::Index(const std::string_view _domain) noexcept
 uint64_t DomainIndices::IndexSlowPath(std::string_view _domain) noexcept
 {
     const std::lock_guard lock{m_Lock};
-    if( auto it = m_DomainToIndex.find(_domain); it != m_DomainToIndex.end() ) {
+    if( const auto it = m_DomainToIndex.find(_domain); it != m_DomainToIndex.end() ) {
         return it->second;
     }
     else {

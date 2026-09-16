@@ -335,7 +335,7 @@ static bool AskUserToDeleteTool()
             [self setNewPathString:panel.URL.path];
 
             dispatch_to_main_queue_after(1ms, [=] {
-                if( auto t = self.selectedTool )
+                if( const auto t = self.selectedTool )
                     if( t->m_Title.empty() )
                         if( NSString *const name = [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
                             [self setNewTitleString:name];

@@ -34,7 +34,7 @@ static std::string to_utf8(std::u16string_view _str)
 {
     if( _str.empty() )
         return {};
-    auto cf_str = base::CFPtr<CFStringRef>::adopt(
+    const auto cf_str = base::CFPtr<CFStringRef>::adopt(
         CFStringCreateWithCharacters(nullptr, reinterpret_cast<const uint16_t *>(_str.data()), _str.length()));
 
     char buf[1024]; // whatever...
@@ -158,25 +158,25 @@ TEST_CASE(PREFIX "Append to a base character")
         CHECK(r.Append(u"\xD83C\xDFFE", U'🧜') == ar);
     }
     {
-        auto ar = r.Append(u"\xD83C\xDFFE\x200D", U'🧜');
+        const auto ar = r.Append(u"\xD83C\xDFFE\x200D", U'🧜');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🧜🏾\x200D"));
         CHECK(ar.eaten == 3);
     }
     {
-        auto ar = r.Append(u"\xD83C\xDFFE\x200D", U'🧜');
+        const auto ar = r.Append(u"\xD83C\xDFFE\x200D", U'🧜');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🧜🏾\x200D"));
         CHECK(ar.eaten == 3);
     }
     {
-        auto ar = r.Append(u"\xD83C\xDFFE\x200D\x2640", U'🧜');
+        const auto ar = r.Append(u"\xD83C\xDFFE\x200D\x2640", U'🧜');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🧜🏾\x200D\x2640"));
         CHECK(ar.eaten == 4);
     }
     {
-        auto ar = r.Append(u"\xD83C\xDFFE\x200D\x2640\xFE0F", U'🧜');
+        const auto ar = r.Append(u"\xD83C\xDFFE\x200D\x2640\xFE0F", U'🧜');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🧜🏾\x200D\x2640\xFE0F"));
         CHECK(ar.eaten == 5);
@@ -184,19 +184,19 @@ TEST_CASE(PREFIX "Append to a base character")
 
     // combining characters
     {
-        auto ar = r.Append(u"\x0308", 'e'); // е, ◌̈
+        const auto ar = r.Append(u"\x0308", 'e'); // е, ◌̈
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"e\x0308"));
         CHECK(ar.eaten == 1);
     }
     {
-        auto ar = r.Append(u"\x0300\x0301\x0302\x0303\x0304\x0304\x0305\x0306\x0307\x0308", 'e');
+        const auto ar = r.Append(u"\x0300\x0301\x0302\x0303\x0304\x0304\x0305\x0306\x0307\x0308", 'e');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"e\x0300\x0301\x0302\x0303\x0304\x0304\x0305\x0306\x0307\x0308"));
         CHECK(ar.eaten == 10);
     }
     {
-        auto ar = r.Append(u"\x0335\x0356\x034d\x030a", 'Z');
+        const auto ar = r.Append(u"\x0335\x0356\x034d\x030a", 'Z');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"Z\x0335\x0356\x034d\x030a"));
         CHECK(ar.eaten == 4);
@@ -204,13 +204,13 @@ TEST_CASE(PREFIX "Append to a base character")
 
     // flags
     {
-        auto ar = r.Append(u"🇧", U'🇬');
+        const auto ar = r.Append(u"🇧", U'🇬');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🇬🇧"));
         CHECK(ar.eaten == 2);
     }
     {
-        auto ar = r.Append(u"🇱", U'🇬');
+        const auto ar = r.Append(u"🇱", U'🇬');
         CHECK(Reg::IsExtended(ar.newchar));
         CHECK(is(r.Decode(ar.newchar), u"🇬🇱"));
         CHECK(ar.eaten == 2);
@@ -223,14 +223,14 @@ TEST_CASE(PREFIX "Append to an extended character")
 
     {
         const char32_t invalid = static_cast<char32_t>((uint32_t(1) << 31) + 43634);
-        auto ar = r.Append(u"\x200D", invalid);
+        const auto ar = r.Append(u"\x200D", invalid);
         CHECK(ar.newchar == invalid);
         CHECK(ar.eaten == 0);
     }
 
     // 🧜🏾‍♀️ = 🧜 D83E DDDC, 🏾 D83C DFFE, ZWJ 200D, ♀️2640, VS FE0F
     {
-        auto ar1 = r.Append(u"🧜🏾");
+        const auto ar1 = r.Append(u"🧜🏾");
         auto ar2 = r.Append(u"\x200D\x2640\xFE0F", ar1.newchar);
 
         CHECK(Reg::IsExtended(ar2.newchar));
@@ -242,8 +242,8 @@ TEST_CASE(PREFIX "Append to an extended character")
     }
 
     {
-        auto ar1 = r.Append(u"🧜🏾");
-        auto ar2 = r.Append(u"A", ar1.newchar);
+        const auto ar1 = r.Append(u"🧜🏾");
+        const auto ar2 = r.Append(u"A", ar1.newchar);
         CHECK(ar2.newchar == ar1.newchar);
         CHECK(ar2.eaten == 0);
     }
@@ -252,7 +252,7 @@ TEST_CASE(PREFIX "Append to an extended character")
 TEST_CASE(PREFIX "IsDoubleWidth")
 {
     ExtendedCharRegistry r;
-    auto dw = [&](std::u16string_view str) { return r.IsDoubleWidth(r.Append(str).newchar); };
+    const auto dw = [&](std::u16string_view str) { return r.IsDoubleWidth(r.Append(str).newchar); };
 
     // clang-format off
     struct TC {
@@ -285,7 +285,7 @@ TEST_CASE(PREFIX "IsDoubleWidth")
         {.str=u"🏾", .exp=true},             // 🏾 feff d83c dffe
     };
     // clang-format on
-    for( auto tc : cases ) {
+    for( const auto tc : cases ) {
         INFO(to_utf8(tc.str));
         CHECK(dw(tc.str) == tc.exp);
     }

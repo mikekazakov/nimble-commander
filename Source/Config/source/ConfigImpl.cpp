@@ -43,7 +43,7 @@ ConfigImpl::ConfigImpl(std::string_view _default_document,
     m_Document.CopyFrom(defaults, m_Document.GetAllocator());
 
     if( auto overwrites_text = m_OverwritesStorage->Read() ) {
-        auto overwrites_document = ParseOverwritesOrReturnNull(*overwrites_text);
+        const auto overwrites_document = ParseOverwritesOrReturnNull(*overwrites_text);
         if( overwrites_document.GetType() != rapidjson::Type::kNullType ) {
             auto new_doc = MergeDocuments(m_Document, overwrites_document);
             std::swap(m_Document, new_doc);
@@ -338,9 +338,9 @@ void ConfigImpl::InsertObserver(std::string_view _path, base::intrusive_ptr<cons
 {
     const auto path = std::string{_path};
     const auto lock = std::lock_guard{m_ObserversLock};
-    if( auto current_observers_it = m_Observers.find(path); current_observers_it != std::end(m_Observers) ) {
+    if( const auto current_observers_it = m_Observers.find(path); current_observers_it != std::end(m_Observers) ) {
         // somebody is already watching this path
-        auto new_observers = base::intrusive_ptr{new Observers};
+        const auto new_observers = base::intrusive_ptr{new Observers};
         new_observers->observers.reserve(current_observers_it->second->observers.size() + 1);
         new_observers->observers = current_observers_it->second->observers;
         new_observers->observers.emplace_back(std::move(_observer));
@@ -412,7 +412,7 @@ base::intrusive_ptr<const ConfigImpl::Observers> ConfigImpl::FindObservers(std::
 {
     const auto path = std::string{_path};
     const auto lock = std::lock_guard{m_ObserversLock};
-    if( auto observers_it = m_Observers.find(path); observers_it != std::end(m_Observers) )
+    if( const auto observers_it = m_Observers.find(path); observers_it != std::end(m_Observers) )
         return observers_it->second;
     return nullptr;
 }
@@ -426,11 +426,11 @@ void ConfigImpl::MarkDirty()
 
 void ConfigImpl::WriteOverwrites()
 {
-    auto clear_write_flag = at_scope_end([this] { m_WriteScheduled.clear(); });
+    const auto clear_write_flag = at_scope_end([this] { m_WriteScheduled.clear(); });
 
     rapidjson::Document overwrites_document;
     {
-        auto lock = std::lock_guard{m_DocumentLock};
+        const auto lock = std::lock_guard{m_DocumentLock};
         overwrites_document = BuildOverwrites(m_Defaults, m_Document);
     }
 
@@ -442,7 +442,7 @@ void ConfigImpl::ResetToDefaults()
 {
     std::vector<std::string> diffs;
     {
-        auto lock = std::lock_guard{m_DocumentLock};
+        const auto lock = std::lock_guard{m_DocumentLock};
         diffs = ListDifferences(m_Document, m_Defaults);
         m_Document.CopyFrom(m_Defaults, m_Document.GetAllocator());
     }
@@ -470,21 +470,21 @@ void ConfigImpl::OverwritesDidChange()
 
 void ConfigImpl::ReloadOverwrites()
 {
-    auto clear_read_flag = at_scope_end([this] { m_ReadScheduled.clear(); });
+    const auto clear_read_flag = at_scope_end([this] { m_ReadScheduled.clear(); });
 
     auto new_overwrites_text = m_OverwritesStorage->Read();
     if( new_overwrites_text == std::nullopt )
         return;
 
-    auto new_overwrites_document = ParseOverwritesOrReturnNull(*new_overwrites_text);
+    const auto new_overwrites_document = ParseOverwritesOrReturnNull(*new_overwrites_text);
     if( new_overwrites_document.GetType() == rapidjson::Type::kNullType )
         return;
 
-    auto new_document = MergeDocuments(m_Defaults, new_overwrites_document);
+    const auto new_document = MergeDocuments(m_Defaults, new_overwrites_document);
 
     std::vector<std::string> diffs;
     {
-        auto lock = std::lock_guard{m_DocumentLock};
+        const auto lock = std::lock_guard{m_DocumentLock};
         diffs = ListDifferences(m_Document, new_document);
         m_Document.CopyFrom(new_document, m_Document.GetAllocator());
     }
@@ -593,7 +593,7 @@ static void TraverseRecursivelyAndMarkEachMember(const rapidjson::Value &_object
         _changes_list.emplace_back(_path_prefix + i->name.GetString());
 
         if( i->value.GetType() == rapidjson::Type::kObjectType ) {
-            auto prefix = _path_prefix + i->name.GetString() + ".";
+            const auto prefix = _path_prefix + i->name.GetString() + ".";
             TraverseRecursivelyAndMarkEachMember(i->value, prefix, _changes_list);
         }
     }
@@ -613,7 +613,7 @@ static void MergeObjectsRecursively(rapidjson::Value &_target,
         const auto &member_name = main_it->name;
         rapidjson::Value key(member_name, _allocator);
 
-        auto overwrite_it = _overwrites.FindMember(member_name);
+        const auto overwrite_it = _overwrites.FindMember(member_name);
         if( overwrite_it == _overwrites.MemberEnd() ) {
             // this entry is absent in the 'overwrites' document
             // => just copy the value from the 'main' document and be done with it.
@@ -689,7 +689,7 @@ static void BuildOverwritesRecursive(const rapidjson::Value &_defaults,
         auto &staging_name = i->name;
         auto &staging_val = i->value;
 
-        auto defaults_it = _defaults.FindMember(staging_name);
+        const auto defaults_it = _defaults.FindMember(staging_name);
         if( defaults_it == _defaults.MemberEnd() ) {
             // no such item in defaults -> should be placed in overwrites
             rapidjson::Value key(staging_name, _allocator);
@@ -737,7 +737,7 @@ static void ListDifferencesRecursively(const rapidjson::Value &_original,
          ++original_it ) {
         const auto &name = original_it->name;
 
-        auto new_it = _new.FindMember(name);
+        const auto new_it = _new.FindMember(name);
         if( new_it == _new.MemberEnd() ) {
             _changes.emplace_back(_path_prefix + name.GetString());
 

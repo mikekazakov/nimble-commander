@@ -657,10 +657,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as parameters")
     };
     for( const auto &tc : tcs ) {
         left.CustomFlagsSelectSorted(std::vector<bool>(left.SortedEntriesCount(), false));
-        for( auto idx : tc.left_selection )
+        for( const auto idx : tc.left_selection )
             left.CustomFlagsSelectSorted(idx, true);
         right.CustomFlagsSelectSorted(std::vector<bool>(right.SortedEntriesCount(), false));
-        for( auto idx : tc.right_selection )
+        for( const auto idx : tc.right_selection )
             right.CustomFlagsSelectSorted(idx, true);
 
         INFO(tc.params_string);
@@ -845,10 +845,10 @@ TEST_CASE(PREFIX "ExternalToolExecution - generation of lists as file")
 
     for( const auto &tc : tcs ) {
         left.CustomFlagsSelectSorted(std::vector<bool>(left.SortedEntriesCount(), false));
-        for( auto idx : tc.left_selection )
+        for( const auto idx : tc.left_selection )
             left.CustomFlagsSelectSorted(idx, true);
         right.CustomFlagsSelectSorted(std::vector<bool>(right.SortedEntriesCount(), false));
-        for( auto idx : tc.right_selection )
+        for( const auto idx : tc.right_selection )
             right.CustomFlagsSelectSorted(idx, true);
 
         INFO(tc.params_string);

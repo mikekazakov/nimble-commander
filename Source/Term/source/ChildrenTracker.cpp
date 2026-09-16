@@ -148,7 +148,7 @@ void ChildrenTracker::Drain()
             const std::span<const pid_t> pids_span{pids, static_cast<size_t>(std::max(npids, 0))};
             Log::Trace("ChildrenTracker: Process with PID {} forked, current child PIDs: {}", pid, pids_span);
             for( const pid_t child : pids_span ) {
-                auto it = std::ranges::lower_bound(m_Tracked, child, {}, &ProcessInfo::pid);
+                const auto it = std::ranges::lower_bound(m_Tracked, child, {}, &ProcessInfo::pid);
                 if( it == m_Tracked.end() || it->pid != child ) {
                     // We haven't seen this process before, let's take a closer look at it...
 
@@ -201,7 +201,7 @@ void ChildrenTracker::Drain()
             ++callback_event.exits;
             Unsubscribe(m_KQ, pid);
 
-            auto it = std::ranges::lower_bound(m_Tracked, pid, {}, &ProcessInfo::pid);
+            const auto it = std::ranges::lower_bound(m_Tracked, pid, {}, &ProcessInfo::pid);
             if( it != m_Tracked.end() && it->pid == pid ) {
                 it->status = SZOMB;
             }

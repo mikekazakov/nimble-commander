@@ -66,11 +66,11 @@ TEST_CASE(PREFIX "Basic geomtery initialization")
 {
     const std::string data = "Hello, world!";
     Context ctx{data}; // NOLINT
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                    backend:ctx.backend
-                                                      theme:g_DummyTheme
-                                       highlightingSettings:ctx.hl_settings
-                                         enableHighlighting:false];
+    const auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                          backend:ctx.backend
+                                                            theme:g_DummyTheme
+                                             highlightingSettings:ctx.hl_settings
+                                               enableHighlighting:false];
     // let's pretend that I happen to know the internal insets and sizes.
     CHECK(view.contentsSize.width == Approx(477.)); // 500-4-4-15
     CHECK(view.contentsSize.height == Approx(100.));
@@ -95,11 +95,11 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text5\n"
                                      "text6";
             Context ctx{data}; // NOLINT
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                            backend:ctx.backend
-                                                              theme:g_DummyTheme
-                                               highlightingSettings:ctx.hl_settings
-                                                 enableHighlighting:false];
+            const auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                                  backend:ctx.backend
+                                                                    theme:g_DummyTheme
+                                                     highlightingSettings:ctx.hl_settings
+                                                       enableHighlighting:false];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == true);
         }
@@ -113,11 +113,11 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
                                      "text6\n"
                                      "text7\n";
             Context ctx{data}; // NOLINT
-            auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                            backend:ctx.backend
-                                                              theme:g_DummyTheme
-                                               highlightingSettings:ctx.hl_settings
-                                                 enableHighlighting:false];
+            const auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                                  backend:ctx.backend
+                                                                    theme:g_DummyTheme
+                                                     highlightingSettings:ctx.hl_settings
+                                                       enableHighlighting:false];
             CHECK(view.isAtTheBeginning == true);
             CHECK(view.isAtTheEnd == false);
 
@@ -133,16 +133,16 @@ TEST_CASE(PREFIX "isAtTheBeginning/isAtTheEnd")
             lorem += "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do\n";
         Context ctx{lorem};
         REQUIRE(ctx.window->WindowSize() == 32768);
-        auto delegate = [[NCViewerTextModeViewMockDelegate alloc] init];
+        const auto delegate = [[NCViewerTextModeViewMockDelegate alloc] init];
         delegate.syncBackendWindowMovement = [&](NCViewerTextModeView *, int64_t _position) {
             return ctx.backend->MoveWindowSync(_position);
         };
 
-        auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                        backend:ctx.backend
-                                                          theme:g_DummyTheme
-                                           highlightingSettings:ctx.hl_settings
-                                             enableHighlighting:false];
+        const auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                              backend:ctx.backend
+                                                                theme:g_DummyTheme
+                                                 highlightingSettings:ctx.hl_settings
+                                                   enableHighlighting:false];
         view.delegate = delegate;
         CHECK(view.isAtTheBeginning == true);
         CHECK(view.isAtTheEnd == false);
@@ -169,11 +169,11 @@ TEST_CASE(PREFIX "attachToNewBackend")
                               "text6\n"
                               "text7\n";
     Context ctx{data1};
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
-                                                    backend:ctx.backend
-                                                      theme:g_DummyTheme
-                                       highlightingSettings:ctx.hl_settings
-                                         enableHighlighting:false];
+    const auto view = [[NCViewerTextModeView alloc] initWithFrame:g_500x100
+                                                          backend:ctx.backend
+                                                            theme:g_DummyTheme
+                                             highlightingSettings:ctx.hl_settings
+                                               enableHighlighting:false];
     [view scrollToGlobalBytesOffset:data1.size()];
     CHECK(view.textFrame.LinesNumber() == 7);
     CHECK(view.isAtTheBeginning == false);

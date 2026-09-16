@@ -34,7 +34,7 @@ BriefOnDiskStorageImpl::PlaceWithExtension(const void *_data, long _bytes, const
     auto on_error_cleanup = at_scope_end([&filepath, this] { m_FS.unlink(filepath.c_str()); });
 
     {
-        auto close_file = at_scope_end([fd, this] { m_FS.close(fd); });
+        const auto close_file = at_scope_end([fd, this] { m_FS.close(fd); });
         auto data_ptr = static_cast<const uint8_t *>(_data);
         while( _bytes > 0 ) {
             const auto write_result = m_FS.write(fd, data_ptr, _bytes);

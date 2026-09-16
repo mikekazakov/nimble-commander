@@ -257,7 +257,7 @@ CompressionJob::ProcessDirectoryItem(int _index, const std::string &_relative_pa
     }
 
     auto entry = archive_entry_new();
-    auto entry_cleanup = at_scope_end([&] { archive_entry_free(entry); });
+    const auto entry_cleanup = at_scope_end([&] { archive_entry_free(entry); });
     archive_entry_set_pathname(entry, _relative_path.c_str());
     archive_entry_copy_stat(entry, vfs_stat);
     const auto head_write_rc = archive_write_header(m_Archive, entry);
@@ -478,7 +478,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
                               Source &_ctx)
 {
     VFSStat stat_buffer;
-    auto &vfs = _ctx.base_hosts[_vfs_no];
+    const auto &vfs = _ctx.base_hosts[_vfs_no];
 
     while( true ) {
         const std::expected<VFSStat, Error> exp_stat = vfs->Stat(_full_path, VFSFlags::F_NoFollow);

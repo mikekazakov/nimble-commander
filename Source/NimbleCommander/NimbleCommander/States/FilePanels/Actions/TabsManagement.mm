@@ -68,9 +68,9 @@ AskAboutClosingWindowWithExtraTabs(int _amount, NSWindow *_window, std::function
     Alert *const dialog = [[Alert alloc] init];
     [dialog addButtonWithTitle:NSLocalizedString(@"Close", "User action to close a window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    auto fmt = NSLocalizedString(@"The window has %@ tabs. Are you sure you want to close this window?",
-                                 "Asking user to close window with additional tabs");
-    auto msg = [NSString localizedStringWithFormat:fmt, [NSNumber numberWithInt:_amount]];
+    const auto fmt = NSLocalizedString(@"The window has %@ tabs. Are you sure you want to close this window?",
+                                       "Asking user to close window with additional tabs");
+    const auto msg = [NSString localizedStringWithFormat:fmt, [NSNumber numberWithInt:_amount]];
     dialog.messageText = msg;
     [dialog beginSheetModalForWindow:_window
                    completionHandler:^(NSModalResponse result) {
@@ -93,8 +93,8 @@ void CloseTab::Perform(MainWindowFilePanelState *_target, id _sender) const
     else {
         const int total_tabs = static_cast<int>(_target.leftControllers.size() + _target.rightControllers.size());
         if( total_tabs > 2 ) {
-            auto window = _target.window;
-            auto close_callback = [=](NSModalResponse result) {
+            const auto window = _target.window;
+            const auto close_callback = [=](NSModalResponse result) {
                 if( result != NSAlertFirstButtonReturn )
                     return;
                 dispatch_to_main_queue([=] { [window close]; });

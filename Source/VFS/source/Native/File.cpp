@@ -23,7 +23,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
                                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
-    auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
+    const auto fs_info = std::dynamic_pointer_cast<NativeHost>(Host())->NativeFSManager().VolumeFromPath(Path());
 
     int openflags = O_NONBLOCK;
 

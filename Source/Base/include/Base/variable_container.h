@@ -234,7 +234,7 @@ T &variable_container<T>::operator[](size_t _at) noexcept
             return Dense()[_at];
         }
         case type::sparse: {
-            auto it = Sparse().find(_at);
+            const auto it = Sparse().find(_at);
             assert(it != Sparse().end());
             return it->second;
         }
@@ -269,7 +269,7 @@ const T &variable_container<T>::operator[](size_t _at) const noexcept
             return Dense()[_at];
         }
         case type::sparse: {
-            auto it = Sparse().find(_at);
+            const auto it = Sparse().find(_at);
             assert(it != Sparse().end());
             return it->second;
         }
@@ -300,7 +300,7 @@ void variable_container<T>::insert(size_t _at, const T &_value)
         }
         case type::sparse: {
             sparse_type &sparse = Sparse();
-            auto i = sparse.find(_at);
+            const auto i = sparse.find(_at);
             if( i == sparse.end() )
                 sparse.emplace(_at, _value);
             else
@@ -327,7 +327,7 @@ void variable_container<T>::insert(size_t _at, T &&_value)
         }
         case type::sparse: {
             sparse_type &sparse = Sparse();
-            auto i = sparse.find(_at);
+            const auto i = sparse.find(_at);
             if( i == sparse.end() )
                 sparse.emplace(_at, std::move(_value));
             else

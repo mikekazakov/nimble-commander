@@ -108,7 +108,7 @@ void SerialQueue::Run(T _f) const
     Increment();
     dispatch_async_f(m_Queue, new Ctx{std::move(_f), this}, [](void *_p) {
         const auto context = static_cast<Ctx *>(_p);
-        auto cleanup = at_scope_end([context] { delete context; });
+        const auto cleanup = at_scope_end([context] { delete context; });
         context->f();
         context->q->Decrement();
     });

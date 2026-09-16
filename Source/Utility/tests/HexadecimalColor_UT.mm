@@ -48,10 +48,10 @@ TEST_CASE(PREFIX "[NSColor colorWithHexString:(std::string_view)_hex]")
 
 TEST_CASE(PREFIX "System colors can be deserialized and serialized")
 {
-    for( auto name : NSColor.systemColorNames ) {
+    for( const auto name : NSColor.systemColorNames ) {
         // we CAN'T verify a symmetric round-trip name-wise, but we CAN verify that a result is the same color
         auto orig_color = [NSColor colorWithHexString:name];
-        auto hex = [orig_color toHexStdString]; // might be different than the 'name'
+        const auto hex = [orig_color toHexStdString]; // might be different than the 'name'
         auto restored_color = [NSColor colorWithHexString:hex];
         CHECK(orig_color == restored_color); // should be equal up to the pointer. works even for tagged pointers!
     }

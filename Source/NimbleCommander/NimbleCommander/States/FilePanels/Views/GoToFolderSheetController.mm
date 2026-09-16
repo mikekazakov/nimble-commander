@@ -24,7 +24,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
         if( i.DisplayNameNS().length < range.length )
             continue;
 
-        auto compare = [i.DisplayNameNS() compare:prefix options:NSCaseInsensitiveSearch range:range];
+        const auto compare = [i.DisplayNameNS() compare:prefix options:NSCaseInsensitiveSearch range:range];
 
         if( compare == 0 )
             result.emplace_back(i.Index());
@@ -161,7 +161,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing &_listing, cons
         filenames.emplace_back(_listing.FilenameNS(i));
 
     std::ranges::sort(filenames, [](auto _1st, auto _2nd) {
-        static auto opts =
+        static const auto opts =
             NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
         return [_1st compare:_2nd options:opts] < 0;
     });

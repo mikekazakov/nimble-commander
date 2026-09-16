@@ -40,7 +40,7 @@ TEST_CASE(PREFIX "Does produces unified Application directory")
     auto rm_marker = [&] { unlink(marker_path); };
     rm_marker();
     REQUIRE(close(creat(marker_path, 0755)) == 0);
-    auto marker_cleanup = at_scope_end([&] { rm_marker(); });
+    const auto marker_cleanup = at_scope_end([&] { rm_marker(); });
 
     std::expected<VFSListingPtr, Error> listing;
     SECTION("No ..")
@@ -112,7 +112,7 @@ TEST_CASE(PREFIX "Loading tags")
                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11};
 
     const TestDir test_dir_holder;
-    auto test_dir = test_dir_holder.directory;
+    const auto test_dir = test_dir_holder.directory;
     REQUIRE(close(creat((test_dir / "1.txt").c_str(), 0755)) == 0);
     REQUIRE(setxattr((test_dir / "1.txt").c_str(),
                      "com.apple.metadata:_kMDItemUserTags",

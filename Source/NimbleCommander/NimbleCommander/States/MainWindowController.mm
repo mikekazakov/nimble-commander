@@ -320,9 +320,9 @@ static int CountMainWindows()
         if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a state
             if( !m_Viewer )
                 dispatch_sync(dispatch_get_main_queue(), [&] {
-                    auto rc = NSMakeRect(0, 0, 100, 100);
-                    auto viewer_factory = [](NSRect rc) { return [NCAppDelegate.me makeViewerWithFrame:rc]; };
-                    auto ctrl = [NCAppDelegate.me makeViewerController];
+                    const auto rc = NSMakeRect(0, 0, 100, 100);
+                    const auto viewer_factory = [](NSRect rc) { return [NCAppDelegate.me makeViewerWithFrame:rc]; };
+                    const auto ctrl = [NCAppDelegate.me makeViewerController];
                     m_Viewer =
                         [[MainWindowInternalViewerState alloc] initWithFrame:rc
                                                                viewerFactory:viewer_factory

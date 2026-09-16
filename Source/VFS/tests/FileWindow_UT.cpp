@@ -161,7 +161,7 @@ TEST_CASE(PREFIX "random access")
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
-    auto vfs_file =
+    const auto vfs_file =
         std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Random);
     REQUIRE(vfs_file->Open(0));
 
@@ -172,7 +172,7 @@ TEST_CASE(PREFIX "random access")
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
 
     for( int i = 0; i < 10000; ++i ) {
-        auto pos = dist(mt);
+        const auto pos = dist(mt);
         REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);
@@ -186,7 +186,7 @@ TEST_CASE(PREFIX "sequential access")
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
-    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
+    const auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(
         "", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Sequential);
     REQUIRE(vfs_file->Open(0));
 
@@ -200,8 +200,8 @@ TEST_CASE(PREFIX "sequential access")
         const int cmp = memcmp(fw.Window(), &data[fw.WindowPos()], fw.WindowSize());
         REQUIRE(cmp == 0);
 
-        auto off = dist(mt);
-        auto pos = fw.WindowPos() + off;
+        const auto off = dist(mt);
+        const auto pos = fw.WindowPos() + off;
         if( pos > fw.FileSize() - fw.WindowSize() )
             break;
 
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "seek access")
     for( int i = 0; i < data_size; ++i )
         data[i] = static_cast<unsigned char>(rand() % 256);
 
-    auto vfs_file =
+    const auto vfs_file =
         std::make_shared<TestGenericMemReadOnlyFile>("", nullptr, data.get(), data_size, VFSFile::ReadParadigm::Seek);
     REQUIRE(vfs_file->Open(0));
 
@@ -227,7 +227,7 @@ TEST_CASE(PREFIX "seek access")
     std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
 
     for( int i = 0; i < 10000; ++i ) {
-        auto pos = dist(mt);
+        const auto pos = dist(mt);
         REQUIRE(fw.MoveWindow(pos));
         const int cmp = memcmp(fw.Window(), &data[pos], fw.WindowSize());
         REQUIRE(cmp == 0);

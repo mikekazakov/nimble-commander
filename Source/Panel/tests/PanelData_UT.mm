@@ -363,7 +363,7 @@ TEST_CASE(PREFIX "HardFiltering")
     // now more comples situations
     filtering.text.text = @"IC";
     data.SetHardFiltering(filtering);
-    auto count = listing->Count();
+    const auto count = listing->Count();
     data.Load(listing, data::Model::PanelType::Directory);
     CHECK(data.SortedIndexForName("..") == 0);
     CHECK(data.SortedIndexForName("Music") >= 0);
@@ -507,7 +507,7 @@ TEST_CASE(PREFIX "DirectorySorting")
 {
     const std::vector<std::tuple<std::string, bool>> entries = {
         {{"Alpha.2", true}, {"Bravo.1", true}, {"Charlie.3", true}}};
-    auto listing = ProduceDummyListing(entries);
+    const auto listing = ProduceDummyListing(entries);
 
     data::Model data;
     data.Load(listing, data::Model::PanelType::Directory);
@@ -542,7 +542,7 @@ TEST_CASE(PREFIX "DirectorySorting")
 TEST_CASE(PREFIX "SetCalculatedSizeForDirectory")
 {
     const std::vector<std::tuple<std::string, bool>> entries = {{{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
-    auto listing = ProduceDummyListing(entries);
+    const auto listing = ProduceDummyListing(entries);
 
     data::Model data;
     data.Load(listing, data::Model::PanelType::Directory);
@@ -589,7 +589,7 @@ TEST_CASE(PREFIX "SetCalculatedSizeForDirectory")
 TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
 {
     const std::vector<std::tuple<std::string, bool>> entries = {{{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
-    auto listing = ProduceDummyListing(entries);
+    const auto listing = ProduceDummyListing(entries);
 
     data::Model data;
     data.Load(listing, data::Model::PanelType::Directory);

@@ -225,7 +225,7 @@ PSHost::~PSHost() = default;
 
 VFSConfiguration PSHost::Configuration() const
 {
-    static auto c = VFSPSHostConfiguration();
+    static const auto c = VFSPSHostConfiguration();
     return c;
 }
 
@@ -301,7 +301,7 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 void PSHost::UpdateCycle()
 {
     using namespace std::literals;
-    auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
+    const auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
     m_UpdateQ.Run([=, this] {
         if( m_UpdateQ.IsStopped() )
             return;
@@ -334,7 +334,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 {
     const std::lock_guard<std::mutex> lock(m_Lock);
 
-    auto newdata = std::make_shared<Snapshot>();
+    const auto newdata = std::make_shared<Snapshot>();
 
     newdata->taken_time = time(nullptr);
     newdata->procs.swap(_procs);
@@ -351,7 +351,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 
     m_Data = newdata;
 
-    for( auto &i : m_UpdateHandlers )
+    for( const auto &i : m_UpdateHandlers )
         i.second();
 }
 
@@ -363,7 +363,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo &_info, std::shared_ptr<Snap
 
     const char *parent_name = "N/A";
     {
-        auto it = _data->pid_to_index.find(_info.ppid);
+        const auto it = _data->pid_to_index.find(_info.ppid);
         if( it != end(_data->pid_to_index) )
             parent_name = _data->procs[it->second].name.c_str();
     }
@@ -411,7 +411,7 @@ PSHost::FetchDirectoryListing(std::string_view _path,
     if( _path != "/" )
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
-    auto data = m_Data;
+    const auto data = m_Data;
 
     // set up or listing structure
     using nc::base::variable_container;
@@ -453,7 +453,7 @@ std::expected<std::shared_ptr<VFSFile>, Error> PSHost::CreateFile(std::string_vi
 
     const std::lock_guard<std::mutex> lock(m_Lock);
 
-    auto index = ProcIndexFromFilepath_Unlocked(_path);
+    const auto index = ProcIndexFromFilepath_Unlocked(_path);
 
     if( index < 0 )
         return std::unexpected(Error{Error::POSIX, ENOENT});
@@ -485,7 +485,7 @@ std::expected<VFSStat, Error> PSHost::Stat(std::string_view _path,
     if( _path.empty() )
         return std::unexpected(Error{Error::POSIX, EINVAL});
 
-    auto index = ProcIndexFromFilepath_Unlocked(_path);
+    const auto index = ProcIndexFromFilepath_Unlocked(_path);
 
     if( index < 0 )
         return std::unexpected(Error{Error::POSIX, ENOENT});
@@ -510,9 +510,9 @@ int PSHost::ProcIndexFromFilepath_Unlocked(std::string_view _filepath)
     if( _filepath[0] != '/' )
         return -1;
 
-    auto plain_fn = _filepath.substr(1);
+    const auto plain_fn = _filepath.substr(1);
 
-    auto it = find(begin(m_Data->plain_filenames), end(m_Data->plain_filenames), plain_fn);
+    const auto it = find(begin(m_Data->plain_filenames), end(m_Data->plain_filenames), plain_fn);
     if( it == end(m_Data->plain_filenames) )
         return -1;
 
@@ -527,14 +527,14 @@ bool PSHost::IsDirectoryChangeObservationAvailable([[maybe_unused]] std::string_
 HostDirObservationTicket PSHost::ObserveDirectoryChanges(std::string_view /*_path*/, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
-    auto ticket = m_LastTicket++;
+    const auto ticket = m_LastTicket++;
     m_UpdateHandlers.emplace_back(ticket, std::move(_handler));
     return {ticket, shared_from_this()};
 }
 
 void PSHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    auto it = std::ranges::find_if(m_UpdateHandlers, [=](const auto &i) { return i.first == _ticket; });
+    const auto it = std::ranges::find_if(m_UpdateHandlers, [=](const auto &i) { return i.first == _ticket; });
     if( it != end(m_UpdateHandlers) )
         m_UpdateHandlers.erase(it);
 }
@@ -546,10 +546,10 @@ PSHost::IterateDirectoryListing(std::string_view _path, const std::function<bool
         return std::unexpected(Error{Error::POSIX, ENOENT});
 
     m_Lock.lock();
-    auto snapshot = m_Data;
+    const auto snapshot = m_Data;
     m_Lock.unlock();
 
-    for( auto &i : snapshot->plain_filenames ) {
+    for( const auto &i : snapshot->plain_filenames ) {
         VFSDirEnt dir;
         dir.name = i;
         dir.type = VFSDirEnt::Reg;
@@ -615,11 +615,11 @@ std::expected<void, Error> PSHost::Unlink(std::string_view _path,
     {
         const std::lock_guard<std::mutex> lock(m_Lock);
 
-        auto index = ProcIndexFromFilepath_Unlocked(_path);
+        const auto index = ProcIndexFromFilepath_Unlocked(_path);
         if( index < 0 )
             return std::unexpected(Error{Error::POSIX, ESRCH});
 
-        auto &proc = m_Data->procs[index];
+        const auto &proc = m_Data->procs[index];
         gid = proc.gid;
         pid = proc.pid;
     }
@@ -678,12 +678,12 @@ std::string PSHost::FormatTime(time_t _time)
     const CFDateRef date = CFDateCreate(kCFAllocatorDefault, abs_time);
     if( !date )
         return {};
-    auto release_date = at_scope_end([date] { CFRelease(date); });
+    const auto release_date = at_scope_end([date] { CFRelease(date); });
 
     const CFStringRef str = CFDateFormatterCreateStringWithDate(kCFAllocatorDefault, fmt, date);
     if( !str )
         return {};
-    auto release_str = at_scope_end([str] { CFRelease(str); });
+    const auto release_str = at_scope_end([str] { CFRelease(str); });
 
     return base::CFStringGetUTF8StdString(str);
 }

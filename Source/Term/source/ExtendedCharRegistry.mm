@@ -165,7 +165,7 @@ ExtendedCharRegistry::AppendResult ExtendedCharRegistry::Append(const std::u16st
 uint32_t ExtendedCharRegistry::FindOrAdd_Unlocked(std::u16string_view _str)
 {
     assert(_str.length() > 1);
-    auto it = m_Lookup.find(_str); // O(1)
+    const auto it = m_Lookup.find(_str); // O(1)
     if( it != m_Lookup.end() )
         return *it;
 
@@ -192,7 +192,7 @@ NSString *ExtendedCharRegistry::DecodeNS(char32_t _code) const noexcept
     if( IsBase(_code) )
         return nil;
 
-    auto str = Decode(_code);
+    const auto str = Decode(_code);
     return objc_bridge_cast<NSString>(str.get()); // should +1 here ???
 }
 
@@ -288,7 +288,7 @@ static constexpr std::array<uint64_t, 65536 / 64> BuildPotentiallyComposableChar
     constexpr size_t sz = 65536 / 64;
     std::array<uint64_t, sz> a;
     a.fill(0);
-    auto set = [&a](uint16_t _first, uint16_t _last) {
+    const auto set = [&a](uint16_t _first, uint16_t _last) {
         for( size_t n = _first; n <= _last; ++n ) {
             a[n / 64] |= (uint64_t(1) << (n % 64));
         }

@@ -50,11 +50,11 @@ std::expected<VFSListingPtr, Error> FetchUnifiedListing(NativeHost &_host,
                     input.title = *userpath_name;
                 else if( auto systempath_name = cache.DisplayName(_system_path) )
                     input.title = *systempath_name;
-                else if( auto nonloc_name = MakeNonLocalizedTitle(_user_path); !nonloc_name.empty() )
+                else if( const auto nonloc_name = MakeNonLocalizedTitle(_user_path); !nonloc_name.empty() )
                     input.title = nonloc_name;
             }
             else {
-                if( auto name = MakeNonLocalizedTitle(_user_path); !name.empty() )
+                if( const auto name = MakeNonLocalizedTitle(_user_path); !name.empty() )
                     input.title = name;
             }
 

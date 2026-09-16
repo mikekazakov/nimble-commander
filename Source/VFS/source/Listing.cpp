@@ -93,7 +93,7 @@ static void Compress(ListingInput &_input)
     // TODO: generalize and move this into variable_container itself?
     // Compress dense hosts into a common one if all are the same
     if( _input.hosts.mode() == variable_container<>::type::dense && !_input.hosts.empty() ) {
-        auto first = _input.hosts[0];
+        const auto first = _input.hosts[0];
         bool allsame = true;
         for( size_t i = 1, e = _input.hosts.size(); i < e; ++i ) {
             if( _input.hosts[i] != first ) {
@@ -115,7 +115,7 @@ template <class It>
 static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> CopyToUniquePtr(It first, It last)
 {
     using T = typename std::iterator_traits<It>::value_type;
-    auto count = std::distance(first, last);
+    const auto count = std::distance(first, last);
     auto ptr = std::make_unique<T[]>(count);
     std::copy(first, last, ptr.get());
     return ptr;
@@ -125,7 +125,7 @@ template <class It>
 static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> MoveToUniquePtr(It first, It last)
 {
     using T = typename std::iterator_traits<It>::value_type;
-    auto count = std::distance(first, last);
+    const auto count = std::distance(first, last);
     auto ptr = std::make_unique<T[]>(count);
     std::move(first, last, ptr.get());
     return ptr;
@@ -216,7 +216,7 @@ ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listin
             if( listing.HasSymlink(i) )
                 result.symlinks.insert(count, listing.Symlink(i));
             if( listing.HasTags(i) ) {
-                auto tags = listing.Tags(i);
+                const auto tags = listing.Tags(i);
                 result.tags.emplace(count, std::vector<utility::Tags::Tag>(tags.begin(), tags.end()));
             }
             count++;
@@ -252,7 +252,7 @@ ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listin
     for( size_t l = 0, e = _listings.size(); l != e; ++l ) {
         auto &listing = *_listings[l];
         auto &indeces = _items_indeces[l];
-        for( auto i : indeces ) {
+        for( const auto i : indeces ) {
             if( i >= listing.Count() )
                 throw std::invalid_argument("VFSListing::Compose: invalid index");
 
@@ -393,7 +393,7 @@ void Listing::BuildFilenames()
     m_DisplayFilenamesCF = variable_container<base::CFString>(variable_container<>::type::sparse);
 
     for( ; i != e; ++i ) {
-        auto &current = m_Filenames[i];
+        const auto &current = m_Filenames[i];
 
         // build Cocoa strings for filenames.
         // if filename is badly broken and UTF8 is invalid - treat it like MacRoman encoding
@@ -408,7 +408,7 @@ void Listing::BuildFilenames()
         // filename. and .filename
         // in such cases we think there's no extension at all
         uint16_t offset = 0;
-        auto dot_it = current.find_last_of('.');
+        const auto dot_it = current.find_last_of('.');
         if( dot_it != std::string::npos && dot_it != 0 && dot_it != current.size() - 1 )
             offset = uint16_t(dot_it + 1);
         m_ExtensionOffsets[i] = offset;
@@ -694,7 +694,7 @@ bool Listing::HasTags(unsigned _ind) const
 std::span<const utility::Tags::Tag> Listing::Tags(unsigned _ind) const
 {
     VFS_LISTING_CHECK_BOUNDS(_ind);
-    if( auto it = m_Tags.find(_ind); it != m_Tags.end() )
+    if( const auto it = m_Tags.find(_ind); it != m_Tags.end() )
         return it->second;
     return {};
 }

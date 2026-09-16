@@ -209,7 +209,7 @@ TEST_CASE(PREFIX "Compressing an item with xattrs")
 {
     const TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    auto str_to_bytes = [](std::string_view _str) -> std::vector<std::byte> {
+    const auto str_to_bytes = [](std::string_view _str) -> std::vector<std::byte> {
         return {reinterpret_cast<const std::byte *>(_str.data()),
                 reinterpret_cast<const std::byte *>(_str.data()) + _str.length()};
     };

@@ -31,7 +31,7 @@ void SyncPanels::Perform(MainWindowFilePanelState *_target, id /*_sender*/) cons
         return;
 
     if( current.isUniform ) {
-        auto request = std::make_shared<DirectoryChangeRequest>();
+        const auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = current.currentDirectoryPath;
         request->VFS = current.vfs;
         request->PerformAsynchronous = true;

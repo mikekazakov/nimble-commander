@@ -25,7 +25,7 @@ bool RevealInOppositePanel::Predicate(MainWindowFilePanelState *_target) const
 
 static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
 {
-    auto request = std::make_shared<DirectoryChangeRequest>();
+    const auto request = std::make_shared<DirectoryChangeRequest>();
     request->VFS = _item.Host();
     if( _item.IsDir() ) {
         request->RequestedDirectory = _item.Path();

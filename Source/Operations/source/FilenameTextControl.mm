@@ -215,7 +215,7 @@ std::vector<std::string> DirectoryPathAutoCompletionImpl::PossibleCompletions(co
 
         std::vector<std::string> directories;
         directories.reserve(indices.size());
-        for( auto index : indices )
+        for( const auto index : indices )
             directories.emplace_back(listing->Filename(index));
 
         std::ranges::sort(directories);

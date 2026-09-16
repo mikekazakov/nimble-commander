@@ -128,7 +128,7 @@ static void check(const Case &test_case)
 
     // let's iterate
     size_t ents_encountered = 0;
-    auto iter_cb = [&](const VFSDirEnt &_dirent) {
+    const auto iter_cb = [&](const VFSDirEnt &_dirent) {
         CHECK(ents_encountered++ == 0);
         CHECK(_dirent.type == VFSDirEnt::Reg);
         CHECK(_dirent.name == std::string_view("hello.txt"));

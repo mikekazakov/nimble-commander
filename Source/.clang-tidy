@@ -92,7 +92,7 @@ Checks: >
   darwin-avoid-spinlock,
   darwin-dispatch-once-nonstatic,
   misc-confusable-identifiers,
-  misc-const-correctness,
+  # misc-const-correctness,                             <-- clang-tidy@23 goes berserk on ObjC++ pointers and seeming this can't be turned off
   misc-coroutine-hostile-raii,
   # misc-definitions-in-headers,                        <-- incompatible with unity builds
   misc-header-include-cycle,
@@ -166,7 +166,6 @@ Checks: >
   objc-super-self,
   performance-avoid-endl,
   performance-enum-size,
-  performance-faster-string-find,
   performance-for-range-copy,
   performance-implicit-conversion-in-loop,
   performance-inefficient-algorithm,
@@ -179,6 +178,7 @@ Checks: >
   performance-noexcept-destructor,
   performance-noexcept-move-constructor,
   performance-noexcept-swap,
+  performance-prefer-single-char-overloads,
   performance-trivially-destructible,
   performance-type-promotion-in-math-fn,
   performance-unnecessary-copy-initialization,

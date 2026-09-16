@@ -290,7 +290,7 @@ static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept
 
 static std::string ReportUTF8(InputTranslator::MouseEvent _event) noexcept
 {
-    auto to_utf8 = [](unsigned int codepoint) -> std::string {
+    const auto to_utf8 = [](unsigned int codepoint) -> std::string {
         std::string out;
         if( codepoint <= 0x7f )
             out.append(1, static_cast<char>(codepoint));
@@ -387,18 +387,18 @@ static std::string ReportSGR(InputTranslator::MouseEvent _event) noexcept
     const unsigned x = std::max(_event.x + 1, 1);
     const unsigned y = std::max(_event.y + 1, 1);
     buf += std::to_string(cb);
-    buf += ";";
+    buf += ';';
     buf += std::to_string(x);
-    buf += ";";
+    buf += ';';
     buf += std::to_string(y);
     switch( _event.type ) {
         case InputTranslator::MouseEvent::LUp:
         case InputTranslator::MouseEvent::MUp:
         case InputTranslator::MouseEvent::RUp:
-            buf += "m";
+            buf += 'm';
             break;
         default:
-            buf += "M";
+            buf += 'M';
             break;
     }
     return buf;

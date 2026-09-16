@@ -291,7 +291,7 @@ void ExternalEditorsStorage::SaveToConfig()
 {
     using namespace rapidjson;
     nc::config::Value v{kArrayType};
-    for( auto &ed : m_ExternalEditors )
+    for( const auto &ed : m_ExternalEditors )
         v.PushBack(ExternalEditorsPersistence::SaveToJSON(*ed), g_CrtAllocator);
     GlobalConfig().Set(m_ConfigPath, v);
 }

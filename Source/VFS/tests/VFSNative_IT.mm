@@ -40,7 +40,7 @@ TEST_CASE(PREFIX "Reports case-insensitive on directory path")
     REQUIRE(close(creat((volume_path / "Dir1/Dir2/reg").c_str(), 0755)) == 0);
     WaitUntilNativeFSManSeesVolumeAtPath(volume_path, std::chrono::seconds(5));
 
-    auto &vfs = *TestEnv().vfs_native;
+    const auto &vfs = *TestEnv().vfs_native;
     CHECK(vfs.IsCaseSensitiveAtPath(volume_path.c_str()) == false);
     CHECK(vfs.IsCaseSensitiveAtPath((volume_path / "Dir1").c_str()) == false);
     CHECK(vfs.IsCaseSensitiveAtPath((volume_path / "Dir1/Dir2").c_str()) == false);
@@ -71,7 +71,7 @@ TEST_CASE(PREFIX "Reports case-sensitive on directory path")
     REQUIRE(close(creat((volume_path / "Dir1/Dir2/reg").c_str(), 0755)) == 0);
     WaitUntilNativeFSManSeesVolumeAtPath(volume_path, std::chrono::seconds(5));
 
-    auto &vfs = *TestEnv().vfs_native;
+    const auto &vfs = *TestEnv().vfs_native;
     CHECK(vfs.IsCaseSensitiveAtPath(volume_path.c_str()) == true);
     CHECK(vfs.IsCaseSensitiveAtPath((volume_path / "Dir1").c_str()) == true);
     CHECK(vfs.IsCaseSensitiveAtPath((volume_path / "Dir1/Dir2").c_str()) == true);
@@ -148,7 +148,7 @@ TEST_CASE(PREFIX "Fetching")
     // spawn a bunch of regular files to ensure the batching mechanism can deal
     // with the mass
     for( size_t i = 0; i != 1000; ++i ) {
-        auto filename = fmt::format("reg{}", i);
+        const auto filename = fmt::format("reg{}", i);
         REQUIRE(close(creat((test_dir / filename).c_str(), 0755)) == 0);
         to_visit.emplace(filename);
     }
@@ -188,11 +188,11 @@ TEST_CASE(PREFIX "Fetching")
 
     const int fd = ::open(test_dir.c_str(), O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     REQUIRE(fd > 0);
-    auto close_fd = at_scope_end([fd] { close(fd); });
+    const auto close_fd = at_scope_end([fd] { close(fd); });
 
     size_t fetched_notification = 0;
-    auto fetch = [&](size_t _fetched) { fetched_notification += _fetched; };
-    auto param = [&](const Fetching::CallbackParams &p) {
+    const auto fetch = [&](size_t _fetched) { fetched_notification += _fetched; };
+    const auto param = [&](const Fetching::CallbackParams &p) {
         REQUIRE(p.filename != nullptr);
         const std::string_view filename(p.filename);
         REQUIRE(to_visit.contains(filename));
@@ -292,7 +292,7 @@ static bool RunMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeo
 static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &volume_path,
                                                  std::chrono::nanoseconds _time_limit)
 {
-    auto predicate = [volume_path] {
+    const auto predicate = [volume_path] {
         auto volumes = TestEnv().native_fs_man->Volumes();
         return std::ranges::any_of(volumes,
                                    [volume_path](auto _fs_info) { return _fs_info->mounted_at_path == volume_path; });

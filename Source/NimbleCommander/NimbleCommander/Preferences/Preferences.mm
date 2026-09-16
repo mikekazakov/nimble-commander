@@ -12,9 +12,9 @@
 
 static PreferencesWindowController *CreatePrefWindow()
 {
-    auto tools_storage = []() -> nc::panel::ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
-    auto app_del = NCAppDelegate.me;
-    auto tabs = @[
+    const auto tools_storage = []() -> nc::panel::ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
+    const auto app_del = NCAppDelegate.me;
+    const auto tabs = @[
         [PreferencesWindowGeneralTab new],
         [PreferencesWindowThemesTab new],
         [PreferencesWindowPanelsTab new],

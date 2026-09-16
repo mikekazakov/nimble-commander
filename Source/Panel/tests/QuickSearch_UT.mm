@@ -83,7 +83,7 @@ TEST_CASE("basic hard filtering")
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
 
     auto request = @"box";
     [qs setSearchCriteria:request];
@@ -114,7 +114,7 @@ TEST_CASE("typing for hard filtering")
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
     ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
     NSEvent *e = nil;
 
     e = KeyDown(SingleCharStr(NSDeleteCharacter), 0);
@@ -154,7 +154,7 @@ TEST_CASE("modifiers option")
 {
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
     const auto skip = view::BiddingPriority::Skip;
     const auto caps = NSEventModifierFlagCapsLock;
     const auto shift = NSEventModifierFlagShift;
@@ -217,7 +217,7 @@ TEST_CASE("ignoring characters")
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
     ctx.qsconfig.Set(g_ConfigIgnoreCharacters, "a ");
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
     const auto skip = view::BiddingPriority::Skip;
     CHECK([qs bidForHandlingKeyDown:KeyDown(@" ", 0) forPanelView:nil] == skip);
     CHECK([qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip);
@@ -239,7 +239,7 @@ TEST_CASE("Underscoring")
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
     ctx.qsconfig.Set(g_ConfigTypingView, true);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
     [qs setSearchCriteria:@"box"];
     CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().count == 1);
     CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].offset == 4);
@@ -252,12 +252,12 @@ TEST_CASE("Underscoring")
 TEST_CASE("Underscoring works in UTF16")
 {
     QuickSearchTestsContext ctx;
-    auto listing = QuickSearch_ProduceDummyListing({"привет.txt", "🤩.txt"});
+    const auto listing = QuickSearch_ProduceDummyListing({"привет.txt", "🤩.txt"});
     ctx.data.Load(listing, data::Model::PanelType::Directory);
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
     ctx.qsconfig.Set(g_ConfigTypingView, true);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
     [qs setSearchCriteria:@"привет"];
     CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().count == 1);
     CHECK(ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].offset == 0);
@@ -282,7 +282,7 @@ TEST_CASE("Different phrase locations")
     using Where = data::TextualFilter::Where;
     QuickSearchTestsContext ctx;
     NCPanelQuickSearch *qs;
-    auto filter = [&](NSString *_crit, Where _where) {
+    const auto filter = [&](NSString *_crit, Where _where) {
         ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
         ctx.qsconfig.Set(g_ConfigTypingView, true);
         ctx.qsconfig.Set(g_ConfigWhereToFind, _where);
@@ -364,7 +364,7 @@ TEST_CASE("basic soft filtering")
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, true);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
 
     [qs setSearchCriteria:@"player"];
 
@@ -380,7 +380,7 @@ TEST_CASE("soft typing")
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, true);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
+    const auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data delegate:ctx.delegate config:ctx.qsconfig];
 
     [qs handleKeyDown:KeyDown(@"p", 0) forPanelView:nil];
     CHECK(ctx.delegate.cursorPosition == 0);

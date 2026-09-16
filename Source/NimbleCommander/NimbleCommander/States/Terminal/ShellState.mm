@@ -200,7 +200,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
     __weak NCTermShellState *weakself = self;
     m_Task->SetOnChildOutput([=](const std::span<const std::byte> _data) {
-        auto strongself = weakself;
+        const auto strongself = weakself;
         if( !strongself )
             return;
 
@@ -214,7 +214,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             if( Log::Level() <= spdlog::level::debug )
                 nc::term::input::LogCommands(cmds);
 
-            if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
+            if( const auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
                 strongself->m_Interpreter->Interpret(cmds);
             [strongself->m_TermScrollView.view.fpsDrawer invalidate];
             [strongself->m_TermScrollView.view adjustSizes:false];
@@ -222,7 +222,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     });
 
     m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const std::string_view _cwd, [[maybe_unused]] bool _changed) {
-        if( auto strongself = weakself ) {
+        if( const auto strongself = weakself ) {
             strongself->m_IconTitle = "";
             strongself->m_WindowTitle = "";
             [strongself updateTitle];
@@ -230,7 +230,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     });
 
     m_Task->SetOnStateChange([=](ShellTask::TaskState _new_state) {
-        if( auto strongself = weakself )
+        if( const auto strongself = weakself )
             [strongself taskStateChanged:_new_state];
     });
 
@@ -415,7 +415,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             __weak NCTermShellState *weakself = self;
             auto cb = [weakself](ChildrenTracker::Event) {
                 dispatch_to_main_queue([weakself] {
-                    if( auto strongself = weakself )
+                    if( const auto strongself = weakself )
                         [strongself updateTitle];
                 });
             };

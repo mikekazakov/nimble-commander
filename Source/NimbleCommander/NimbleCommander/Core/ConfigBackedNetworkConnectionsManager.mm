@@ -28,7 +28,7 @@ static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_value
 {
     std::vector<std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))>> v;
     for( auto &i : _values ) {
-        auto it = std::ranges::find(_mru, i.Uuid());
+        const auto it = std::ranges::find(_mru, i.Uuid());
         v.emplace_back(std::move(i), it);
     }
 
@@ -102,17 +102,17 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
 static std::optional<NetworkConnectionsManager::Connection> JSONObjectToConnection(const config::Value &_object)
 {
     using namespace rapidjson;
-    auto has_string = [&](const char *k) {
+    const auto has_string = [&](const char *k) {
         if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
             return i->value.GetType() == kStringType;
         return false;
     };
-    auto has_number = [&](const char *k) {
+    const auto has_number = [&](const char *k) {
         if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
             return i->value.GetType() == kNumberType;
         return false;
     };
-    auto has_bool = [&](const char *k) {
+    const auto has_bool = [&](const char *k) {
         if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
             return i->value.GetType() == kFalseType || i->value.GetType() == kTrueType;
         return false;
@@ -259,8 +259,8 @@ ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager() 
 void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnectionsManager::Connection &_conn)
 {
     {
-        auto lock = std::lock_guard{m_Lock};
-        auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _conn.Uuid(); });
+        const auto lock = std::lock_guard{m_Lock};
+        const auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _conn.Uuid(); });
         if( t != end(m_Connections) )
             *t = _conn;
         else
@@ -272,12 +272,12 @@ void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnec
 void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_connection)
 {
     {
-        auto lock = std::lock_guard{m_Lock};
-        auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _connection.Uuid(); });
+        const auto lock = std::lock_guard{m_Lock};
+        const auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _connection.Uuid(); });
         if( t != end(m_Connections) )
             m_Connections.erase(t);
 
-        auto i = std::ranges::find_if(m_MRU, [&](auto &_c) { return _c == _connection.Uuid(); });
+        const auto i = std::ranges::find_if(m_MRU, [&](auto &_c) { return _c == _connection.Uuid(); });
         if( i != end(m_MRU) )
             m_MRU.erase(i);
     }
@@ -288,7 +288,7 @@ std::optional<NetworkConnectionsManager::Connection>
 ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const base::UUID &_uuid) const
 {
     const std::lock_guard<std::mutex> lock(m_Lock);
-    auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _uuid; });
+    const auto t = std::ranges::find_if(m_Connections, [&](auto &_c) { return _c.Uuid() == _uuid; });
     if( t != end(m_Connections) )
         return *t;
     return std::nullopt;
@@ -301,18 +301,18 @@ void ConfigBackedNetworkConnectionsManager::Save()
     Value connections(rapidjson::kArrayType);
     Value mru(rapidjson::kArrayType);
     {
-        auto lock = std::lock_guard{m_Lock};
-        for( auto &c : m_Connections ) {
+        const auto lock = std::lock_guard{m_Lock};
+        for( const auto &c : m_Connections ) {
             auto o = ConnectionToJSONObject(c);
             if( o.GetType() != rapidjson::kNullType )
                 connections.PushBack(std::move(o), allocator);
         }
-        for( auto &u : m_MRU )
+        for( const auto &u : m_MRU )
             mru.PushBack(Value(u.ToString(), allocator), allocator);
     }
 
     m_IsWritingConfig = true;
-    auto clear = at_scope_end([&] { m_IsWritingConfig = false; });
+    const auto clear = at_scope_end([&] { m_IsWritingConfig = false; });
 
     m_Config.Set(g_ConnectionsKey, connections);
     m_Config.Set(g_MRUKey, mru);
@@ -321,7 +321,7 @@ void ConfigBackedNetworkConnectionsManager::Save()
 void ConfigBackedNetworkConnectionsManager::Load()
 {
     using namespace rapidjson;
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     m_Connections.clear();
     m_MRU.clear();
 
@@ -341,8 +341,8 @@ void ConfigBackedNetworkConnectionsManager::Load()
 void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_connection)
 {
     {
-        auto lock = std::lock_guard{m_Lock};
-        auto it = std::ranges::find_if(m_MRU, [&](auto &i) { return i == _connection.Uuid(); });
+        const auto lock = std::lock_guard{m_Lock};
+        const auto it = std::ranges::find_if(m_MRU, [&](auto &i) { return i == _connection.Uuid(); });
         if( it != end(m_MRU) )
             rotate(begin(m_MRU), it, it + 1);
         else
@@ -354,7 +354,7 @@ void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_conne
 std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
 {
     std::vector<Connection> c;
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     for( auto &i : m_Connections )
         if( i.IsType<FTP>() )
             c.emplace_back(i);
@@ -365,7 +365,7 @@ std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnection
 std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::SFTPConnectionsByMRU() const
 {
     std::vector<Connection> c;
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     for( auto &i : m_Connections )
         if( i.IsType<SFTP>() )
             c.emplace_back(i);
@@ -378,7 +378,7 @@ ConfigBackedNetworkConnectionsManager::LANShareConnectionsByMRU() const
 {
     std::vector<Connection> c;
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         for( auto &i : m_Connections )
             if( i.IsType<LANShare>() )
                 c.emplace_back(i);
@@ -391,7 +391,7 @@ std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnection
 {
     std::vector<Connection> c;
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         c = m_Connections;
         SortByMRU(c, m_MRU);
     }
@@ -444,7 +444,7 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
     if( !pred )
         return std::nullopt;
 
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     const auto it = std::ranges::find_if(m_Connections, pred);
     if( it != end(m_Connections) )
         return *it;
@@ -502,8 +502,8 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status, void *_re
 {
     std::function<void(const std::string &_mounted_path, const std::string &_error)> cb;
     {
-        auto lock = std::lock_guard{m_PendingMountRequestsLock};
-        auto i = std::ranges::find_if(m_PendingMountRequests, [=](auto &_v) { return _v.first == _requestID; });
+        const auto lock = std::lock_guard{m_PendingMountRequestsLock};
+        const auto i = std::ranges::find_if(m_PendingMountRequests, [=](auto &_v) { return _v.first == _requestID; });
         if( i != std::end(m_PendingMountRequests) ) {
             cb = std::move(i->second);
             m_PendingMountRequests.erase(i);
@@ -513,7 +513,7 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status, void *_re
     if( cb ) {
         // _mountpoints can contain a valid mounted path even if _status is not equal to zero
         if( _mountpoints != nullptr && CFArrayGetCount(_mountpoints) != 0 )
-            if( auto str = objc_cast<NSString>(((__bridge NSArray *)_mountpoints).firstObject) ) {
+            if( const auto str = objc_cast<NSString>(((__bridge NSArray *)_mountpoints).firstObject) ) {
                 const std::string path = str.fileSystemRepresentationSafe;
                 if( !path.empty() ) {
                     cb(path, "");
@@ -565,7 +565,7 @@ static bool IsEmptyDirectory(const std::string &_path)
 static bool
 TearDownSMBOrAFPMountName(const std::string &_name, std::string &_user, std::string &_host, std::string &_share)
 {
-    auto url_string = [NSString stringWithUTF8StdString:_name];
+    const auto url_string = [NSString stringWithUTF8StdString:_name];
     if( !url_string )
         return false;
 
@@ -592,7 +592,7 @@ TearDownSMBOrAFPMountName(const std::string &_name, std::string &_user, std::str
 static bool TearDownNFSMountName(const std::string &_name, std::string &_host, std::string &_share)
 {
     [[clang::no_destroy]] static const auto delimiter = ":/"s;
-    auto pos = _name.find(delimiter);
+    const auto pos = _name.find(delimiter);
     if( pos == std::string::npos )
         return false;
     _host = _name.substr(0, pos);
@@ -601,7 +601,7 @@ static bool TearDownNFSMountName(const std::string &_name, std::string &_host, s
 }
 
 static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
-GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
+GetMountedRemoteFilesystems(const nc::utility::NativeFSManager &_native_fs_man)
 {
     [[clang::no_destroy]] static const auto smb = "smbfs"s;
     [[clang::no_destroy]] static const auto afp = "afpfs"s;
@@ -637,10 +637,10 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volum
         std::string host;
         std::string share;
         if( TearDownSMBOrAFPMountName(_volume.mounted_from_name, user, host, share) ) {
-            auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
-            auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
-            auto same_user = (strcasecmp(user.c_str(), _share.user.c_str()) == 0) ||
-                             (_share.user.empty() && user == "GUEST") || (_share.user.empty() && user == "guest");
+            const auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
+            const auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
+            const auto same_user = (strcasecmp(user.c_str(), _share.user.c_str()) == 0) ||
+                                   (_share.user.empty() && user == "GUEST") || (_share.user.empty() && user == "guest");
             return same_host && same_share && same_user;
         }
     }
@@ -648,8 +648,8 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volum
         std::string host;
         std::string share;
         if( TearDownNFSMountName(_volume.mounted_from_name, host, share) ) {
-            auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
-            auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
+            const auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
+            const auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
             return same_host && same_share;
         }
     }
@@ -658,9 +658,9 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volum
 
 static std::shared_ptr<const nc::utility::NativeFileSystemInfo>
 FindExistingMountedShare(const NetworkConnectionsManager::LANShare &_share,
-                         nc::utility::NativeFSManager &_native_fs_man)
+                         const nc::utility::NativeFSManager &_native_fs_man)
 {
-    for( auto &v : GetMountedRemoteFilesystems(_native_fs_man) )
+    for( const auto &v : GetMountedRemoteFilesystems(_native_fs_man) )
         if( MatchVolumeWithShare(*v, _share) )
             return v;
     return nullptr;
@@ -684,17 +684,17 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
         return true;
     }
 
-    auto url = CookURLForLANShare(share);
-    auto mountpoint = CookMountPointForLANShare(share);
-    auto username = share.user.empty() ? nil : [NSString stringWithUTF8StdString:share.user];
-    auto passwd = _password.empty() ? nil : [NSString stringWithUTF8StdString:_password];
-    auto open_options = static_cast<NSMutableDictionary *>([@{@"UIOption": @"NoUI"} mutableCopy]);
-    auto mount_options = (!mountpoint || !IsEmptyDirectory(share.mountpoint))
-                             ? nil
-                             : static_cast<NSMutableDictionary *>(
-                                   [@{@"MountAtMountDir": @true} mutableCopy]);
+    const auto url = CookURLForLANShare(share);
+    const auto mountpoint = CookMountPointForLANShare(share);
+    const auto username = share.user.empty() ? nil : [NSString stringWithUTF8StdString:share.user];
+    const auto passwd = _password.empty() ? nil : [NSString stringWithUTF8StdString:_password];
+    const auto open_options = static_cast<NSMutableDictionary *>([@{@"UIOption": @"NoUI"} mutableCopy]);
+    const auto mount_options = (!mountpoint || !IsEmptyDirectory(share.mountpoint))
+                                   ? nil
+                                   : static_cast<NSMutableDictionary *>(
+                                         [@{@"MountAtMountDir": @true} mutableCopy]);
 
-    auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
+    const auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
         NetFSCallback(status, requestID, mountpoints);
     };
 
@@ -710,12 +710,12 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
                                           callback);
 
     if( result != 0 ) {
-        auto error = NetFSErrorString(result);
+        const auto error = NetFSErrorString(result);
         dispatch_to_main_queue([error, _callback] { _callback("", error); });
         return false;
     }
 
-    auto lock = std::lock_guard{m_PendingMountRequestsLock};
+    const auto lock = std::lock_guard{m_PendingMountRequestsLock};
     m_PendingMountRequests.emplace_back(request_id, std::move(_callback));
     return true;
 }

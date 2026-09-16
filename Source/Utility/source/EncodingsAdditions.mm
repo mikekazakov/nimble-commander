@@ -34,7 +34,7 @@ static struct {
 
 const char *NameFromEncoding(Encoding _encoding)
 {
-    for( auto i : g_Names )
+    for( const auto i : g_Names )
         if( i.encoding == _encoding )
             return i.name;
     return "ENCODING_INVALID";
@@ -42,7 +42,7 @@ const char *NameFromEncoding(Encoding _encoding)
 
 Encoding EncodingFromName(const char *_name)
 {
-    for( auto i : g_Names )
+    for( const auto i : g_Names )
         if( strcmp(i.name, _name) == 0 )
             return i.encoding;
     return Encoding::ENCODING_INVALID;

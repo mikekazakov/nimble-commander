@@ -57,7 +57,7 @@ HostDirObservationTicket::operator bool() const noexcept
 void HostDirObservationTicket::reset()
 {
     if( valid() ) {
-        if( auto h = m_Host.lock() )
+        if( const auto h = m_Host.lock() )
             h->StopDirChangeObserving(m_Ticket);
         m_Ticket = 0;
         m_Host.reset();
@@ -99,7 +99,7 @@ FileObservationToken::operator bool() const noexcept
 void FileObservationToken::reset() noexcept
 {
     if( *this ) {
-        if( auto host = m_Host.lock() )
+        if( const auto host = m_Host.lock() )
             host->StopObservingFileChanges(m_Token);
         m_Token = 0;
         m_Host.reset();
@@ -185,7 +185,7 @@ bool Host::IsSymlink(std::string_view _path, unsigned long _flags, const VFSCanc
 std::expected<uint64_t, Error> Host::CalculateDirectorySize(std::string_view _path,
                                                             const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     std::queue<std::filesystem::path> look_paths;
@@ -329,13 +329,13 @@ std::expected<void, Error> Host::SetPermissions([[maybe_unused]] std::string_vie
 
 const std::shared_ptr<Host> &Host::DummyHost()
 {
-    [[clang::no_destroy]] static auto host = std::make_shared<Host>("", nullptr, Host::UniqueTag);
+    [[clang::no_destroy]] static const auto host = std::make_shared<Host>("", nullptr, Host::UniqueTag);
     return host;
 }
 
 VFSConfiguration Host::Configuration() const
 {
-    [[clang::no_destroy]] static auto config = VFSConfiguration(VFSHostConfiguration());
+    [[clang::no_destroy]] static const auto config = VFSConfiguration(VFSHostConfiguration());
     return config;
 }
 
@@ -379,7 +379,7 @@ std::expected<VFSListingPtr, Error> Host::FetchSingleItemListing(std::string_vie
     // as we came here - there's no special implementation in derived class,
     // so need to try to emulate it with available methods.
 
-    if( !_path.starts_with("/") )
+    if( !_path.starts_with('/') )
         return std::unexpected(nc::Error{nc::Error::POSIX, EINVAL});
 
     const std::string_view directory = utility::PathManip::Parent(_path);

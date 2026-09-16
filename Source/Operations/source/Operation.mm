@@ -285,7 +285,7 @@ bool Operation::IsWaitingForUIResponse() const noexcept
 void Operation::AbortUIWaiting() noexcept
 {
     const auto guard = std::lock_guard{m_PendingResponseLock};
-    if( auto r = m_PendingResponse.lock() )
+    if( const auto r = m_PendingResponse.lock() )
         r->Abort();
 }
 

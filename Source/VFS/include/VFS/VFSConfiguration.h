@@ -52,7 +52,7 @@ public:
     template <class T>
     [[nodiscard]] const T &Get() const
     {
-        if( auto p = std::dynamic_pointer_cast<const Model<T>>(m_Object) )
+        if( const auto p = std::dynamic_pointer_cast<const Model<T>>(m_Object) )
             return p->obj;
         throw std::domain_error("invalid configuration request");
     }

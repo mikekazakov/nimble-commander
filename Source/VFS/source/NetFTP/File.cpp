@@ -42,7 +42,7 @@ std::expected<void, Error> File::Close()
     }
 
     if( m_CURL ) {
-        auto host = std::dynamic_pointer_cast<FTPHost>(Host());
+        const auto host = std::dynamic_pointer_cast<FTPHost>(Host());
         host->CommitIOInstanceAtDir(DirName().c_str(), std::move(m_CURL));
     }
 
@@ -64,7 +64,7 @@ std::filesystem::path File::DirName() const
 std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     Log::Trace("File::Open({}) called", _open_flags);
-    auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
+    const auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
     const std::expected<VFSStat, Error> stat = ftp_host->Stat(Path(), 0, _cancel_checker);
     Log::Trace("stat is {}", stat ? "ok" : "not ok");
 

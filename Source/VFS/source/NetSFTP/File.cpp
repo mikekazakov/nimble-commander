@@ -23,7 +23,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags,
     if( IsOpened() )
         std::ignore = Close();
 
-    auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
+    const auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
     std::expected<std::unique_ptr<SFTPHost::Connection>, Error> conn = sftp_host->GetConnection();
     if( !conn )
         return std::unexpected(conn.error());

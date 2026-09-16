@@ -447,7 +447,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
         if( I->shell_type == ShellType::ZSH ) {
             // say ZSH to not put into history any commands starting with space character
-            auto cmd = std::string_view(g_ZSHHistControlCmd);
+            const auto cmd = std::string_view(g_ZSHHistControlCmd);
             I->master_write_lock.lock();
             const ssize_t write_res = write(I->master_fd, cmd.data(), cmd.length());
             I->master_write_lock.unlock();
@@ -557,7 +557,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
 void ShellTask::SetOnChildOutput(OnChildOutput _callback)
 {
-    auto local = std::lock_guard{I->callback_lock};
+    const auto local = std::lock_guard{I->callback_lock};
     I->on_child_output = std::make_shared<OnChildOutput>(std::move(_callback));
 }
 
@@ -622,7 +622,7 @@ void ShellTask::Impl::DoCalloutOnChildOutput(const void *_d, size_t _sz)
 {
     if( _sz && _d ) {
         callback_lock.lock();
-        auto clbk = on_child_output;
+        const auto clbk = on_child_output;
         callback_lock.unlock();
 
         if( clbk && *clbk )
@@ -679,7 +679,7 @@ void ShellTask::Impl::DoOnPwdPromptCallout(std::string_view _cwd, bool _changed)
 {
     Log::Trace("shell PID={} current working directory: '{}', changed={}", shell_pid.load(), _cwd, _changed);
     callback_lock.lock();
-    auto on_pwd = on_pwd_prompt;
+    const auto on_pwd = on_pwd_prompt;
     callback_lock.unlock();
 
     if( on_pwd && *on_pwd )
@@ -810,7 +810,7 @@ void ShellTask::Impl::SetState(TaskState _new_state)
     state = _new_state;
 
     callback_lock.lock();
-    auto callback = on_state_changed;
+    const auto callback = on_state_changed;
     callback_lock.unlock();
 
     if( callback && *callback )
@@ -843,11 +843,11 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     // now compose a command to feed the shell with
     std::string child_feed;
     // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
-    child_feed += "\x03";
+    child_feed += '\003';
     child_feed += " cd ";
     // cd command don't like trailing slashes, so remove it
     child_feed += EscapeShellFeed(EnsureNoTrailingSlash(requested_cwd));
-    child_feed += "\n";
+    child_feed += '\n';
 
     // and send it
     WriteChildInput(child_feed);
@@ -916,7 +916,7 @@ void ShellTask::ExecuteWithFullPath(const std::filesystem::path &_binary_path, s
         cmd += ' ';
         cmd += EscapeShellFeed(arg);
     }
-    cmd += "\n";
+    cmd += '\n';
 
     I->SetState(TaskState::ProgramExternal);
     WriteChildInput(cmd);

@@ -34,7 +34,7 @@ bool Delete::Predicate(PanelController *_target) const
 
 void Delete::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto items = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
+    const auto items = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
     if( items->empty() )
         return;
 
@@ -54,7 +54,7 @@ void Delete::Perform(PanelController *_target, id /*_sender*/) const
         sheet.defaultType = nc::ops::DeletionType::Permanent;
     }
 
-    auto sheet_handler = ^(NSModalResponse returnCode) {
+    const auto sheet_handler = ^(NSModalResponse returnCode) {
       if( returnCode == NSModalResponseOK ) {
           const auto operation = std::make_shared<nc::ops::Deletion>(std::move(*items), sheet.resultType);
           AddPanelRefreshEpilog(_target, *operation);
@@ -134,7 +134,7 @@ void context::DeletePermanently::Perform(PanelController *_target, id /*_sender*
 
 static bool CommonDeletePredicate(PanelController *_target)
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     if( !i || !i.Host()->IsWritable() )
         return false;
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
@@ -158,7 +158,7 @@ static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSMan
     const auto directories = ExtractDirectories(_c);
 
     const bool all_have_trash = std::ranges::all_of(directories, [&](const std::string &dir) {
-        if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->interfaces.has_trash )
+        if( const auto vol = _fsman.VolumeFromPath(dir); vol && vol->interfaces.has_trash )
             return true;
         return false;
     });
@@ -169,7 +169,7 @@ static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSMan
 
     // otherwise, speculate a bit and try doing trash on locally-mounted volumes as well
     const bool all_are_local = std::ranges::all_of(directories, [&](const std::string &dir) {
-        if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->mount_flags.local )
+        if( const auto vol = _fsman.VolumeFromPath(dir); vol && vol->mount_flags.local )
             return true;
         return false;
     });

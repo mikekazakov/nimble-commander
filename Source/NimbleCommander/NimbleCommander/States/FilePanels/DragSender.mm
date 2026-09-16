@@ -66,14 +66,14 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
     const auto drag_items = [[NSMutableArray alloc] initWithCapacity:vfs_items.size()];
     for( const auto &item : vfs_items ) {
         // dragging item itself
-        auto pasterboard_item = [[PanelDraggingItem alloc] initWithItem:item];
+        const auto pasterboard_item = [[PanelDraggingItem alloc] initWithItem:item];
         [pasterboard_item setDataProvider:dragging_source forTypes:pasteboard_types];
         pasterboard_item.icon = m_IconCallback(item);
 
         [dragging_source addItem:pasterboard_item];
 
         // visual appearance of a dragging item
-        auto drag_item = [[NSDraggingItem alloc] initWithPasteboardWriter:pasterboard_item];
+        const auto drag_item = [[NSDraggingItem alloc] initWithPasteboardWriter:pasterboard_item];
         drag_item.draggingFrame = NSMakeRect(std::floor(position.x), std::floor(position.y), 32, 32);
 
         __weak PanelDraggingItem *weak_pb_item = pasterboard_item;

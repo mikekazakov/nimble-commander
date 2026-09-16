@@ -34,9 +34,9 @@ static nc::config::Value HistoryEntryToJSONObject(const History::Entry &_entry)
 static std::optional<History::Entry> JSONObjectToHistoryEntry(const nc::config::Value &_object)
 {
     using namespace rapidjson;
-    auto has_string = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsString(); };
-    auto has_number = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsNumber(); };
-    auto has_bool = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsBool(); };
+    const auto has_string = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsString(); };
+    const auto has_number = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsNumber(); };
+    const auto has_bool = [&](const char *_key) { return _object.HasMember(_key) && _object[_key].IsBool(); };
 
     History::Entry e;
 
@@ -92,8 +92,8 @@ History::History(nc::config::Config &_global_config, nc::config::Config &_state_
 
 void History::AddEntry(Entry _entry)
 {
-    auto lock = std::lock_guard{m_HistoryLock};
-    auto it = std::ranges::find_if(m_History, [&](auto &_i) { return _i.path == _entry.path; });
+    const auto lock = std::lock_guard{m_HistoryLock};
+    const auto it = std::ranges::find_if(m_History, [&](auto &_i) { return _i.path == _entry.path; });
     if( it != std::end(m_History) )
         m_History.erase(it);
     m_History.push_front(std::move(_entry));
@@ -104,8 +104,8 @@ void History::AddEntry(Entry _entry)
 
 std::optional<History::Entry> History::EntryByPath(const std::string &_path) const
 {
-    auto lock = std::lock_guard{m_HistoryLock};
-    auto it = std::ranges::find_if(m_History, [&](auto &_i) { return _i.path == _path; });
+    const auto lock = std::lock_guard{m_HistoryLock};
+    const auto it = std::ranges::find_if(m_History, [&](auto &_i) { return _i.path == _path; });
     if( it != std::end(m_History) )
         return *it;
     return std::nullopt;
@@ -128,7 +128,7 @@ History::SaveOptions History::Options() const
 
 bool History::Enabled() const
 {
-    auto options = Options();
+    const auto options = Options();
     return options.encoding || options.mode || options.position || options.wrapping || options.selection ||
            options.language;
 }
@@ -137,7 +137,7 @@ void History::SaveToStateConfig() const
 {
     nc::config::Value entries(rapidjson::kArrayType);
     {
-        auto lock = std::lock_guard{m_HistoryLock};
+        const auto lock = std::lock_guard{m_HistoryLock};
         for( auto &e : m_History ) {
             auto o = HistoryEntryToJSONObject(e);
             if( o.GetType() != rapidjson::kNullType )
@@ -151,7 +151,7 @@ void History::LoadFromStateConfig()
 {
     using namespace rapidjson;
     auto entries = m_StateConfig.Get(m_StateConfigPath);
-    auto lock = std::lock_guard{m_HistoryLock};
+    const auto lock = std::lock_guard{m_HistoryLock};
     if( entries.GetType() == kArrayType ) {
         for( auto i = entries.Begin(), e = entries.End(); i != e; ++i )
             if( auto c = JSONObjectToHistoryEntry(*i) )
@@ -161,7 +161,7 @@ void History::LoadFromStateConfig()
 
 void History::ClearHistory()
 {
-    auto lock = std::lock_guard{m_HistoryLock};
+    const auto lock = std::lock_guard{m_HistoryLock};
     m_History.clear();
 }
 

@@ -291,7 +291,7 @@ TEST_CASE("Config ignores broken overwrites data")
 TEST_CASE("Config saves overwrites")
 {
     auto json = R"({"abra": {"cadabra": {"alakazam": 42} } })";
-    auto storage = std::make_shared<NonPersistentOverwritesStorage>("");
+    const auto storage = std::make_shared<NonPersistentOverwritesStorage>("");
 
     {
         ConfigImpl config{json, storage};
@@ -307,7 +307,7 @@ TEST_CASE("Config saves overwritten entries which are absent in defaults")
 {
     auto json1 = R"({"abra": {"cadabra": {"alakazam": 42} } })";
     auto json2 = R"({"abra2": {"cadabra": {"alakazam": 50} } })";
-    auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);
+    const auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);
 
     {
         ConfigImpl config{json1, storage};
@@ -368,7 +368,7 @@ TEST_CASE("Config reloads externally changed overwrites")
 {
     auto json1 = R"({"abra": {"cadabra": {"alakazam": 42} } })";
     auto json2 = R"({"abra": {"cadabra": {"alakazam": 17} } })";
-    auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);
+    const auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);
     ConfigImpl config{json1, storage};
     int num_called = 0;
     config.ObserveForever("abra.cadabra.alakazam", [&] { num_called++; });

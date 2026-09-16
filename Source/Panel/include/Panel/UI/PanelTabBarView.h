@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonnull, nonatomic, readonly) NSColor *regularNotKeyWndBackgroundColor;
 @property(nonnull, nonatomic, readonly) NSColor *separatorColor;
 @property(nonnull, nonatomic, readonly) NSColor *pictogramColor;
-- (void)observeChangesWith:(void (^)(void))_callback;
+- (void)observeChangesWith:(void (^)())_callback;
 @end
 
 NS_ASSUME_NONNULL_END

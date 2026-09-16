@@ -9,7 +9,7 @@
 
 static NSTextField *CreateStockTF()
 {
-    auto tf = [[NSTextField alloc] initWithFrame:NSRect()];
+    const auto tf = [[NSTextField alloc] initWithFrame:NSRect()];
     [tf setTranslatesAutoresizingMaskIntoConstraints:NO];
     [tf setEditable:false];
     [tf setBordered:false];
@@ -118,13 +118,13 @@ static NSTextField *CreateStockTF()
     const auto text_font = [NSFont labelFontOfSize:11];
     const auto digits_font = [NSFont monospacedDigitSystemFontOfSize:11 weight:NSFontWeightRegular];
     const auto tf_right_aligned_for_digits = [digits_font] {
-        auto tf = CreateStockTF();
+        const auto tf = CreateStockTF();
         tf.alignment = NSTextAlignmentRight;
         tf.font = digits_font;
         return tf;
     };
     const auto tf_for_text = [text_font] {
-        auto tf = CreateStockTF();
+        const auto tf = CreateStockTF();
         tf.font = text_font;
         return tf;
     };
@@ -247,10 +247,10 @@ static NSTextField *CreateStockTF()
                                                                      line5,
                                                                      line6);
         auto vis_fmt = [cpu_box, cpu_box_views](NSString *_format) {
-            auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
-                                                                options:0
-                                                                metrics:nil
-                                                                  views:cpu_box_views];
+            const auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:cpu_box_views];
             [cpu_box addConstraints:csts];
         };
         vis_fmt(@"|-(==8)-[cpu_sysload_title]-(==8)-[m_TextCPULoadSystem(>=60)]-(==8)-|");
@@ -381,10 +381,10 @@ static NSTextField *CreateStockTF()
                                                                      line5,
                                                                      line6);
         auto vis_fmt = [ram_box, ram_box_views](NSString *_format) {
-            auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
-                                                                options:0
-                                                                metrics:nil
-                                                                  views:ram_box_views];
+            const auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:ram_box_views];
             [ram_box addConstraints:csts];
         };
         vis_fmt(@"|-(==8)-[ram_total_title]-(==8)-[m_TextMemTotal]-(==8)-|");
@@ -453,10 +453,10 @@ static NSTextField *CreateStockTF()
         NSDictionary *system_box_views =
             NSDictionaryOfVariableBindings(m_TextComputerName, m_TextUserName, line2, computer_title, user_title);
         auto vis_fmt = [system_box, system_box_views](NSString *_format) {
-            auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
-                                                                options:0
-                                                                metrics:nil
-                                                                  views:system_box_views];
+            const auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:system_box_views];
             [system_box addConstraints:csts];
         };
         vis_fmt(@"|-(==8)-[computer_title]-(==8)-[m_TextComputerName]-(==8)-|");
@@ -522,10 +522,10 @@ static NSTextField *CreateStockTF()
                                                                      m_TextVolumeTotalBytes,
                                                                      m_TextVolumeAvailBytes);
         auto vis_fmt = [storage_box, storage_views](NSString *_format) {
-            auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
-                                                                options:0
-                                                                metrics:nil
-                                                                  views:storage_views];
+            const auto csts = [NSLayoutConstraint constraintsWithVisualFormat:_format
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:storage_views];
             [storage_box addConstraints:csts];
         };
         vis_fmt(@"|-(==8)-[vol_title]-(==8)-[m_TextVolumeName]-(==8)-|");

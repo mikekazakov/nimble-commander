@@ -33,7 +33,7 @@ TEST_CASE(PREFIX "Adoption of existing CoreFoundation object")
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     CHECK(CFGetRetainCount(array) == 1);
     {
-        auto p = CFPtr<CFMutableArrayRef>::adopt(array);
+        const auto p = CFPtr<CFMutableArrayRef>::adopt(array);
         CHECK(CFGetRetainCount(array) == 1);
         CHECK(p.get() == array);
         CHECK(static_cast<bool>(p) == true);
@@ -43,7 +43,7 @@ TEST_CASE(PREFIX "Adoption of existing CoreFoundation object")
 TEST_CASE(PREFIX "Copy constructor")
 {
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
-    auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
+    const auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     CFPtr<CFMutableArrayRef> p2(p1); // NOLINT
     CHECK(CFGetRetainCount(array) == 2);
@@ -53,7 +53,7 @@ TEST_CASE(PREFIX "Copy constructor")
 TEST_CASE(PREFIX "Converting copy constructor")
 {
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
-    auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
+    const auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     const CFPtr<CFArrayRef> p2(p1);
     CHECK(CFGetRetainCount(array) == 2);
@@ -66,7 +66,7 @@ TEST_CASE(PREFIX "Move constructor")
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
-    auto p2 = std::move(p1);
+    const auto p2 = std::move(p1);
     CHECK(CFGetRetainCount(array) == 1);
     CHECK(p1.get() == nullptr);
     // NOLINTEND(bugprone-use-after-move)
@@ -87,7 +87,7 @@ TEST_CASE(PREFIX "Converting move constructor")
 TEST_CASE(PREFIX "Assignment operator")
 {
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
-    auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
+    const auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     CFPtr<CFMutableArrayRef> p2;
     p2 = p1;
@@ -101,7 +101,7 @@ TEST_CASE(PREFIX "Assignment operator")
 TEST_CASE(PREFIX "Converting assignment operator")
 {
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
-    auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
+    const auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
     CHECK(CFGetRetainCount(array) == 1);
     CFPtr<CFArrayRef> p2;
     p2 = p1;
@@ -163,7 +163,7 @@ TEST_CASE(PREFIX "reset")
 {
     CFMutableArrayRef array = CFArrayCreateMutable(nullptr, 0, nullptr);
     auto p1 = CFPtr<CFMutableArrayRef>::adopt(array);
-    auto p2 = p1;
+    const auto p2 = p1;
     CHECK(CFGetRetainCount(array) == 2);
 
     p1.reset();

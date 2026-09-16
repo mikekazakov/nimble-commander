@@ -82,7 +82,7 @@ static PreferencesWindowThemesTabGroupNode *SpawnGroupNode(NSString *_descriptio
 
 NSArray *BuildThemeSettingsNodesTree()
 {
-    auto fp_general_nodes = @[
+    const auto fp_general_nodes = @[
         SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
         SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
         SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor"),
@@ -90,7 +90,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Top separator color", "filePanelsGeneralTopSeparatorColor"),
     ];
 
-    auto fp_tabs_nodes = @[
+    const auto fp_tabs_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsTabsFont"),
         SpawnColorNode(@"Text color", "filePanelsTabsTextColor"),
         SpawnColorNode(@"Selected & key window & active", "filePanelsTabsSelectedKeyWndActiveBackgroundColor"),
@@ -103,7 +103,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Pictogram", "filePanelsTabsPictogramColor")
     ];
 
-    auto fp_header_nodes = @[
+    const auto fp_header_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsHeaderFont"),
         SpawnColorNode(@"Regular text color", "filePanelsHeaderTextColor"),
         SpawnColorNode(@"Active text color", "filePanelsHeaderActiveTextColor"),
@@ -112,7 +112,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor")
     ];
 
-    auto fp_footer_nodes = @[
+    const auto fp_footer_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsFooterFont"),
         SpawnColorNode(@"Regular text color", "filePanelsFooterTextColor"),
         SpawnColorNode(@"Active text color", "filePanelsFooterActiveTextColor"),
@@ -121,7 +121,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Separator", "filePanelsFooterSeparatorsColor")
     ];
 
-    auto fp_brief_nodes = @[
+    const auto fp_brief_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsBriefFont"),
         SpawnIntNode(@"Row vertical padding", "filePanelsBriefRowVerticalPadding"),
         SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
@@ -132,7 +132,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Selected item background", "filePanelsBriefSelectedItemBackgroundColor")
     ];
 
-    auto fp_list_nodes = @[
+    const auto fp_list_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsListFont"),
         SpawnIntNode(@"Row vertical padding", "filePanelsListRowVerticalPadding"),
         SpawnIntNode(@"Secondary text opacity (%)", "filePanelsListSecondaryColumnsOpacity"),
@@ -148,7 +148,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
     ];
 
-    auto fp_gallery_nodes = @[
+    const auto fp_gallery_nodes = @[
         SpawnFontNode(@"Text font", "filePanelsGalleryFont"),
         SpawnColorNode(@"Background", "filePanelsGalleryBackgroundColor"),
         SpawnColorNode(@"Focused item background, active", "filePanelsGalleryFocusedActiveItemBackgroundColor"),
@@ -156,7 +156,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Selected item background", "filePanelsGallerySelectedItemBackgroundColor")
     ];
 
-    auto fp_group = SpawnGroupNode(@"File panels", @[
+    const auto fp_group = SpawnGroupNode(@"File panels", @[
         SpawnGroupNode(@"General", fp_general_nodes),
         SpawnGroupNode(@"Tabs", fp_tabs_nodes),
         SpawnGroupNode(@"Header", fp_header_nodes),
@@ -166,7 +166,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnGroupNode(@"Gallery mode", fp_gallery_nodes)
     ]);
 
-    auto viewer_nodes = @[
+    const auto viewer_nodes = @[
         SpawnFontNode(@"Text font", "viewerFont"),
         SpawnColorNode(@"Overlay color", "viewerOverlayColor"),
         SpawnColorNode(@"Foreground color", "viewerTextColor"),
@@ -181,7 +181,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"Background color", "viewerBackgroundColor")
     ];
 
-    auto term_nodes = @[
+    const auto term_nodes = @[
         SpawnFontNode(@"Text font", "terminalFont"),
         SpawnColorNode(@"Overlay color", "terminalOverlayColor"),
         SpawnColorNode(@"Foreground color", "terminalForegroundColor"),
@@ -207,7 +207,7 @@ NSArray *BuildThemeSettingsNodesTree()
         SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
     ];
 
-    auto general_nodes = @[
+    const auto general_nodes = @[
         [[PreferencesWindowThemesTabItemNode alloc] initWithTitle:@"Theme title"
                                                          forEntry:"themeName"
                                                            ofType:PreferencesWindowThemesTabItemType::ThemeTitle],

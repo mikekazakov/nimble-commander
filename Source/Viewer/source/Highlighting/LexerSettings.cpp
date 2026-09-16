@@ -57,7 +57,7 @@ std::expected<LexerSettings, std::string> ParseLexerSettings(std::string_view _j
                 std::string key = it.key();
                 std::string value = it.value();
 
-                auto key_it = g_SCENames.find(key);
+                const auto key_it = g_SCENames.find(key);
                 if( key_it == g_SCENames.end() ) {
                     return std::unexpected{fmt::format("Unknown style '{}'", key)};
                 }

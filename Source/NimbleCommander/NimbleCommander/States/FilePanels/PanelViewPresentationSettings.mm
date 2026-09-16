@@ -9,7 +9,7 @@ PanelViewFilenameTrimming GetCurrentFilenamesTrimmingMode() noexcept
 {
     static PanelViewFilenameTrimming mode = [] {
         const auto v = static_cast<PanelViewFilenameTrimming>(GlobalConfig().GetInt(g_ConfigTrimmingMode));
-        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_ConfigTrimmingMode, [] {
+        [[clang::no_destroy]] static const auto ticket = GlobalConfig().Observe(g_ConfigTrimmingMode, [] {
             mode = static_cast<PanelViewFilenameTrimming>(GlobalConfig().GetInt(g_ConfigTrimmingMode));
         });
         return v;
@@ -22,7 +22,7 @@ ByteCountFormatter::Type GetFileSizeFormat() noexcept
 {
     static ByteCountFormatter::Type format = [] {
         const auto v = static_cast<ByteCountFormatter::Type>(GlobalConfig().GetInt(g_ConfigFileSizeFormat));
-        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_ConfigFileSizeFormat, [] {
+        [[clang::no_destroy]] static const auto ticket = GlobalConfig().Observe(g_ConfigFileSizeFormat, [] {
             format = static_cast<ByteCountFormatter::Type>(GlobalConfig().GetInt(g_ConfigFileSizeFormat));
         });
         return v;
@@ -35,7 +35,7 @@ ByteCountFormatter::Type GetSelectionSizeFormat() noexcept
 {
     static ByteCountFormatter::Type format = [] {
         const auto v = static_cast<ByteCountFormatter::Type>(GlobalConfig().GetInt(g_ConfigSelectionSizeFormat));
-        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_ConfigSelectionSizeFormat, [] {
+        [[clang::no_destroy]] static const auto ticket = GlobalConfig().Observe(g_ConfigSelectionSizeFormat, [] {
             format = static_cast<ByteCountFormatter::Type>(GlobalConfig().GetInt(g_ConfigSelectionSizeFormat));
         });
         return v;

@@ -12,7 +12,7 @@ using nc::base::CFPtr;
 std::string UTIDBImpl::UTIForExtension(std::string_view _extension) const
 {
     const std::lock_guard lock{m_ExtensionToUTILock};
-    if( auto i = m_ExtensionToUTI.find(_extension); i != std::end(m_ExtensionToUTI) )
+    if( const auto i = m_ExtensionToUTI.find(_extension); i != std::end(m_ExtensionToUTI) )
         return i->second;
 
     std::string uti;

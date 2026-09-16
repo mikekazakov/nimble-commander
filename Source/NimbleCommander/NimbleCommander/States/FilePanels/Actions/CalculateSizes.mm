@@ -11,7 +11,7 @@ namespace nc::panel::actions {
 
 bool CalculateSizes::Predicate(PanelController *_target) const
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     return i && (i.IsDir() || _target.data.Stats().selected_dirs_amount > 0);
 }
 
@@ -26,7 +26,7 @@ void CalculateAllSizes::Perform(PanelController *_target, id /*_sender*/) const
 {
     std::vector<VFSListingItem> items;
     auto &data = _target.data;
-    for( auto ind : data.SortedDirectoryEntries() )
+    for( const auto ind : data.SortedDirectoryEntries() )
         if( auto e = data.EntryAtRawPosition(ind) )
             if( e.IsDir() )
                 items.emplace_back(std::move(e));

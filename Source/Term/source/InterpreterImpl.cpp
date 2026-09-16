@@ -172,8 +172,8 @@ void InterpreterImpl::ProcessText(const input::UTF8Text &_text)
 
     const int sx = m_Screen.Width();
 
-    auto curr_line_ends_with_mcg = [&]() -> bool {
-        auto line = m_Screen.Buffer().LineFromNo(m_Screen.CursorY());
+    const auto curr_line_ends_with_mcg = [&]() -> bool {
+        const auto line = m_Screen.Buffer().LineFromNo(m_Screen.CursorY());
         return line.back().l == Screen::MultiCellGlyph;
     };
 
@@ -529,43 +529,43 @@ void InterpreterImpl::ProcessClearTab(input::TabClear _tab_clear)
 
 void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _attributes)
 {
-    auto set_fg = [this](std::optional<Color> _color) {
+    const auto set_fg = [this](std::optional<Color> _color) {
         m_Rendition.fg_color = _color;
         m_Screen.SetFgColor(_color);
     };
-    auto set_bg = [this](std::optional<Color> _color) {
+    const auto set_bg = [this](std::optional<Color> _color) {
         m_Rendition.bg_color = _color;
         m_Screen.SetBgColor(_color);
     };
-    auto set_faint = [this](bool _faint) {
+    const auto set_faint = [this](bool _faint) {
         m_Rendition.faint = _faint;
         m_Screen.SetFaint(_faint);
     };
-    auto set_inverse = [this](bool _inverse) {
+    const auto set_inverse = [this](bool _inverse) {
         m_Rendition.inverse = _inverse;
         m_Screen.SetReverse(_inverse);
     };
-    auto set_bold = [this](bool _bold) {
+    const auto set_bold = [this](bool _bold) {
         m_Rendition.bold = _bold;
         m_Screen.SetBold(_bold);
     };
-    auto set_italic = [this](bool _italic) {
+    const auto set_italic = [this](bool _italic) {
         m_Rendition.italic = _italic;
         m_Screen.SetItalic(_italic);
     };
-    auto set_invisible = [this](bool _invisible) {
+    const auto set_invisible = [this](bool _invisible) {
         m_Rendition.invisible = _invisible;
         m_Screen.SetInvisible(_invisible);
     };
-    auto set_blink = [this](bool _blink) {
+    const auto set_blink = [this](bool _blink) {
         m_Rendition.blink = _blink;
         m_Screen.SetBlink(_blink);
     };
-    auto set_underline = [this](bool _underline) {
+    const auto set_underline = [this](bool _underline) {
         m_Rendition.underline = _underline;
         m_Screen.SetUnderline(_underline);
     };
-    auto set_crossed = [this](bool _crossed) {
+    const auto set_crossed = [this](bool _crossed) {
         m_Rendition.crossed = _crossed;
         m_Screen.SetCrossed(_crossed);
     };
@@ -671,7 +671,7 @@ void InterpreterImpl::Response(std::string_view _text)
 static std::u16string ConvertUTF8ToUTF16(std::string_view _utf8)
 {
     // temp and slow implementation
-    auto str = base::CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_utf8));
+    const auto str = base::CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_utf8));
     if( !str )
         return {};
 

@@ -72,7 +72,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Chinese symbols")
         0x5a, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00};
     static const unsigned int __3_zip_len = 208;
 
-    auto check = [](std::span<const std::byte> _bytes) {
+    const auto check = [](std::span<const std::byte> _bytes) {
         const TestDir dir;
         const auto path = std::filesystem::path(dir.directory) / "tmp.zip";
         REQUIRE(nc::base::WriteAtomically(path, _bytes));
@@ -206,7 +206,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Cyrillic symbols")
     static const unsigned int __4_zip_len = 169;
 #endif
 
-    auto check = [](std::span<const std::byte> _bytes) {
+    const auto check = [](std::span<const std::byte> _bytes) {
         const TestDir dir;
         const auto path = std::filesystem::path(dir.directory) / "tmp.zip";
         REQUIRE(nc::base::WriteAtomically(path, _bytes));
@@ -433,7 +433,7 @@ TEST_CASE(PREFIX "Symlinks handling")
     CHECK(host->StatTotalDirs() == 2);
     CHECK(host->StatTotalRegs() == 1);
 
-    auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
+    const auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
     CHECK(readsym("/r/l0") == "f");
     CHECK(readsym("/r/l1") == "./f");
     CHECK(readsym("/r/l2") == "l1");
@@ -453,7 +453,7 @@ TEST_CASE(PREFIX "Symlinks handling")
     CHECK(readsym("/r/d/l4") == "../d/../d/../d/../f");
     CHECK(readsym("/r/d/l5") == "./../l3");
 
-    auto symlink = [&](const char *_path) -> const ArchiveHost::Symlink & {
+    const auto symlink = [&](const char *_path) -> const ArchiveHost::Symlink & {
         const arc::DirEntry *entry = host->FindEntry(_path);
         REQUIRE(entry);
         const ArchiveHost::Symlink *symlink = host->ResolvedSymlink(entry->aruid);
@@ -513,7 +513,7 @@ TEST_CASE(PREFIX "Symlinks handling - invalid values")
     CHECK(host->StatTotalDirs() == 1);
     CHECK(host->StatTotalRegs() == 0);
 
-    auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
+    const auto readsym = [&](const char *_path) -> std::string { return host->ReadSymlink(_path).value(); };
     CHECK(readsym("/r/l0") == "nada");
     CHECK(readsym("/r/l1") == "../nada");
     CHECK(readsym("/r/l2") == "../.././../../././../nada");
@@ -521,7 +521,7 @@ TEST_CASE(PREFIX "Symlinks handling - invalid values")
     CHECK(readsym("/r/l4") == "../nada");
     CHECK(readsym("/r/l5") == ".././r/./nada");
 
-    auto symlink = [&](const char *_path) -> const ArchiveHost::Symlink & {
+    const auto symlink = [&](const char *_path) -> const ArchiveHost::Symlink & {
         const arc::DirEntry *entry = host->FindEntry(_path);
         REQUIRE(entry);
         const ArchiveHost::Symlink *symlink = host->ResolvedSymlink(entry->aruid);
@@ -2082,7 +2082,7 @@ TEST_CASE(PREFIX "synthetic directories can be correctly resolved")
     REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(arc_tar_gz), std::size(arc_tar_gz)}));
     std::shared_ptr<ArchiveHost> host;
     REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
-    auto readsym = [&](const std::string_view _path) -> std::string { return host->ReadSymlink(_path).value(); };
+    const auto readsym = [&](const std::string_view _path) -> std::string { return host->ReadSymlink(_path).value(); };
     REQUIRE(host->IsDirectory("/etc", VFSFlags::None));
     REQUIRE(host->IsDirectory("/etc/rc0.d", VFSFlags::None));
     REQUIRE(host->IsSymlink("/etc/rc0.d/K01cryptdisks-early", VFSFlags::F_NoFollow));

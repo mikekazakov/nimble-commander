@@ -20,7 +20,7 @@ static CURL *SpawnOrThrow()
     return curl;
 }
 
-static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
+static size_t CURLWriteDataIntoString(const void *buffer, size_t size, size_t nmemb, void *userp)
 {
     const auto sz = size * nmemb;
     auto &str = *reinterpret_cast<std::string *>(userp);

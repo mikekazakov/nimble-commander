@@ -28,7 +28,7 @@ std::expected<void, Error> File::Open(unsigned long _open_flags, const VFSCancel
     if( _open_flags & VFSFlags::OF_Write )
         return std::unexpected(Error{Error::POSIX, ENOTSUP}); // ArchiveFile is Read-Only
 
-    auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
+    const auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
 
     StackAllocator alloc;
     std::pmr::string file_path(&alloc);

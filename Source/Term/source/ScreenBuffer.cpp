@@ -67,7 +67,7 @@ std::span<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_number) noexce
 
 ScreenBuffer::Space ScreenBuffer::At(int x, int y) const
 {
-    auto line = LineFromNo(y);
+    const auto line = LineFromNo(y);
     if( line.empty() )
         throw std::invalid_argument("ScreenBuffer::At(): invalid row");
     if( x < 0 || x >= static_cast<long>(line.size()) )
@@ -107,7 +107,7 @@ std::vector<uint16_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, 
     std::vector<uint16_t> unicode;
     auto curr = _begin;
     while( curr < _end ) {
-        auto line = LineFromNo(curr.y);
+        const auto line = LineFromNo(curr.y);
 
         if( line.empty() ) {
             curr.y++;
@@ -132,7 +132,7 @@ std::vector<uint16_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, 
                 }
             }
             else {
-                auto cf_str = m_Registry.Decode(sp.l);
+                const auto cf_str = m_Registry.Decode(sp.l);
                 assert(cf_str);
                 const auto len = CFStringGetLength(cf_str.get());
                 const auto curr_size = unicode.size();
@@ -166,13 +166,13 @@ ScreenBuffer::DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end) co
 
     auto curr = _begin;
 
-    auto put = [&](uint16_t _unichar) {
+    const auto put = [&](uint16_t _unichar) {
         unichars.emplace_back(_unichar);
         positions.emplace_back(curr);
     };
 
     while( curr < _end ) {
-        auto line = LineFromNo(curr.y);
+        const auto line = LineFromNo(curr.y);
 
         if( line.empty() ) {
             curr.y++;
@@ -255,7 +255,7 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _options) const
                     result += i->l;
                 }
                 else {
-                    auto cf_str = m_Registry.Decode(i->l);
+                    const auto cf_str = m_Registry.Decode(i->l);
                     assert(cf_str);
                     Append(cf_str.get(), result);
                 }
@@ -272,7 +272,7 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _options) const
 
 void ScreenBuffer::LoadScreenFromANSI(std::string_view _dump)
 {
-    for( auto &l : m_OnScreenLines ) {
+    for( const auto &l : m_OnScreenLines ) {
         for( auto i = &m_OnScreenSpaces[l.start_index], e = i + l.line_length; i != e; ++i ) {
             if( _dump.empty() )
                 return;
@@ -320,7 +320,7 @@ void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_
         throw std::out_of_range("TermScreenBuffer::ResizeScreen - screen sizes can't be zero");
 
     using ConstIt = std::vector<std::tuple<std::vector<Space>, bool>>::const_iterator;
-    auto fill_scr_from_declines = [this](ConstIt _i, ConstIt _e) {
+    const auto fill_scr_from_declines = [this](ConstIt _i, ConstIt _e) {
         size_t l = 0;
         for( ; _i != _e; ++_i, ++l ) {
             std::copy(std::begin(std::get<0>(*_i)),
@@ -329,7 +329,7 @@ void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_
             m_OnScreenLines[l].is_wrapped = std::get<1>(*_i);
         }
     };
-    auto fill_bkscr_from_declines = [this](ConstIt _i, ConstIt _e) {
+    const auto fill_bkscr_from_declines = [this](ConstIt _i, ConstIt _e) {
         for( ; _i != _e; ++_i ) {
             LineMeta lm;
             lm.start_index = static_cast<int>(m_BackScreenSpaces.size());
@@ -342,7 +342,7 @@ void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_
     };
 
     if( _merge_with_backscreen ) {
-        auto comp_lines = ComposeContinuousLines(-BackScreenLines(), Height());
+        const auto comp_lines = ComposeContinuousLines(-BackScreenLines(), Height());
         auto decomp_lines = DecomposeContinuousLines(comp_lines, _new_sx);
 
         m_BackScreenLines.clear();
@@ -435,14 +435,14 @@ bool ScreenBuffer::HasOccupiedChars(const Space *_begin, const Space *_end) noex
 
 unsigned ScreenBuffer::OccupiedChars(int _line_no) const
 {
-    if( auto l = LineFromNo(_line_no); !l.empty() )
+    if( const auto l = LineFromNo(_line_no); !l.empty() )
         return OccupiedChars(l);
     return 0;
 }
 
 bool ScreenBuffer::HasOccupiedChars(int _line_no) const
 {
-    if( auto l = LineFromNo(_line_no); !l.empty() )
+    if( const auto l = LineFromNo(_line_no); !l.empty() )
         return HasOccupiedChars(l.data(), l.data() + l.size());
     return false;
 }

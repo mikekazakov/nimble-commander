@@ -10,10 +10,10 @@ VFSBundleIconsCacheImpl::~VFSBundleIconsCacheImpl() = default;
 
 NSImage *VFSBundleIconsCacheImpl::IconIfHas(const std::string &_file_path, VFSHost &_host)
 {
-    auto key = MakeKey(_file_path, _host);
+    const auto key = MakeKey(_file_path, _host);
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         if( m_Icons.count(key) )
             return m_Icons.at(key);
     }
@@ -26,15 +26,15 @@ NSImage *VFSBundleIconsCacheImpl::ProduceIcon(const std::string &_file_path, VFS
     auto key = MakeKey(_file_path, _host);
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         if( m_Icons.count(key) )
             return m_Icons.at(key);
     }
 
-    auto image = ProduceBundleIcon(_file_path, _host);
+    const auto image = ProduceBundleIcon(_file_path, _host);
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         m_Icons.insert(std::move(key), image);
     }
 
@@ -105,7 +105,7 @@ NSImage *VFSBundleIconsCacheImpl::ProduceBundleIcon(const std::string &_path, VF
     if( !plist )
         return nullptr;
 
-    auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
+    const auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
     if( !icon_str )
         return nil;
     if( !icon_str.fileSystemRepresentation )

@@ -29,13 +29,13 @@ static NSString *OpTitlePreffix(bool _copying)
 
 static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *_to)
 {
-    auto fmt = localizable::CopyingTitleSingleSuffix();
+    const auto fmt = localizable::CopyingTitleSingleSuffix();
     return [NSString stringWithFormat:fmt, OpTitlePreffix(_copying), _item, _to];
 }
 
 static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
 {
-    auto fmt = localizable::CopyingTitleMultiSuffix();
+    const auto fmt = localizable::CopyingTitleMultiSuffix();
     return [NSString stringWithFormat:fmt, OpTitlePreffix(_copying), [NSNumber numberWithInt:_items], _to];
 }
 
@@ -51,15 +51,15 @@ CopyingTitleBuilder::CopyingTitleBuilder(const std::vector<VFSListingItem> &_sou
 std::string CopyingTitleBuilder::TitleForPreparing() const
 {
     if( m_SourceFiles.size() == 1 ) {
-        auto name = m_SourceFiles.front().FilenameNS();
-        auto fmt = m_Options.docopy ? localizable::CopyingTitlePreparingToCopySingle()
-                                    : localizable::CopyingTitlePreparingToMoveSingle();
+        const auto name = m_SourceFiles.front().FilenameNS();
+        const auto fmt = m_Options.docopy ? localizable::CopyingTitlePreparingToCopySingle()
+                                          : localizable::CopyingTitlePreparingToMoveSingle();
         return [NSString stringWithFormat:fmt, name].UTF8String;
     }
     else {
-        auto amount = [NSNumber numberWithInt:static_cast<int>(m_SourceFiles.size())];
-        auto fmt = m_Options.docopy ? localizable::CopyingTitlePreparingToCopyMulti()
-                                    : localizable::CopyingTitlePreparingToMoveMulti();
+        const auto amount = [NSNumber numberWithInt:static_cast<int>(m_SourceFiles.size())];
+        const auto fmt = m_Options.docopy ? localizable::CopyingTitlePreparingToCopyMulti()
+                                          : localizable::CopyingTitlePreparingToMoveMulti();
         return [NSString stringWithFormat:fmt, amount].UTF8String;
     }
 }

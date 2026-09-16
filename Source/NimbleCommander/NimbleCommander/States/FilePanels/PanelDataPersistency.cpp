@@ -302,7 +302,7 @@ std::string PanelDataPersistency::MakeFootprintString(const PersistentLocation &
     for( auto &h : _loc.hosts ) {
         if( std::any_cast<Native>(&h) ) {
             footprint += VFSNativeHost::UniqueTag;
-            footprint += "|";
+            footprint += '|';
         }
         else if( std::any_cast<PSFS>(&h) ) {
             footprint += vfs::PSHost::UniqueTag;
@@ -310,27 +310,27 @@ std::string PanelDataPersistency::MakeFootprintString(const PersistentLocation &
         }
         else if( auto xattr = std::any_cast<XAttr>(&h) ) {
             footprint += vfs::XAttrHost::UniqueTag;
-            footprint += "|";
+            footprint += '|';
             footprint += xattr->junction;
         }
         else if( auto network = std::any_cast<Network>(&h) ) {
             if( auto conn = m_ConnectionsManager.ConnectionByUUID(network->connection) ) {
                 footprint += VFSTagForNetworkConnection(*conn);
-                footprint += "|";
+                footprint += '|';
                 footprint += NetworkConnectionsManager::MakeConnectionPath(*conn);
             }
         }
         else if( auto la = std::any_cast<ArcLA>(&h) ) {
             footprint += vfs::ArchiveHost::UniqueTag;
-            footprint += "|";
+            footprint += '|';
             footprint += la->junction;
         }
         else if( auto la_raw = std::any_cast<ArcLARaw>(&h) ) {
             footprint += vfs::ArchiveRawHost::UniqueTag;
-            footprint += "|";
+            footprint += '|';
             footprint += la_raw->junction;
         }
-        footprint += "|";
+        footprint += '|';
     }
 
     footprint += _loc.path;
@@ -522,12 +522,12 @@ std::expected<VFSHostPtr, Error> PanelDataPersistency::CreateVFSFromLocation(con
     }
 
     std::vector<VFSHostPtr> vfs;
-    auto alive_hosts = _inst_mgr.AliveHosts(); // make it optional perhaps?
+    const auto alive_hosts = _inst_mgr.AliveHosts(); // make it optional perhaps?
     try {
         for( auto &h : _state.hosts ) {
             const VFSHostPtr back = vfs.empty() ? nullptr : vfs.back();
 
-            if( auto exist = FindFitting(alive_hosts, h, back.get()) ) { // we're lucky!
+            if( const auto exist = FindFitting(alive_hosts, h, back.get()) ) { // we're lucky!
                 vfs.emplace_back(exist);
                 continue;
             }
@@ -543,12 +543,12 @@ std::expected<VFSHostPtr, Error> PanelDataPersistency::CreateVFSFromLocation(con
                 if( vfs.empty() )
                     return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
-                auto xattr_vfs = std::make_shared<vfs::XAttrHost>(xattr->junction.c_str(), vfs.back());
+                const auto xattr_vfs = std::make_shared<vfs::XAttrHost>(xattr->junction.c_str(), vfs.back());
                 vfs.emplace_back(xattr_vfs);
             }
             else if( auto network = std::any_cast<Network>(&h) ) {
                 if( auto conn = m_ConnectionsManager.ConnectionByUUID(network->connection) ) {
-                    if( auto host = m_ConnectionsManager.SpawnHostFromConnection(*conn) )
+                    if( const auto host = m_ConnectionsManager.SpawnHostFromConnection(*conn) )
                         vfs.emplace_back(host);
                     else
                         return std::unexpected(Error{Error::POSIX, EINVAL}); // failed to spawn connection
@@ -560,14 +560,14 @@ std::expected<VFSHostPtr, Error> PanelDataPersistency::CreateVFSFromLocation(con
                 if( vfs.empty() )
                     return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
-                auto host = std::make_shared<vfs::ArchiveHost>(la->junction.c_str(), vfs.back());
+                const auto host = std::make_shared<vfs::ArchiveHost>(la->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
             else if( auto la_raw = std::any_cast<ArcLARaw>(&h) ) {
                 if( vfs.empty() )
                     return std::unexpected(Error{Error::POSIX, EINVAL}); // invalid data
 
-                auto host = std::make_shared<vfs::ArchiveRawHost>(la_raw->junction.c_str(), vfs.back());
+                const auto host = std::make_shared<vfs::ArchiveRawHost>(la_raw->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
         }

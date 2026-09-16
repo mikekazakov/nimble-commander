@@ -58,7 +58,7 @@ static std::vector<std::string> GetHandlersPathsForNativeItem(std::string_view _
     const auto url = CFURLCreateFromFileSystemRepresentation(
         nullptr, reinterpret_cast<const UInt8 *>(_path.data()), _path.length(), false);
     if( url ) {
-        auto apps = (__bridge_transfer NSArray *)LSCopyApplicationURLsForURL(url, kLSRolesAll);
+        const auto apps = (__bridge_transfer NSArray *)LSCopyApplicationURLsForURL(url, kLSRolesAll);
         for( NSURL *app_url in apps )
             result.emplace_back(app_url.path.fileSystemRepresentation);
         CFRelease(url);
@@ -159,7 +159,7 @@ LauchServicesHandlers::LauchServicesHandlers(const std::vector<LauchServicesHand
         inserted.clear();
     }
 
-    for( auto &i : handlers_count )
+    for( const auto &i : handlers_count )
         if( i.second == static_cast<int>(_handlers_to_merge.size()) ) {
             m_Paths.emplace_back(i.first);
             if( i.first == default_handler )
@@ -193,7 +193,7 @@ struct CachedLaunchServiceHandler {
     static CachedLaunchServiceHandler GetLaunchHandlerInfo(const std::string &_handler_path)
     {
         const std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
-        if( auto i = g_HandlersByPath.find(_handler_path);
+        if( const auto i = g_HandlersByPath.find(_handler_path);
             i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
             return i->second;
         }
@@ -260,7 +260,7 @@ private:
 
 LaunchServiceHandler::LaunchServiceHandler(const std::string &_handler_path)
 {
-    auto handler = CachedLaunchServiceHandler::GetLaunchHandlerInfo(_handler_path);
+    const auto handler = CachedLaunchServiceHandler::GetLaunchHandlerInfo(_handler_path);
     m_AppID = handler.identifier;
     m_AppVersion = handler.version;
     m_AppName = handler.name;

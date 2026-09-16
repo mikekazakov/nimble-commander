@@ -40,11 +40,11 @@ TEST_CASE(PREFIX "VolumeFromFD")
 
     const int fd1 = open(p1, O_RDONLY);
     REQUIRE(fd1 >= 0);
-    auto close_fd1 = at_scope_end([=] { close(fd1); });
+    const auto close_fd1 = at_scope_end([=] { close(fd1); });
 
     const int fd2 = open(p2, O_RDONLY);
     REQUIRE(fd2 >= 0);
-    auto close_fd2 = at_scope_end([=] { close(fd2); });
+    const auto close_fd2 = at_scope_end([=] { close(fd2); });
 
     const NativeFSManagerImpl fsm;
     const auto info1 = fsm.VolumeFromFD(fd1);
@@ -69,18 +69,19 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
 
     NativeFSManagerImpl fsm;
-    auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
-    auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
+    const auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ "
+                            "-volname SomethingWickedThisWayComes12345 " +
+                            dmg_path.native();
+    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     auto volume_path = "/Volumes/SomethingWickedThisWayComes12345";
 
     {
         REQUIRE(Execute(create_cmd) == 0);
         REQUIRE(Execute(mount_cmd) == 0);
-        auto unmount = at_scope_end([&] { Execute(unmount_cmd); });
+        const auto unmount = at_scope_end([&] { Execute(unmount_cmd); });
 
-        auto predicate = [&]() -> bool {
+        const auto predicate = [&]() -> bool {
             auto volumes = fsm.Volumes();
             return std::ranges::any_of(volumes,
                                        [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
@@ -94,7 +95,7 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
         CHECK(volume->basic.total_bytes == 1007616);
     }
 
-    auto predicate = [&]() -> bool {
+    const auto predicate = [&]() -> bool {
         auto volumes = fsm.Volumes();
         return std::ranges::none_of(volumes,
                                     [&](const auto &volume) { return volume->mounted_at_path == volume_path; });
@@ -108,9 +109,10 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     const TempTestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
 
-    auto create_cmd =
-        "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path.native();
-    auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
+    const auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ "
+                            "-volname SomethingWickedThisWayComes12345 " +
+                            dmg_path.native();
+    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     auto rename_cmd = "/usr/sbin/diskutil rename /Volumes/SomethingWickedThisWayComes12345 "
                       "SomethingWickedThisWayComes123456";
     auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes123456";
@@ -120,12 +122,12 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     REQUIRE(Execute(create_cmd) == 0); // Flaky!
 
     NativeFSManagerImpl fsm;
-    auto predicate_old = [&]() -> bool {
+    const auto predicate_old = [&]() -> bool {
         auto volumes = fsm.Volumes();
         return std::ranges::any_of(volumes,
                                    [&](const auto &volume) { return volume->mounted_at_path == volume_path_old; });
     };
-    auto predicate_new = [&]() -> bool {
+    const auto predicate_new = [&]() -> bool {
         auto volumes = fsm.Volumes();
         return std::ranges::any_of(volumes,
                                    [&](const auto &volume) { return volume->mounted_at_path == volume_path_new; });
@@ -134,7 +136,7 @@ TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
     REQUIRE(predicate_new() == false);
 
     REQUIRE(Execute(mount_cmd) == 0);
-    auto unmount = at_scope_end([&] { Execute(unmount_cmd); });
+    const auto unmount = at_scope_end([&] { Execute(unmount_cmd); });
 
     REQUIRE(runMainLoopUntilExpectationOrTimeout(10s, predicate_old));
     REQUIRE(predicate_new() == false);

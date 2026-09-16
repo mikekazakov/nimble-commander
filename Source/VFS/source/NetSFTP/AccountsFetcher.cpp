@@ -115,7 +115,7 @@ std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaOpenDirec
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto uid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
+            const auto uid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
             users[name].first = static_cast<uint32_t>(std::atoi(uid_str.c_str()));
         }
 
@@ -123,7 +123,7 @@ std::expected<std::vector<VFSUser>, Error> AccountsFetcher::GetUsersViaOpenDirec
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto gecos = e.substr(fs);
+            const auto gecos = e.substr(fs);
             users[name].second = base::TrimLeft(gecos, ' ');
         }
 
@@ -155,7 +155,7 @@ std::expected<std::vector<VFSGroup>, Error> AccountsFetcher::GetGroupsViaOpenDir
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto gid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
+            const auto gid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
             groups[name].first = static_cast<uint32_t>(std::atoi(gid_str.c_str()));
         }
 
@@ -163,7 +163,7 @@ std::expected<std::vector<VFSGroup>, Error> AccountsFetcher::GetGroupsViaOpenDir
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto gecos = e.substr(fs);
+            const auto gecos = e.substr(fs);
             groups[name].second = base::TrimLeft(gecos, ' ');
         }
 

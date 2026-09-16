@@ -139,7 +139,7 @@ static const auto g_LongProcessDelay = 100ms;
 
     dispatch_to_main_queue([weak_self, cmds = std::move(cmds)] {
         FilePanelOverlappedTerminal *const me = weak_self;
-        if( auto lock = me->m_TermScrollView.screen.AcquireLock() )
+        if( const auto lock = me->m_TermScrollView.screen.AcquireLock() )
             me->m_Interpreter->Interpret(cmds);
         [me->m_TermScrollView.view.fpsDrawer invalidate];
         [me->m_TermScrollView.view adjustSizes:false];
@@ -271,7 +271,7 @@ static const auto g_LongProcessDelay = 100ms;
 
     auto esc = Task::EscapeShellFeed(_input);
     if( !esc.empty() ) {
-        esc += " ";
+        esc += ' ';
         m_Task->WriteChildInput(esc);
     }
 }

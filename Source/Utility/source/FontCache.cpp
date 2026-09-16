@@ -146,7 +146,7 @@ std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
     const auto full_name = base::CFPtr<CFStringRef>::adopt(CTFontCopyFullName(_basic_font));
     const double font_size = CTFontGetSize(_basic_font);
-    for( auto &i : g_Caches ) {
+    for( const auto &i : g_Caches ) {
         auto font = i.lock();
         const bool same_name = CFStringCompare(font->m_FontName.get(), full_name.get(), 0) == kCFCompareEqualTo;
         const bool same_size = std::fabs(font->Size() - font_size) < 0.1;
@@ -193,7 +193,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
     }
     else {
         // need to look up for fallback font
-        auto ctfont = CreateFallbackFontStraight(_c, m_CTFonts[0].get());
+        const auto ctfont = CreateFallbackFontStraight(_c, m_CTFonts[0].get());
         if( ctfont ) {
             r = CTFontGetGlyphsForCharacters(ctfont.get(), &_c, &g, 1);
             if( r ) // it should be true always, but for confidence...
@@ -257,7 +257,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
         return p;
     }
     else { // need to try fallback fonts
-        if( auto font_straight = CreateFallbackFontStraight(_c, m_CTFonts[0].get()) ) {
+        if( const auto font_straight = CreateFallbackFontStraight(_c, m_CTFonts[0].get()) ) {
             r = CTFontGetGlyphsForCharacters(font_straight.get(), utf16, g, 2);
             if( r ) {
                 if( !IsLastResortFont(font_straight.get()) ) { // ok, use it
@@ -269,7 +269,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
                     return p;
                 }
                 else { // try hard way to extract font from CoreText-made layout
-                    if( auto font_hard = CreateFallbackFontHardway(_c, m_CTFonts[0].get()) ) {
+                    if( const auto font_hard = CreateFallbackFontHardway(_c, m_CTFonts[0].get()) ) {
                         r = CTFontGetGlyphsForCharacters(font_hard.get(), utf16, g, 2);
                         if( r ) { // use this font
                             Pair p;

@@ -114,7 +114,7 @@ void LRUCache<_Key, _Value, _Capacity, _Hash>::insert(_Key _key, _Value _value)
             evict();
 
         m_LRU.emplace_front(std::move(_key), std::move(_value));
-        auto front = std::begin(m_LRU);
+        const auto front = std::begin(m_LRU);
         m_Map.emplace(std::make_pair(front->first, front));
     }
 }

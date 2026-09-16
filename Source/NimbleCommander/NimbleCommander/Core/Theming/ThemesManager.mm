@@ -177,7 +177,7 @@ void ThemesManager::LoadThemes()
     }
 
     // Load any new themes that were added into the defaults
-    for( auto &name : m_OrderedDefaultThemeNames ) {
+    for( const auto &name : m_OrderedDefaultThemeNames ) {
         if( !m_Themes.contains(name) ) {
             m_Themes.emplace(name, m_DefaultThemes.at(name));
         }
@@ -222,7 +222,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() cons
 
 std::shared_ptr<const nc::config::Value> ThemesManager::ThemeData(const std::string &_theme_name) const
 {
-    auto it = m_Themes.find(_theme_name);
+    const auto it = m_Themes.find(_theme_name);
     if( it != m_Themes.end() )
         return it->second;
 
@@ -254,7 +254,7 @@ bool ThemesManager::SetThemeValue(const std::string &_theme_name,
                                   const std::string &_key,
                                   const nc::config::Value &_value)
 {
-    auto it = m_Themes.find(_theme_name);
+    const auto it = m_Themes.find(_theme_name);
     if( it == m_Themes.end() )
         return false;
 
@@ -289,9 +289,9 @@ void ThemesManager::UpdateCurrentTheme()
     using namespace std::literals;
 
     // comprose new theme object
-    auto theme_data = SelectedThemeData();
+    const auto theme_data = SelectedThemeData();
     assert(theme_data);
-    auto new_theme = std::make_shared<Theme>(*theme_data, *BackupThemeData(m_SelectedThemeName));
+    const auto new_theme = std::make_shared<Theme>(*theme_data, *BackupThemeData(m_SelectedThemeName));
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;
@@ -324,7 +324,7 @@ void ThemesManager::WriteThemes() const
 {
     nc::config::Value json_themes{rapidjson::kArrayType};
     for( auto &tn : m_OrderedThemeNames ) {
-        auto i = m_Themes.find(tn);
+        const auto i = m_Themes.find(tn);
         assert(i != end(m_Themes));
 
         nc::config::Value theme{rapidjson::kObjectType};
@@ -367,11 +367,11 @@ bool ThemesManager::HasDefaultSettings(const std::string &_theme_name) const noe
 
 bool ThemesManager::DiscardThemeChanges(const std::string &_theme_name)
 {
-    auto ci = m_Themes.find(_theme_name);
+    const auto ci = m_Themes.find(_theme_name);
     if( ci == m_Themes.end() )
         return false;
 
-    auto di = m_DefaultThemes.find(_theme_name);
+    const auto di = m_DefaultThemes.find(_theme_name);
     if( di == m_DefaultThemes.end() )
         return false; // there's no "default" counterpart
 
@@ -396,7 +396,7 @@ bool ThemesManager::ImportThemeData(const std::string &_theme_name, const nc::co
     if( _data.GetType() != rapidjson::kObjectType )
         return false;
 
-    auto it = m_Themes.find(_theme_name);
+    const auto it = m_Themes.find(_theme_name);
     if( it == end(m_Themes) )
         return false;
 
@@ -546,7 +546,7 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
     if( m_Themes.contains(_to_name) )
         return false;
 
-    auto old_doc = ThemeData(_theme_name);
+    const auto old_doc = ThemeData(_theme_name);
     if( !old_doc || old_doc->GetType() != rapidjson::kObjectType )
         return false;
 
@@ -631,7 +631,7 @@ static std::string MigrateThemeName(const std::string &_name)
 
 static std::optional<std::string> ExtractThemeNameAppearance(const nc::config::Value &_doc)
 {
-    auto it = _doc.FindMember(g_NameKey);
+    const auto it = _doc.FindMember(g_NameKey);
     if( it == _doc.MemberEnd() )
         return {};
     if( !it->value.IsString() )

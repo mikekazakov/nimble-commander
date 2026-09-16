@@ -37,7 +37,7 @@ ActionsShortcutsManager::ActionsShortcutsManager(
 
     // Set up the shortcut defaults from the hardcoded map
     for( auto [action, shortcut_string] : _default_shortcuts ) {
-        if( auto it = m_ActionToTag.find(action); it != m_ActionToTag.end() ) {
+        if( const auto it = m_ActionToTag.find(action); it != m_ActionToTag.end() ) {
             m_ShortcutsDefaults[it->second] = SanitizedShortcuts(Shortcuts{Shortcut{shortcut_string}});
         }
     }
@@ -109,11 +109,11 @@ ActionsShortcutsManager::ShortcutsFromAction(std::string_view _action) const noe
 
 std::optional<ActionsShortcutsManager::Shortcuts> ActionsShortcutsManager::ShortcutsFromTag(int _tag) const noexcept
 {
-    if( auto sc_override = m_ShortcutsOverrides.find(_tag); sc_override != m_ShortcutsOverrides.end() ) {
+    if( const auto sc_override = m_ShortcutsOverrides.find(_tag); sc_override != m_ShortcutsOverrides.end() ) {
         return sc_override->second;
     }
 
-    if( auto sc_default = m_ShortcutsDefaults.find(_tag); sc_default != m_ShortcutsDefaults.end() ) {
+    if( const auto sc_default = m_ShortcutsDefaults.find(_tag); sc_default != m_ShortcutsDefaults.end() ) {
         return sc_default->second;
     }
 
@@ -123,7 +123,7 @@ std::optional<ActionsShortcutsManager::Shortcuts> ActionsShortcutsManager::Short
 std::optional<ActionsShortcutsManager::Shortcuts>
 ActionsShortcutsManager::DefaultShortcutsFromTag(int _tag) const noexcept
 {
-    if( auto sc_default = m_ShortcutsDefaults.find(_tag); sc_default != m_ShortcutsDefaults.end() ) {
+    if( const auto sc_default = m_ShortcutsDefaults.find(_tag); sc_default != m_ShortcutsDefaults.end() ) {
         return sc_default->second;
     }
     return {};
@@ -132,18 +132,18 @@ ActionsShortcutsManager::DefaultShortcutsFromTag(int _tag) const noexcept
 std::optional<ActionsShortcutsManager::ActionTags>
 ActionsShortcutsManager::ActionTagsFromShortcut(const Shortcut _sc, const std::string_view _in_domain) const noexcept
 {
-    auto it = m_ShortcutsUsage.find(_sc);
+    const auto it = m_ShortcutsUsage.find(_sc);
     if( it == m_ShortcutsUsage.end() )
         return std::nullopt; // this shortcut is not used at all
 
     ActionTags tags = it->second;
     if( !_in_domain.empty() ) {
         // need to filter the tag depending to their domain, aka action name prefix
-        auto not_in_domain = [&](const int tag) {
+        const auto not_in_domain = [&](const int tag) {
             return !ActionFromTag(tag).value_or(std::string_view{}).starts_with(_in_domain);
         };
 
-        auto to_erase = std::ranges::remove_if(tags, not_in_domain);
+        const auto to_erase = std::ranges::remove_if(tags, not_in_domain);
         tags.erase(to_erase.begin(), to_erase.end());
     }
 
@@ -247,7 +247,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     nc::config::Value overrides{kObjectType};
 
     for( auto &i : m_OriginalOrderedActions ) {
-        auto scover = m_ShortcutsOverrides.find(i.second);
+        const auto scover = m_ShortcutsOverrides.find(i.second);
         if( scover == m_ShortcutsOverrides.end() ) {
             continue;
         }
@@ -280,7 +280,7 @@ void ActionsShortcutsManager::RegisterShortcutUsage(const Shortcut _shortcut, co
     if( !static_cast<bool>(_shortcut) )
         return;
 
-    if( auto it = m_ShortcutsUsage.find(_shortcut); it == m_ShortcutsUsage.end() ) {
+    if( const auto it = m_ShortcutsUsage.find(_shortcut); it == m_ShortcutsUsage.end() ) {
         // this shortcut wasn't used before
         m_ShortcutsUsage[_shortcut].push_back(_tag);
     }
@@ -294,10 +294,10 @@ void ActionsShortcutsManager::RegisterShortcutUsage(const Shortcut _shortcut, co
 
 void ActionsShortcutsManager::UnregisterShortcutUsage(Shortcut _shortcut, int _tag) noexcept
 {
-    if( auto it = m_ShortcutsUsage.find(_shortcut); it != m_ShortcutsUsage.end() ) {
+    if( const auto it = m_ShortcutsUsage.find(_shortcut); it != m_ShortcutsUsage.end() ) {
         auto &tags = it->second;
 
-        auto to_erase = std::ranges::remove(tags, _tag);
+        const auto to_erase = std::ranges::remove(tags, _tag);
         tags.erase(to_erase.begin(), to_erase.end());
 
         if( tags.empty() ) {
@@ -333,7 +333,7 @@ ActionsShortcutsManager::Shortcuts ActionsShortcutsManager::SanitizedShortcuts(c
 
     // Remove any empty shortcuts.
     {
-        auto to_erase = std::ranges::remove_if(shortcuts, [](const Shortcut &_sc) { return _sc == Shortcut{}; });
+        const auto to_erase = std::ranges::remove_if(shortcuts, [](const Shortcut &_sc) { return _sc == Shortcut{}; });
         shortcuts.erase(to_erase.begin(), to_erase.end());
     }
 

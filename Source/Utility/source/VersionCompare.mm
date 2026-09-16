@@ -8,8 +8,7 @@ namespace nc::utility {
 
 namespace {
 
-struct SeparatorTag {
-};
+struct SeparatorTag {};
 
 using Token = std::variant<std::uint64_t, std::string_view, SeparatorTag>;
 

@@ -23,14 +23,14 @@ Task::~Task() = default;
 
 void Task::SetOnChildOutput(std::function<void(const void *_d, size_t _sz)> _callback)
 {
-    auto local = std::lock_guard{m_OnChildOutputLock};
+    const auto local = std::lock_guard{m_OnChildOutputLock};
     m_OnChildOutput = std::make_shared<decltype(_callback)>(std::move(_callback));
 }
 
 void Task::DoCalloutOnChildOutput(const void *_d, size_t _sz)
 {
     m_OnChildOutputLock.lock();
-    auto clbk = m_OnChildOutput;
+    const auto clbk = m_OnChildOutput;
     m_OnChildOutputLock.unlock();
 
     if( clbk && *clbk && _sz && _d )

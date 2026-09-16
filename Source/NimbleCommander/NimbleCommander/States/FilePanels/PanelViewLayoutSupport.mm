@@ -252,7 +252,7 @@ const std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::DefaultLay
 int PanelViewLayoutsStorage::DefaultLayoutIndex() const
 {
     for( int i = 1; i >= 0; --i )
-        if( auto l = GetLayout(i) )
+        if( const auto l = GetLayout(i) )
             if( !l->is_disabled() )
                 return i;
     return -1;
@@ -271,7 +271,7 @@ void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification(PanelViewLa
 void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory)
 {
     {
-        auto lock = std::lock_guard{m_LayoutsLock};
+        const auto lock = std::lock_guard{m_LayoutsLock};
         if( _at_index < 0 || _at_index >= static_cast<int>(m_Layouts.size()) )
             return;
         if( *m_Layouts[_at_index] == _layout )
@@ -293,7 +293,7 @@ void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
     if( !layouts.IsArray() )
         return;
 
-    auto lock = std::lock_guard{m_LayoutsLock};
+    const auto lock = std::lock_guard{m_LayoutsLock};
     m_Layouts.clear();
     for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
         if( auto l = LoadLayout(*i) )
@@ -306,12 +306,12 @@ void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
 {
     std::vector<std::shared_ptr<const PanelViewLayout>> layouts;
     {
-        auto lock = std::lock_guard{m_LayoutsLock};
+        const auto lock = std::lock_guard{m_LayoutsLock};
         layouts = m_Layouts;
     }
 
     config::Value json_layouts{rapidjson::kArrayType};
-    for( auto &l : layouts )
+    for( const auto &l : layouts )
         json_layouts.PushBack(SaveLayout(*l), config::g_CrtAllocator);
     GlobalConfig().Set(m_ConfigPath, json_layouts);
 }

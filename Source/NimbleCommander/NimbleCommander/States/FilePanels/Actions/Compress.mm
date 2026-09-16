@@ -59,19 +59,19 @@ bool CompressHere::Predicate(PanelController *_target) const
 
 void CompressHere::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto entries = _target.selectedEntriesOrFocusedEntry;
+    const auto entries = _target.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
 
-    auto dialog = [[NCOpsCompressDialog alloc] initWithItems:entries
-                                              destinationVFS:_target.vfs
-                                          initialDestination:_target.currentDirectoryPath];
+    const auto dialog = [[NCOpsCompressDialog alloc] initWithItems:entries
+                                                    destinationVFS:_target.vfs
+                                                initialDestination:_target.currentDirectoryPath];
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto op = std::make_shared<nc::ops::Compression>(entries, dialog.destination, _target.vfs, dialog.password);
+      const auto op = std::make_shared<nc::ops::Compression>(entries, dialog.destination, _target.vfs, dialog.password);
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = _target;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -98,7 +98,7 @@ bool CompressToOpposite::Predicate(PanelController *_target) const
     if( i.IsDotDot() && _target.data.Stats().selected_entries_amount == 0 )
         return false;
 
-    auto opposite = FindVisibleOppositeController(_target);
+    const auto opposite = FindVisibleOppositeController(_target);
     if( !opposite )
         return false;
 
@@ -111,19 +111,19 @@ void CompressToOpposite::Perform(PanelController *_target, id /*_sender*/) const
     if( !opposite_panel.isUniform || !opposite_panel.vfs->IsWritable() )
         return;
 
-    auto entries = _target.selectedEntriesOrFocusedEntry;
+    const auto entries = _target.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
 
-    auto dialog = [[NCOpsCompressDialog alloc] initWithItems:entries
-                                              destinationVFS:opposite_panel.vfs
-                                          initialDestination:opposite_panel.currentDirectoryPath];
+    const auto dialog = [[NCOpsCompressDialog alloc] initWithItems:entries
+                                                    destinationVFS:opposite_panel.vfs
+                                                initialDestination:opposite_panel.currentDirectoryPath];
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto op =
+      const auto op =
           std::make_shared<nc::ops::Compression>(entries, dialog.destination, opposite_panel.vfs, dialog.password);
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = opposite_panel;
@@ -168,7 +168,8 @@ bool context::CompressHere::ValidateMenuItem(PanelController *_target, NSMenuIte
 void context::CompressHere::Perform(PanelController *_target, id /*_sender*/) const
 {
     auto entries = m_Items;
-    auto op = std::make_shared<nc::ops::Compression>(std::move(entries), _target.currentDirectoryPath, _target.vfs);
+    const auto op =
+        std::make_shared<nc::ops::Compression>(std::move(entries), _target.currentDirectoryPath, _target.vfs);
 
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
@@ -188,7 +189,7 @@ context::CompressToOpposite::CompressToOpposite(nc::config::Config &_config, con
 
 bool context::CompressToOpposite::Predicate(PanelController *_target) const
 {
-    auto opposite = FindVisibleOppositeController(_target);
+    const auto opposite = FindVisibleOppositeController(_target);
     if( !opposite )
         return false;
 
@@ -219,7 +220,7 @@ void context::CompressToOpposite::Perform(PanelController *_target, id /*_sender
         return;
 
     auto entries = m_Items;
-    auto op = std::make_shared<nc::ops::Compression>(
+    const auto op = std::make_shared<nc::ops::Compression>(
         std::move(entries), opposite_panel.currentDirectoryPath, opposite_panel.vfs);
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
@@ -234,7 +235,7 @@ void context::CompressToOpposite::Perform(PanelController *_target, id /*_sender
 
 static PanelController *FindVisibleOppositeController(PanelController *_source)
 {
-    auto state = _source.state;
+    const auto state = _source.state;
     if( !state.bothPanelsAreVisible )
         return nil;
     if( [state isLeftController:_source] )

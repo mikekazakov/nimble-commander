@@ -49,7 +49,7 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
 {
     dispatch_is_main_queue();
     // there's no need to lock here because at this point no one can touch this object anymore
-    for( auto &watch : m_Watches ) {
+    for( const auto &watch : m_Watches ) {
         DeleteEventStream(watch.second.stream);
     }
     Log::Trace("FSEventsFileUpdateImpl destroyed");
@@ -59,13 +59,13 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
 uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path, std::function<void()> _handler)
 {
     assert(_handler);
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
 
     const auto token = m_NextTicket++;
     Log::Debug("Adding for path: {}, token: {}", _path, token);
     const auto was_empty = m_Watches.empty();
 
-    if( auto existing = m_Watches.find(_path); existing != m_Watches.end() ) {
+    if( const auto existing = m_Watches.find(_path); existing != m_Watches.end() ) {
         auto &watch = existing->second;
         assert(watch.handlers.contains(token) == false);
         watch.handlers.emplace(token, std::move(_handler));
@@ -90,7 +90,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
 
 void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
 {
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     for( auto watch_it = m_Watches.begin(), watch_end = m_Watches.end(); watch_it != watch_end; ++watch_it ) {
         auto &watch = watch_it->second;
         if( watch.handlers.contains(_token) ) {
@@ -125,7 +125,7 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
                                         .copyDescription = nullptr};
 
     FSEventStreamRef stream = nullptr;
-    auto create_schedule_and_run = [&] {
+    const auto create_schedule_and_run = [&] {
         stream = FSEventStreamCreate(nullptr,
                                      &FSEventsFileUpdateImpl::CallbackFFI,
                                      &context,
@@ -176,15 +176,15 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
     std::vector<std::string_view> paths(cpaths, cpaths + _num);
     paths.erase(std::ranges::unique(paths).begin(), paths.end());
 
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     const auto now = base::machtime();
-    for( auto path : paths ) {
+    for( const auto path : paths ) {
         Log::Debug("Callback fired for {}", path);
-        auto watches_it = m_Watches.find(path);
+        const auto watches_it = m_Watches.find(path);
         if( watches_it != m_Watches.end() ) {
             watches_it->second.stat = GetStat(watches_it->first); // sync I/O :`(
             watches_it->second.snapshot_time = now;
-            for( auto &handler : watches_it->second.handlers ) {
+            for( const auto &handler : watches_it->second.handlers ) {
                 // NB! no copy here => this call is NOT reenterant!
                 handler.second();
             }
@@ -209,7 +209,7 @@ void FSEventsFileUpdateImpl::ScheduleScannerKickstart()
     m_KickstartIsOnline = true;
     // schedule the next scanner execution after g_ScanInterval
     dispatch_after(m_ScanInterval, m_KickstartQueue, [context = m_WeakAsyncContext] {
-        if( auto instance = context.lock() )
+        if( const auto instance = context.lock() )
             instance->me->KickstartBackgroundScanner();
     });
 }
@@ -218,7 +218,7 @@ void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
 {
     dispatch_assert_background_queue();
 
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
 
     if( m_Watches.empty() ) {
         m_KickstartIsOnline = false;
@@ -244,13 +244,13 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesyste
                                                 const std::vector<std::optional<struct stat>> &_stats)
 {
     dispatch_assert_main_queue();
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
     ScheduleScannerKickstart();
 
     assert(_paths.size() == _stats.size());
     const auto now = base::machtime();
     for( size_t i = 0; i != _paths.size(); ++i ) {
-        auto it = m_Watches.find(_paths[i]);
+        const auto it = m_Watches.find(_paths[i]);
         if( it == m_Watches.end() )
             continue; // _paths[i] was removed in the meantime
 
@@ -260,7 +260,7 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesyste
 
         if( changed ) {
             Log::Debug("Callback fired for {}", _paths[i]);
-            for( auto &handler : it->second.handlers ) {
+            for( const auto &handler : it->second.handlers ) {
                 // NB! no copy here => this call is NOT reenterant!
                 handler.second();
             }
@@ -299,7 +299,7 @@ void FSEventsFileUpdateImpl::BackgroundScanner(std::vector<std::filesystem::path
         stats.emplace_back(GetStat(path));
 
     dispatch_to_main_queue([paths = std::move(_paths), stats = std::move(stats), _context] {
-        if( auto instance = _context.lock() )
+        if( const auto instance = _context.lock() )
             instance->me->AcceptScannedStats(paths, stats);
     });
 }

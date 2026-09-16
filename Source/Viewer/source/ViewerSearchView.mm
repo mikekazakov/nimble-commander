@@ -55,7 +55,10 @@
         const auto views =
             NSDictionaryOfVariableBindings(m_SearchProgressIndicator, m_SearchField, m_CloseButton, m_Background);
         const auto add = [&](NSString *_vf) {
-            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:nil views:views];
+            const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:views];
             [self addConstraints:constraints];
         };
 

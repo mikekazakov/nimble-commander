@@ -15,7 +15,7 @@ using nc::utility::AdaptiveDateFormatting;
 static NSString *FileSizeToString(const VFSListingItem &_dirent,
                                   const data::ItemVolatileData &_vd,
                                   ByteCountFormatter::Type _format,
-                                  ByteCountFormatter &_fmter)
+                                  const ByteCountFormatter &_fmter)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -40,67 +40,67 @@ static NSString *FileSizeToString(const VFSListingItem &_dirent,
 static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
                                                 int _total_files,
                                                 ByteCountFormatter::Type _format,
-                                                ByteCountFormatter &_fmter)
+                                                const ByteCountFormatter &_fmter)
 {
     const auto bytes = _fmter.ToNSString(_sz, _format);
     if( _total_files == 1 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 1 file",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 1 file",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 2 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 2 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 2 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 3 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 3 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 3 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 4 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 4 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 4 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 5 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 5 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 5 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 6 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 6 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 6 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 7 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 7 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 7 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 8 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 8 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 8 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else if( _total_files == 9 ) {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in 9 files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in 9 files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes];
     }
     else {
-        auto fmt =
-            NSLocalizedString(@"Selected %@ in %@ files",
-                              "Informative text for a bottom information bar in panels, showing size of selection");
+        const auto fmt = NSLocalizedString(@"Selected %@ in %@ files",
+                                           "Informative text for a bottom information "
+                                           "bar in panels, showing size of selection");
         return [NSString stringWithFormat:fmt, bytes, [NSNumber numberWithInt:_total_files]];
     }
 }
@@ -155,7 +155,7 @@ static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
                 [strong_self updateVolumeInfo];
         });
         m_Theme->ObserveChanges([weak_self] {
-            if( auto strong_self = weak_self )
+            if( const auto strong_self = weak_self )
                 [strong_self setupPresentation];
         });
 
@@ -276,7 +276,10 @@ static NSString *FormHumanReadableBytesAndFiles(uint64_t _sz,
                                                       m_VSeparatorLine2);
     const auto metrics = @{@"lm1": @400, @"lm2": @450};
     const auto ac = [&](NSString *_vf) {
-        auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf options:0 metrics:metrics views:views];
+        const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf
+                                                                         options:0
+                                                                         metrics:metrics
+                                                                           views:views];
         [self addConstraints:constraints];
     };
     ac(@"V:|-(0)-[m_SeparatorLine(==1)]");

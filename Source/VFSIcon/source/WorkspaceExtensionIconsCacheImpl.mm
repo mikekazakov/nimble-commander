@@ -47,7 +47,7 @@ NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension(const std::string &_
 
     {
         const auto lock = std::lock_guard{m_Lock};
-        if( auto i = m_Icons.find(_extension); i != m_Icons.end() ) {
+        if( const auto i = m_Icons.find(_extension); i != m_Icons.end() ) {
             Log::Trace("IconForExtension() found a cached icon for '{}'", _extension);
             return i->second;
         }

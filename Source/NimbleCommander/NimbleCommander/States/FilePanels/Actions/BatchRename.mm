@@ -19,7 +19,7 @@ static const auto g_ConfigReplacesPath = "filePanel.batchRename.lastReplaces";
 
 bool BatchRename::Predicate(PanelController *_target) const
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     return (!_target.isUniform || _target.vfs->IsWritable()) && i &&
            (!i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
     return true;
@@ -43,7 +43,7 @@ void BatchRename::Perform(PanelController *_target, id /*_sender*/) const
     sheet.replaceWithDataSource =
         [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigReplacesPath];
 
-    auto handler = ^(NSModalResponse returnCode) {
+    const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode == NSModalResponseOK ) {
           auto src_paths = sheet.filenamesSource;
           auto dst_paths = sheet.filenamesDestination;

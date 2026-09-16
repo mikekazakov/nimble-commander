@@ -20,7 +20,7 @@ const std::string *DisplayNamesCache::Internalize(std::string_view _string) noex
     assert(!_string.empty());
 
     const std::lock_guard lock{mtx};
-    if( auto it = strings.find(_string); it != strings.end() ) {
+    if( const auto it = strings.find(_string); it != strings.end() ) {
         return &*it;
     }
     else {
@@ -83,7 +83,7 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino, dev_t _dev, std::string_view _
     Inodes &inodes = m_Devices[_dev];
 
     // O(1) - find an entry for this inode
-    if( auto it = inodes.find(_ino); it != inodes.end() ) {
+    if( const auto it = inodes.find(_ino); it != inodes.end() ) {
         if( const Filename *existing_filename = std::get_if<Filename>(&it->second) ) {
             // There is one entry there already, we need to convert it to a vector with two elements
             std::vector<Filename> vec{*existing_filename, f};

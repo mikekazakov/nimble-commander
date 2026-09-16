@@ -84,7 +84,7 @@ void TagsStorage::Store()
     nc::config::Value tags{kArrayType};
     {
         const std::lock_guard lock{m_Mut};
-        for( auto &tag : m_Tags ) {
+        for( const auto &tag : m_Tags ) {
             tags.PushBack(nc::config::MakeStandaloneString(tag.Label()), nc::config::g_CrtAllocator);
             tags.PushBack(nc::config::MakeStandaloneString(std::to_string(std::to_underlying(tag.Color()))),
                           nc::config::g_CrtAllocator);

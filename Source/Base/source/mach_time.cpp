@@ -42,14 +42,14 @@ std::chrono::nanoseconds MachTimeBenchmark::Delta() const
 
 void MachTimeBenchmark::ResetNano(std::string_view _msg)
 {
-    auto now = machtime();
+    const auto now = machtime();
     fmt::println("{}{}{}ns", _msg, _msg.empty() ? "" : " ", (now - last).count());
     last = now;
 }
 
 void MachTimeBenchmark::ResetMicro(std::string_view _msg)
 {
-    auto now = machtime();
+    const auto now = machtime();
     fmt::println("{}{}{}um",
                  _msg,
                  _msg.empty() ? "" : " ",
@@ -59,7 +59,7 @@ void MachTimeBenchmark::ResetMicro(std::string_view _msg)
 
 void MachTimeBenchmark::ResetMilli(std::string_view _msg)
 {
-    auto now = machtime();
+    const auto now = machtime();
     fmt::println("{}{}{}ms",
                  _msg,
                  _msg.empty() ? "" : " ",

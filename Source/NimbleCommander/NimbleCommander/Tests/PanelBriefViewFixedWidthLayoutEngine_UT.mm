@@ -121,7 +121,7 @@ TEST_CASE(PREFIX "produces sane item attributes")
     FixedWidthLayoutEngine engine;
     engine.Layout(params);
 
-    auto attrs = engine.AttributesForItemNumber(29);
+    const auto attrs = engine.AttributesForItemNumber(29);
     CHECK(attrs.indexPath.item == 29);
     CHECK(attrs.frame.origin.x == Approx(450.0));
     CHECK(attrs.frame.origin.y == Approx(40.0));

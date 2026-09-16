@@ -19,7 +19,7 @@ static time_t ModificationTime(const std::string &_filepath);
 FileOverwritesStorage::FileOverwritesStorage(const std::filesystem::path &_file_path) : m_Path(_file_path)
 {
     Log::Trace("Created storage with path: {}", _file_path);
-    auto parent_path = _file_path.parent_path();
+    const auto parent_path = _file_path.parent_path();
     Log::Trace("Setting observation for directory: {}", parent_path);
     m_DirObservationTicket =
         FSEventsDirUpdate::Instance().AddWatchPath(parent_path.c_str(), [this] { OverwritesDirChanged(); });

@@ -78,7 +78,7 @@ TEST_CASE(PREFIX "PrettyString()")
         {.input = "\uF70D", .pretty = @"F10"},
     };
     for( auto &test_case : test_cases ) {
-        auto pretty = ActionShortcut(test_case.input).PrettyString();
+        const auto pretty = ActionShortcut(test_case.input).PrettyString();
         INFO(test_case.input);
         INFO(test_case.pretty.UTF8String);
         INFO(pretty.UTF8String);

@@ -27,10 +27,10 @@ void ConfigWiring::SetupOperationsPool()
 {
     constexpr auto path = "filePanel.operations.concurrencyPerWindow";
     const auto config = &m_Config;
-    auto update = [config] {
+    const auto update = [config] {
         const auto new_limit = config->GetInt(path);
         dispatch_to_main_queue([new_limit] {
-            for( auto wnd : NCAppDelegate.me.mainWindowControllers )
+            for( const NCMainWindowController *wnd : NCAppDelegate.me.mainWindowControllers )
                 wnd.operationsPool.SetConcurrency(new_limit);
         });
     };
@@ -41,14 +41,14 @@ void ConfigWiring::SetupOperationsPool()
 void ConfigWiring::SetupOperationsPoolEnqueFilter()
 {
     constexpr auto path = "filePanel.operations.concurrencyPerWindowDoesntApplyTo";
-    auto update = [this] {
+    const auto update = [this] {
         const auto new_list = m_Config.GetString(path);
         std::vector<std::string> entries;
         for( const auto str : std::views::split(std::string_view{new_list}, ',') )
-            if( auto trimmed = base::Trim(std::string_view{str}); !trimmed.empty() )
+            if( const auto trimmed = base::Trim(std::string_view{str}); !trimmed.empty() )
                 entries.emplace_back(trimmed);
         m_PoolFilter.Reset();
-        for( auto &entry : entries )
+        for( const auto &entry : entries )
             m_PoolFilter.Set(entry, false);
     };
     update();

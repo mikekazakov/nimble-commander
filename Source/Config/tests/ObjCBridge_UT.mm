@@ -15,7 +15,7 @@ TEST_CASE("ConfigBridge returns a valid value")
 {
     auto json = "{\"abra\":42}";
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
-    auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
+    const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
     const id value = [bridge valueForKeyPath:@"abra"];
     CHECK(static_cast<NSNumber *>(value).intValue == 42);
@@ -25,7 +25,7 @@ TEST_CASE("ConfigBridge returns a valid value from a nested value")
 {
     auto json = R"({"abra": {"cadabra": {"alakazam": "Hello"} } })";
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
-    auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
+    const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
     const id value = [bridge valueForKeyPath:@"abra.cadabra.alakazam"];
     CHECK([static_cast<NSString *>(value) isEqualToString:@"Hello"]);
@@ -35,7 +35,7 @@ TEST_CASE("ConfigBridge returns nil for an invalid path")
 {
     auto json = "{\"abra\":42}";
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
-    auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
+    const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
     const id value = [bridge valueForKeyPath:@"abra1"];
     CHECK(value == nil);
@@ -45,7 +45,7 @@ TEST_CASE("ConfigBridge can change a nested value")
 {
     auto json = R"({"abra": {"cadabra": {"alakazam": "Hello"} } })";
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
-    auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
+    const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
     [bridge setValue:@42 forKeyPath:@"abra.cadabra.alakazam"];
     CHECK(config.GetInt("abra.cadabra.alakazam") == 42);
@@ -55,7 +55,7 @@ TEST_CASE("ConfigBridge can set boolean values")
 {
     auto json = "{\"abra\": 42}";
     ConfigImpl config{json, MakeDummyStorage()}; // NOLINT
-    auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
+    const auto bridge = [[NCConfigObjCBridge alloc] initWithConfig:config];
 
     [bridge setValue:@YES forKeyPath:@"abra"];
     CHECK(config.GetBool("abra") == true);

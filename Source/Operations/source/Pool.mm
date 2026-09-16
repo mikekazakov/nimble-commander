@@ -8,8 +8,7 @@ namespace nc::ops {
 
 std::shared_ptr<Pool> Pool::Make()
 {
-    struct workaround : public Pool {
-    };
+    struct workaround : public Pool {};
     return std::make_shared<workaround>();
 }
 
@@ -192,9 +191,9 @@ void Pool::StopAndWaitForShutdown()
 {
     {
         const auto guard = std::lock_guard{m_Lock};
-        for( auto &o : m_PendingOperations )
+        for( const auto &o : m_PendingOperations )
             o->Stop();
-        for( auto &o : m_RunningOperations )
+        for( const auto &o : m_RunningOperations )
             o->Stop();
     }
 

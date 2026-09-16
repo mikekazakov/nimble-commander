@@ -36,7 +36,7 @@ void Base::GCDLimitedConcurrentQueue::Execute(std::function<void()> _block)
     if( _block == nullptr )
         return;
 
-    auto lock = std::lock_guard{m_AwaitingLock};
+    const auto lock = std::lock_guard{m_AwaitingLock};
 
     if( m_Scheduled < m_Concurrency ) {
         m_Scheduled++;
@@ -49,7 +49,7 @@ void Base::GCDLimitedConcurrentQueue::Execute(std::function<void()> _block)
 
 int Base::GCDLimitedConcurrentQueue::QueueLength() const
 {
-    auto lock = std::lock_guard{m_AwaitingLock};
+    const auto lock = std::lock_guard{m_AwaitingLock};
     return static_cast<int>(m_Awaiting.size());
 }
 
@@ -63,7 +63,7 @@ void Base::GCDLimitedConcurrentQueue::RunBlock(const std::function<void()> &_cli
         Log::Error("RunBlock(): unknown exception caught");
     }
 
-    auto lock = std::lock_guard{m_AwaitingLock};
+    const auto lock = std::lock_guard{m_AwaitingLock};
 
     if( !m_Awaiting.empty() ) {
         auto new_client_block = std::move(m_Awaiting.front());

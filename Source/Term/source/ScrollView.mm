@@ -72,7 +72,7 @@ static const NSEdgeInsets g_Insets = {.top = 2., .left = 5., .bottom = 2., .righ
 
         __weak NCTermScrollView *weak_self = self;
         m_SettingsNotificationTicket = m_Settings->StartChangesObserving([weak_self] {
-            if( auto strong_self = weak_self )
+            if( const auto strong_self = weak_self )
                 [strong_self onSettingsChanged];
         });
 

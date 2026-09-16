@@ -28,7 +28,7 @@ void GoToFolder::Perform(PanelController *_target, id /*_sender*/) const
     sheet.panel = _target;
     [sheet showSheetWithParentWindow:_target.window
                              handler:[=] {
-                                 auto c = std::make_shared<DirectoryChangeRequest>();
+                                 const auto c = std::make_shared<DirectoryChangeRequest>();
                                  c->RequestedDirectory = [_target expandPath:sheet.requestedPath];
                                  c->VFS = _target.isUniform ? _target.vfs
                                                             : nc::bootstrap::NativeVFSHostInstance().SharedPtr();
@@ -43,7 +43,7 @@ void GoToFolder::Perform(PanelController *_target, id /*_sender*/) const
 
 static void GoToNativeDir(const std::string &_path, PanelController *_target)
 {
-    auto request = std::make_shared<DirectoryChangeRequest>();
+    const auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = _path;
     request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     request->PerformAsynchronous = true;
@@ -108,7 +108,7 @@ void GoToRootFolder::Perform(PanelController *_target, id /*_sender*/) const
 
 void GoToProcessesList::Perform(PanelController *_target, id /*_sender*/) const
 {
-    auto request = std::make_shared<DirectoryChangeRequest>();
+    const auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = "/";
     request->VFS = vfs::PSHost::GetSharedOrNew();
     request->PerformAsynchronous = true;
@@ -122,10 +122,10 @@ GoToFavoriteLocation::GoToFavoriteLocation(NetworkConnectionsManager &_net_mgr) 
 
 void GoToFavoriteLocation::Perform(PanelController *_target, id _sender) const
 {
-    auto menuitem = objc_cast<NSMenuItem>(_sender);
+    const auto menuitem = objc_cast<NSMenuItem>(_sender);
     if( menuitem == nil )
         return;
-    auto holder = objc_cast<AnyHolder>(menuitem.representedObject);
+    const auto holder = objc_cast<AnyHolder>(menuitem.representedObject);
     if( holder == nil )
         return;
     auto location = std::any_cast<PersistentLocation>(&holder.any);
@@ -135,7 +135,7 @@ void GoToFavoriteLocation::Perform(PanelController *_target, id _sender) const
     auto restorer = AsyncPersistentLocationRestorer(_target, _target.vfsInstanceManager, m_NetMgr);
     auto handler = [path = location->path, panel = _target](VFSHostPtr _host) {
         dispatch_to_main_queue([=] {
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
@@ -163,7 +163,7 @@ bool GoToEnclosingFolder::Predicate(PanelController *_target) const
 void GoToEnclosingFolder::Perform(PanelController *_target, id _sender) const
 {
     if( _target.isUniform ) {
-        auto cur = std::filesystem::path(_target.data.DirectoryPathWithTrailingSlash());
+        const auto cur = std::filesystem::path(_target.data.DirectoryPathWithTrailingSlash());
         if( cur.empty() )
             return;
 
@@ -176,7 +176,7 @@ void GoToEnclosingFolder::Perform(PanelController *_target, id _sender) const
                 const std::string dir = junct.parent_path();
                 const std::string sel_fn = junct.filename();
 
-                auto request = std::make_shared<DirectoryChangeRequest>();
+                const auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = dir;
                 request->VFS = parent_vfs;
                 request->RequestFocusedEntry = sel_fn;
@@ -190,7 +190,7 @@ void GoToEnclosingFolder::Perform(PanelController *_target, id _sender) const
             const std::string dir = cur.parent_path().remove_filename();
             const std::string sel_fn = cur.parent_path().filename();
 
-            auto request = std::make_shared<DirectoryChangeRequest>();
+            const auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = dir;
             request->VFS = vfs;
             request->RequestFocusedEntry = sel_fn;
@@ -237,7 +237,7 @@ bool GoIntoFolder::Predicate(PanelController *_target) const
 
 bool GoIntoFolder::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    if( auto vfs_item = _target.view.item ) {
+    if( const auto vfs_item = _target.view.item ) {
         _item.title = [NSString
             stringWithFormat:NSLocalizedString(@"Enter \u201c%@\u201d", "Enter a directory"), vfs_item.DisplayNameNS()];
     }
@@ -255,7 +255,7 @@ void GoIntoFolder::Perform(PanelController *_target, id /*_sender*/) const
         if( item.IsDotDot() )
             actions::GoToEnclosingFolder{}.Perform(_target, _target);
 
-        auto request = std::make_shared<DirectoryChangeRequest>();
+        const auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = item.Path();
         request->VFS = item.Host();
         request->PerformAsynchronous = true;
@@ -268,15 +268,15 @@ void GoIntoFolder::Perform(PanelController *_target, id /*_sender*/) const
     if( eligible_to_check ) {
 
         auto task = [item, _target](const std::function<bool()> &_cancelled) {
-            auto pwd_ask = [=] {
+            const auto pwd_ask = [=] {
                 std::string p;
                 return RunAskForPasswordModalWindow(item.Filename(), p) ? p : "";
             };
 
-            auto arhost = vfs::VFSArchiveProxy::OpenFileAsArchive(item.Path(), item.Host(), pwd_ask, _cancelled);
+            const auto arhost = vfs::VFSArchiveProxy::OpenFileAsArchive(item.Path(), item.Host(), pwd_ask, _cancelled);
 
             if( arhost ) {
-                auto request = std::make_shared<DirectoryChangeRequest>();
+                const auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = "/";
                 request->VFS = arhost;
                 request->PerformAsynchronous = true;

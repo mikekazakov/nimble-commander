@@ -22,7 +22,7 @@ void IconRepositoryCleaner::SweepUnusedSlots()
     for( auto i = 0, e = m_Data.RawEntriesCount(); i < e; ++i ) {
         auto &vd = m_Data.VolatileDataAtRawPosition(i);
         if( vd.icon != vfsicon::IconRepository::InvalidKey ) {
-            auto it = std::ranges::lower_bound(used_slots, vd.icon);
+            const auto it = std::ranges::lower_bound(used_slots, vd.icon);
             if( it != std::end(used_slots) && *it == vd.icon )
                 still_in_use[std::distance(std::begin(used_slots), it)] = true;
         }

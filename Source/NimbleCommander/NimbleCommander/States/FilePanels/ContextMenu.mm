@@ -222,7 +222,7 @@ using namespace nc::panel;
         const std::vector<nc::utility::Tags::Tag> all_tags = NCAppDelegate.me.tagsStorage.Get();
         auto tag_state = [&](const nc::utility::Tags::Tag &_tag) -> NSControlStateValue {
             const auto count = std::ranges::count_if(m_Items, [&](const VFSListingItem &_item) -> bool {
-                auto item_tags = _item.Tags();
+                const auto item_tags = _item.Tags();
                 return std::ranges::find(item_tags, _tag) != item_tags.end();
             });
             if( count == 0 )

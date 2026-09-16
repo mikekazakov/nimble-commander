@@ -35,7 +35,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_i
         return {};
 
     {
-        auto lock = std::lock_guard{m_MemoryLock};
+        const auto lock = std::lock_guard{m_MemoryLock};
         // check if we have a weak_ptr to this instance
         // most of calls should end on this check:
         if( auto info = InfoFromVFSPtr_Unlocked(_instance) )
@@ -50,7 +50,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_i
         VFSHostPtr instance_recursive = _instance;
         while( instance_recursive ) {
             bool has_exising_match = false;
-            auto instance_config = instance_recursive->Configuration();
+            const auto instance_config = instance_recursive->Configuration();
             // find an info with matching configuration and requestd id
             for( auto &i : m_Memory )
                 if( i.m_Configuration == instance_config &&
@@ -90,7 +90,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_i
     }
 
     // no such exising info found, need to build it
-    auto instance = _instance;
+    const auto &instance = _instance;
 
     if( instance->Parent() )
         TameVFS(instance->Parent());
@@ -99,7 +99,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_i
 
     Promise result;
     {
-        auto lock = std::lock_guard{m_MemoryLock};
+        const auto lock = std::lock_guard{m_MemoryLock};
         // create new VFS info
 
         uint64_t parent_id = 0;
@@ -123,7 +123,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS(const VFSHostPtr &_i
 
 VFSInstanceManager::Promise VFSInstanceManagerImpl::PreserveVFS(const std::weak_ptr<VFSHost> &_instance)
 {
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     // check if we have a weak_ptr to this instance
     // most of calls should end on this check:
     if( auto info = InfoFromVFSWeakPtr_Unlocked(_instance) )
@@ -137,7 +137,7 @@ void VFSInstanceManagerImpl::IncPromiseCount(uint64_t _inst_id)
     if( _inst_id == 0 )
         return;
 
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     if( auto info = InfoFromID_Unlocked(_inst_id) )
         info->m_PromisesCount++;
 }
@@ -150,7 +150,7 @@ void VFSInstanceManagerImpl::DecPromiseCount(uint64_t _inst_id)
     bool fire_observers = false;
 
     {
-        auto lock = std::lock_guard{m_MemoryLock};
+        const auto lock = std::lock_guard{m_MemoryLock};
         if( auto info = InfoFromID_Unlocked(_inst_id) ) {
             assert(info->m_PromisesCount > 0);
             info->m_PromisesCount--;
@@ -161,7 +161,7 @@ void VFSInstanceManagerImpl::DecPromiseCount(uint64_t _inst_id)
 
                     if( info->m_ParentVFSID > 0 ) {
                         // remove refcount on parent vfs
-                        auto id_to_dec = info->m_ParentVFSID;
+                        const auto id_to_dec = info->m_ParentVFSID;
                         dispatch_to_background([=, this] { DecPromiseCount(id_to_dec); });
                     }
 
@@ -208,8 +208,8 @@ VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::InfoFromID_Unlocked(uint64
 void VFSInstanceManagerImpl::SweepDeadMemory()
 {
     {
-        auto lock = std::lock_guard{m_MemoryLock};
-        auto old_size = m_Memory.size();
+        const auto lock = std::lock_guard{m_MemoryLock};
+        const auto old_size = m_Memory.size();
         std::erase_if(m_Memory, [](const auto &i) { return i.m_WeakHost.expired() && i.m_PromisesCount == 0; });
 
         for( auto &i : m_Memory )
@@ -229,7 +229,7 @@ void VFSInstanceManagerImpl::EnrollAliveHost(const VFSHostPtr &_inst)
         return;
 
     {
-        auto lock = std::lock_guard{m_AliveHostsLock};
+        const auto lock = std::lock_guard{m_AliveHostsLock};
         if( std::ranges::any_of(m_AliveHosts,
                                 [&](auto &_i) { return !_i.owner_before(_inst) && !_inst.owner_before(_i); }) )
             return;
@@ -246,8 +246,8 @@ void VFSInstanceManagerImpl::EnrollAliveHost(const VFSHostPtr &_inst)
 void VFSInstanceManagerImpl::SweepDeadReferences()
 {
     {
-        auto lock = std::lock_guard{m_AliveHostsLock};
-        auto old_size = m_AliveHosts.size();
+        const auto lock = std::lock_guard{m_AliveHostsLock};
+        const auto old_size = m_AliveHosts.size();
         std::erase_if(m_AliveHosts, [](auto &i) { return i.expired(); });
         if( old_size == m_AliveHosts.size() )
             return; // no changes
@@ -261,7 +261,7 @@ VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS(const Promise &_promise, std::fun
         return nullptr;
     assert(InstanceFromPromise(_promise) == this);
 
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     auto info = InfoFromID_Unlocked(_promise.id());
     if( !info )
         return nullptr; // this should never happen!
@@ -271,13 +271,13 @@ VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS(const Promise &_promise, std::fun
 
 unsigned VFSInstanceManagerImpl::KnownVFSCount()
 {
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     return static_cast<unsigned>(m_Memory.size());
 }
 
 VFSInstanceManager::Promise VFSInstanceManagerImpl::GetVFSPromiseByPosition(unsigned _at)
 {
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     if( _at < m_Memory.size() )
         return SpawnPromiseFromInfo_Unlocked(m_Memory[_at]);
     return {};
@@ -289,7 +289,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::GetParentPromise(const Promi
         return {};
     assert(InstanceFromPromise(_promise) == this);
 
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     auto info = InfoFromID_Unlocked(_promise.id());
     if( !info || info->m_ParentVFSID == 0 )
         return {};
@@ -305,7 +305,7 @@ const char *VFSInstanceManagerImpl::GetTag(const Promise &_promise)
         return nullptr;
     assert(InstanceFromPromise(_promise) == this);
 
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     auto info = InfoFromID_Unlocked(_promise.id());
     if( !info )
         return nullptr; // this should never happen!
@@ -351,7 +351,7 @@ std::string VFSInstanceManagerImpl::GetVerboseVFSTitle(const Promise &_promise)
         return "";
     assert(InstanceFromPromise(_promise) == this);
 
-    auto lock = std::lock_guard{m_MemoryLock};
+    const auto lock = std::lock_guard{m_MemoryLock};
     std::string title;
     uint64_t next = _promise.id();
     while( next > 0 ) {
@@ -381,7 +381,7 @@ VFSInstanceManagerImpl::ObserveKnownVFSListChanged(std::function<void()> _callba
 std::vector<std::weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
 {
     std::vector<std::weak_ptr<VFSHost>> list;
-    auto lock = std::lock_guard{m_AliveHostsLock};
+    const auto lock = std::lock_guard{m_AliveHostsLock};
     list = m_AliveHosts;
     return list;
 }

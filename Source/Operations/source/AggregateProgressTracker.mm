@@ -29,7 +29,7 @@ void AggregateProgressTracker::AddPool(Pool &_pool)
 
     const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
     _pool.ObserveUnticketed(Pool::NotifyAboutChange, [weak_this] {
-        if( auto me = weak_this.lock() )
+        if( const auto me = weak_this.lock() )
             me->PoolsChanged();
     });
 }
@@ -46,7 +46,7 @@ void AggregateProgressTracker::PoolsChanged()
             m_IsUpdateScheduled = true;
             const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
             dispatch_to_main_queue_after(m_UpdateDelay, [weak_this] {
-                if( auto me = weak_this.lock() )
+                if( const auto me = weak_this.lock() )
                     me->Update();
             });
         }
@@ -55,7 +55,7 @@ void AggregateProgressTracker::PoolsChanged()
         m_IsTracking = false;
         const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
         dispatch_to_main_queue([weak_this] {
-            if( auto me = weak_this.lock() )
+            if( const auto me = weak_this.lock() )
                 me->Signal(InvalidProgess);
         });
     }
@@ -100,7 +100,7 @@ void AggregateProgressTracker::Update()
     if( m_IsTracking ) {
         const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
         dispatch_to_main_queue_after(m_UpdateDelay, [weak_this] {
-            if( auto me = weak_this.lock() )
+            if( const auto me = weak_this.lock() )
                 me->Update();
         });
     }

@@ -10,10 +10,10 @@ bool PasteboardSupport::WriteFilesnamesPBoard(const std::vector<VFSListingItem> 
     if( !_pasteboard )
         return false;
 
-    auto filepaths = [[NSMutableArray alloc] initWithCapacity:_items.size()];
+    const auto filepaths = [[NSMutableArray alloc] initWithCapacity:_items.size()];
     for( auto &i : _items )
         if( i.Host()->IsNativeFS() )
-            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
+            if( const auto path = [NSString stringWithUTF8StdString:i.Path()] )
                 [filepaths addObject:path];
 
     if( filepaths.count == 0 )
@@ -32,11 +32,11 @@ bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_item
     if( !_pasteboard )
         return false;
 
-    auto urls = [[NSMutableArray alloc] initWithCapacity:_items.size()];
+    const auto urls = [[NSMutableArray alloc] initWithCapacity:_items.size()];
     for( auto &i : _items )
         if( i.Host()->IsNativeFS() )
-            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
-                if( auto url = [NSURL fileURLWithPath:path] )
+            if( const auto path = [NSString stringWithUTF8StdString:i.Path()] )
+                if( const auto url = [NSURL fileURLWithPath:path] )
                     [urls addObject:url];
 
     [_pasteboard clearContents];

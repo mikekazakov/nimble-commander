@@ -104,8 +104,8 @@ int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
         }
         else {
             // or check distance with a previous line and choose which is closer
-            auto delta_1 = _first[index].BytesStart() - _bytes_offset;
-            auto delta_2 = _bytes_offset - _first[index - 1].BytesStart();
+            const auto delta_1 = _first[index].BytesStart() - _bytes_offset;
+            const auto delta_2 = _bytes_offset - _first[index - 1].BytesStart();
             if( delta_1 <= delta_2 )
                 return index;
             else

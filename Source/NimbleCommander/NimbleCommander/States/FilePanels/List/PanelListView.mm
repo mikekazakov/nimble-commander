@@ -144,13 +144,13 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
         __weak NCPanelListView *weak_self = self;
         m_IconRepository->SetUpdateCallback([=](IconRepository::SlotKey _slot, NSImage *_icon) {
-            if( auto strong_self = weak_self )
+            if( const auto strong_self = weak_self )
                 [strong_self onIconUpdated:_slot image:_icon];
         });
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsList | ThemesManager::Notifications::FilePanelsGeneral,
             [weak_self] {
-                if( auto strong_self = weak_self )
+                if( const auto strong_self = weak_self )
                     [strong_self handleThemeChanges];
             });
 
@@ -396,7 +396,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     if( View *const v = [_tv makeViewWithIdentifier:_identifier owner:nil] )
         return v;
-    auto v = [[View alloc] initWithFrame:NSRect()];
+    const auto v = [[View alloc] initWithFrame:NSRect()];
     v.identifier = _identifier;
     return v;
 }

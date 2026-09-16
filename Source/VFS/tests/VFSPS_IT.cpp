@@ -9,7 +9,7 @@ using namespace nc::vfs;
 
 TEST_CASE(PREFIX "basic test")
 {
-    auto host = std::make_shared<PSHost>();
+    const auto host = std::make_shared<PSHost>();
     const VFSListingPtr list = host->FetchDirectoryListing("/", 0).value();
 
     bool has_launchd = false;
@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "basic test")
 
 TEST_CASE(PREFIX "can read info about kernel_task")
 {
-    auto host = std::make_shared<PSHost>();
+    const auto host = std::make_shared<PSHost>();
     const VFSListingPtr list = host->FetchDirectoryListing("/", 0).value();
 
     auto it = std::find_if(

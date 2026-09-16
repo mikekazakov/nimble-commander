@@ -14,8 +14,8 @@ using nc::viewer::TextModeWorkingSet;
 TEST_CASE(PREFIX "Copies and owns UTF16 characters")
 {
     std::string utf8_string = reinterpret_cast<const char *>(u8"Привет, мир!");
-    auto utf16_chars = std::make_unique<unsigned short[]>(utf8_string.length());
-    auto utf16_chars_offsets = std::make_unique<unsigned[]>(utf8_string.length());
+    const auto utf16_chars = std::make_unique<unsigned short[]>(utf8_string.length());
+    const auto utf16_chars_offsets = std::make_unique<unsigned[]>(utf8_string.length());
     size_t utf16_length = 0;
     nc::utility::InterpretAsUnichar(nc::utility::Encoding::ENCODING_UTF8,
                                     reinterpret_cast<const unsigned char *>(utf8_string.data()),
@@ -64,8 +64,8 @@ TEST_CASE(PREFIX "Copies and owns UTF16 characters")
 TEST_CASE(PREFIX "properly clips ranges in ToLocalBytesRange")
 {
     std::string utf8_string = reinterpret_cast<const char *>(u8"Привет, мир!");
-    auto utf16_chars = std::make_unique<unsigned short[]>(utf8_string.length());
-    auto utf16_chars_offsets = std::make_unique<unsigned[]>(utf8_string.length());
+    const auto utf16_chars = std::make_unique<unsigned short[]>(utf8_string.length());
+    const auto utf16_chars_offsets = std::make_unique<unsigned[]>(utf8_string.length());
     size_t utf16_length = 0;
     nc::utility::InterpretAsUnichar(nc::utility::Encoding::ENCODING_UTF8,
                                     reinterpret_cast<const unsigned char *>(utf8_string.data()),

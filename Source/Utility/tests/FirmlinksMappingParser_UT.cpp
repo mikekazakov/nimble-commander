@@ -83,7 +83,7 @@ TEST_CASE(PREFIX "Works against system mapping")
     in.read(mapping.data(), mapping.size());
     in.close();
 
-    auto parsed = FirmlinksMappingParser::Parse(mapping);
+    const auto parsed = FirmlinksMappingParser::Parse(mapping);
 
     CHECK(!parsed.empty());
 }

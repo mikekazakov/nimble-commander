@@ -307,8 +307,8 @@ std::pair<double, double> HexModeLayout::CalcColumnSelectionBackground(const CFR
             (static_cast<long>(_columm_index) * static_cast<long>(m_Frame->BytesPerColumn())));
 
     const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
-    auto x1 = _offsets.columns.at(_columm_index) + (local_start_byte * symb_width * 3);
-    auto x2 = x1 + (static_cast<double>(sel_range.length) * symb_width * 3) - symb_width;
+    const auto x1 = _offsets.columns.at(_columm_index) + (local_start_byte * symb_width * 3);
+    const auto x2 = x1 + (static_cast<double>(sel_range.length) * symb_width * 3) - symb_width;
     return {std::floor(x1), std::ceil(x2)};
 }
 

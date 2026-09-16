@@ -51,7 +51,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
                                      std::function<NCViewerViewController *()> _make_viewer_controller)
 {
     PanelActionsMap m;
-    auto add = [&](SEL _sel, actions::PanelAction *_action) { m[_sel].reset(_action); };
+    const auto add = [&](SEL _sel, actions::PanelAction *_action) { m[_sel].reset(_action); };
 
     add(@selector(OnOpenNatively:), new OpenFilesWithDefaultHandler{_file_opener});
     add(@selector(onOpenFileWith:), new OpenFileWithSubmenu{_open_with_menu_delegate});

@@ -70,10 +70,10 @@ using nc::ThemeAppearance;
 
         auto views = NSDictionaryOfVariableBindings(m_ColorWell, m_Description);
         auto add_visfmt = [&](NSString *_layout) {
-            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
-                                                                       options:0
-                                                                       metrics:nil
-                                                                         views:views];
+            const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:views];
             [self addConstraints:constraints];
         };
         add_visfmt(@"|[m_ColorWell(==40)]-[m_Description]-(>=0)-|");
@@ -323,10 +323,10 @@ using nc::ThemeAppearance;
 
         auto views = NSDictionaryOfVariableBindings(m_TextField);
         auto add_visfmt = [&](NSString *_layout) {
-            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
-                                                                       options:0
-                                                                       metrics:nil
-                                                                         views:views];
+            const auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:views];
             [self addConstraints:constraints];
         };
         add_visfmt(@"|[m_TextField(==40)]-(>=0)-|");

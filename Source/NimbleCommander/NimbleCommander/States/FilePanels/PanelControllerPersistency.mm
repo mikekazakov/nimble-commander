@@ -58,7 +58,7 @@ ControllerStateJSONDecoder::ControllerStateJSONDecoder(const utility::NativeFSMa
 
 static void LoadHomeDirectory(PanelController *_panel)
 {
-    auto context = std::make_shared<DirectoryChangeRequest>();
+    const auto context = std::make_shared<DirectoryChangeRequest>();
     context->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     context->PerformAsynchronous = true;
     context->RequestedDirectory = base::CommonPaths::Home();
@@ -77,7 +77,7 @@ static void EnsureNonEmptyStateAsync(PanelController *_panel)
 
 static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host, const std::string &_path, PanelController *_panel)
 {
-    auto shared_request = std::make_shared<DirectoryChangeRequest>();
+    const auto shared_request = std::make_shared<DirectoryChangeRequest>();
     auto &ctx = *shared_request;
     ctx.VFS = _host;
     ctx.PerformAsynchronous = true;
@@ -86,10 +86,11 @@ static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host, const std::strin
         if( !_result && !_panel.data.IsLoaded() ) {
             // failed to load a listing on this VFS on specified path
             // will try upper directories on this VFS up to the root,
-            // in case if everyone fails we will fallback to Home Directory on native VFS.
-            auto fs_path = std::filesystem::path{EnsureNoTrailingSlash(_path)};
+            // in case if everyone fails we will fallback to Home Directory on native
+            // VFS.
+            const auto fs_path = std::filesystem::path{EnsureNoTrailingSlash(_path)};
             if( fs_path.has_parent_path() ) {
-                auto upper_dir = fs_path.parent_path().native();
+                const auto upper_dir = fs_path.parent_path().native();
                 dispatch_to_main_queue([=] { RecoverSavedPathAtVFSAsync(_host, upper_dir, _panel); });
             }
             else {
@@ -132,7 +133,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocatio
     const VFSHostPtr &host = *exp_host;
 
     auto &path = _location.path;
-    auto request = std::make_shared<DirectoryChangeRequest>();
+    const auto request = std::make_shared<DirectoryChangeRequest>();
     request->VFS = host;
     request->PerformAsynchronous = false;
     request->RequestedDirectory = _location.path;
@@ -141,10 +142,10 @@ void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocatio
             // failed to load a listing on this VFS on specified path
             // will try upper directories on this VFS up to the root,
             // in case if everyone fails we will fallback to Home Directory on native VFS.
-            auto fs_path = std::filesystem::path{EnsureNoTrailingSlash(path)};
+            const auto fs_path = std::filesystem::path{EnsureNoTrailingSlash(path)};
 
             if( fs_path.has_parent_path() ) {
-                auto upper_dir = fs_path.parent_path().native();
+                const auto upper_dir = fs_path.parent_path().native();
                 dispatch_to_main_queue([=] { RecoverSavedPathAtVFSAsync(host, upper_dir, _panel); });
             }
             else {
@@ -164,7 +165,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
             if( exp_host && *exp_host != nullptr ) {
                 // the VFS was recovered, lets go inside it.
                 const VFSHostPtr &host = *exp_host;
-                auto path = location.path;
+                const auto path = location.path;
                 dispatch_to_main_queue([=] { RecoverSavedPathAtVFSAsync(host, path, _panel); });
             }
             else {
@@ -202,7 +203,7 @@ void ControllerStateJSONDecoder::Decode(const config::Value &_state, PanelContro
     if( auto layout_index = config::GetOptionalIntFromObject(_state, g_RestorationLayoutKey) )
         _panel.layoutIndex = *layout_index;
 
-    if( auto it = _state.FindMember(g_RestorationDataKey); it != _state.MemberEnd() ) {
+    if( const auto it = _state.FindMember(g_RestorationDataKey); it != _state.MemberEnd() ) {
         RecoverSavedContent(it->value, _panel);
     }
 }

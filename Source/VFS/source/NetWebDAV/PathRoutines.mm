@@ -30,8 +30,8 @@ std::pair<std::string, std::string> DeconstructPath(std::string_view _path)
 std::string URIEscape(std::string_view _unescaped)
 {
     static const auto acs = NSCharacterSet.URLPathAllowedCharacterSet;
-    if( auto str = [NSString stringWithUTF8StdStringView:_unescaped] )
-        if( auto percents = [str stringByAddingPercentEncodingWithAllowedCharacters:acs] )
+    if( const auto str = [NSString stringWithUTF8StdStringView:_unescaped] )
+        if( const auto percents = [str stringByAddingPercentEncodingWithAllowedCharacters:acs] )
             if( auto utf8 = percents.UTF8String )
                 return utf8;
     return {};
@@ -39,8 +39,8 @@ std::string URIEscape(std::string_view _unescaped)
 
 std::string URIUnescape(const std::string &_escaped)
 {
-    if( auto str = [NSString stringWithUTF8StdString:_escaped] )
-        if( auto stripped = [str stringByRemovingPercentEncoding] )
+    if( const auto str = [NSString stringWithUTF8StdString:_escaped] )
+        if( const auto stripped = [str stringByRemovingPercentEncoding] )
             if( auto utf8 = stripped.UTF8String )
                 return utf8;
     return {};

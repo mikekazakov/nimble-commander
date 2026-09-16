@@ -98,7 +98,7 @@ TEST_CASE(PREFIX "setting foreground colors")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](std::optional<Color> _color) {
+    const auto verify = [&](std::optional<Color> _color) {
         interpreter.Interpret(
             Command(Type::set_character_attributes,
                     _color ? CA{.mode = CA::ForegroundColor, .color = *_color} : CA{.mode = CA::ForegroundDefault}));
@@ -189,7 +189,7 @@ TEST_CASE(PREFIX "setting background colors")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](std::optional<Color> _color) {
+    const auto verify = [&](std::optional<Color> _color) {
         interpreter.Interpret(
             Command(Type::set_character_attributes,
                     _color ? CA{.mode = CA::BackgroundColor, .color = *_color} : CA{.mode = CA::BackgroundDefault}));
@@ -280,7 +280,7 @@ TEST_CASE(PREFIX "setting faint")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _faint) {
+    const auto verify = [&](CA::Kind _kind, bool _faint) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).faint == _faint);
@@ -310,7 +310,7 @@ TEST_CASE(PREFIX "setting inverse")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _inverse) {
+    const auto verify = [&](CA::Kind _kind, bool _inverse) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).reverse == _inverse);
@@ -336,7 +336,7 @@ TEST_CASE(PREFIX "setting bold")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _bold) {
+    const auto verify = [&](CA::Kind _kind, bool _bold) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).bold == _bold);
@@ -362,7 +362,7 @@ TEST_CASE(PREFIX "setting italic")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _italic) {
+    const auto verify = [&](CA::Kind _kind, bool _italic) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).italic == _italic);
@@ -388,7 +388,7 @@ TEST_CASE(PREFIX "setting invisible")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _invisible) {
+    const auto verify = [&](CA::Kind _kind, bool _invisible) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).invisible == _invisible);
@@ -414,7 +414,7 @@ TEST_CASE(PREFIX "setting blink")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _blink) {
+    const auto verify = [&](CA::Kind _kind, bool _blink) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).blink == _blink);
@@ -440,7 +440,7 @@ TEST_CASE(PREFIX "setting underline")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _underline) {
+    const auto verify = [&](CA::Kind _kind, bool _underline) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).underline == _underline);
@@ -470,7 +470,7 @@ TEST_CASE(PREFIX "setting crossed")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _crossed) {
+    const auto verify = [&](CA::Kind _kind, bool _crossed) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
         CHECK(screen.Buffer().At(0, 0).crossed == _crossed);
@@ -572,7 +572,7 @@ TEST_CASE(PREFIX "Change title")
 
     std::vector<std::string> title;
     std::vector<Interpreter::TitleKind> kind;
-    auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
+    const auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
         title.emplace_back(_title);
         kind.emplace_back(_kind);
     };
@@ -632,7 +632,7 @@ TEST_CASE(PREFIX "Supports saving/restoring titles")
 
     std::vector<std::string> title;
     std::vector<Interpreter::TitleKind> kind;
-    auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
+    const auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
         title.emplace_back(_title);
         kind.emplace_back(_kind);
     };

@@ -36,14 +36,15 @@ static std::pair<NSColor *, NSColor *> Color(utility::Tags::Color _color) noexce
                                                          alpha:components[i][6] / 255.];
         }
     });
-    auto idx = std::to_underlying(_color);
+    const auto idx = std::to_underlying(_color);
     return {fill_colors[idx], stroke_colors[idx]};
 }
 
 TrailingTagsInplaceDisplay::Geom
 TrailingTagsInplaceDisplay::Place(const std::span<const utility::Tags::Tag> _tags) noexcept
 {
-    auto count = std::ranges::count_if(_tags, [](auto &_tag) { return _tag.Color() != utility::Tags::Color::None; });
+    const auto count =
+        std::ranges::count_if(_tags, [](auto &_tag) { return _tag.Color() != utility::Tags::Color::None; });
     if( count == 0 )
         return {};
     return {.width = Diameter + ((std::min(static_cast<int>(count), MaxDrawn) - 1) * Step), .margin = Margin};
@@ -98,7 +99,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
             [shadow stroke];
         }
 
-        auto colors = Color(colors_to_draw[i]);
+        const auto colors = Color(colors_to_draw[i]);
         [colors.first setFill];
         if( _accent )
             [_accent setStroke];
@@ -118,14 +119,14 @@ const std::array<NSImage *, 8> &TagsMenuDisplay::Images() noexcept
         std::array<NSImage *, 8> images;
         constexpr double diameter = 12.;
         for( size_t i = 0; i < images.size(); ++i ) {
-            auto handler = ^(NSRect _rc) {
+            const auto handler = ^(NSRect _rc) {
               if( i == 0 ) {
                   [NSColor.textColor setStroke];
                   NSBezierPath *const circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
                   [circle stroke];
               }
               else {
-                  auto colors = Color(static_cast<utility::Tags::Color>(i));
+                  const auto colors = Color(static_cast<utility::Tags::Color>(i));
                   [colors.first setFill];
                   [colors.second setStroke];
                   NSBezierPath *const circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];

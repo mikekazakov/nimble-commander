@@ -17,7 +17,7 @@ std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_vie
         Log::Error("Failed to create an XPC connection");
         return std::unexpected<std::string>("Failed to create an XPC connection");
     }
-    auto release_connection = at_scope_end([&] { xpc_release(connection); });
+    const auto release_connection = at_scope_end([&] { xpc_release(connection); });
 
     xpc_connection_set_event_handler(connection, ^(xpc_object_t _event) {
       const xpc_type_t type = xpc_get_type(_event);
@@ -39,10 +39,10 @@ std::expected<std::vector<Style>, std::string> Client::Highlight(std::string_vie
     xpc_object_t message = xpc_dictionary_create(nullptr, nullptr, 0);
     xpc_dictionary_set_data(message, "text", _text.data(), _text.size());
     xpc_dictionary_set_data(message, "settings", _settings.data(), _settings.size());
-    auto release_message = at_scope_end([&] { xpc_release(message); });
+    const auto release_message = at_scope_end([&] { xpc_release(message); });
 
     xpc_object_t reply = xpc_connection_send_message_with_reply_sync(connection, message);
-    auto release_reply = at_scope_end([&] { xpc_release(reply); });
+    const auto release_reply = at_scope_end([&] { xpc_release(reply); });
     Log::Trace("Got a response from the XPC service");
 
     const xpc_type_t reply_type = xpc_get_type(reply);
@@ -102,7 +102,7 @@ void Client::HighlightAsync(std::string_view _text,
         _done(std::unexpected<std::string>("Failed to create an XPC connection"));
     }
 
-    auto handler = ^(xpc_object_t _reply) {
+    const auto handler = ^(xpc_object_t _reply) {
       Log::Trace("Got a response from the XPC service");
       const xpc_type_t type = xpc_get_type(_reply);
       if( type == XPC_TYPE_ERROR ) {
@@ -155,7 +155,7 @@ void Client::HighlightAsync(std::string_view _text,
     xpc_object_t message = xpc_dictionary_create(nullptr, nullptr, 0);
     xpc_dictionary_set_data(message, "text", _text.data(), _text.size());
     xpc_dictionary_set_data(message, "settings", _settings.data(), _settings.size());
-    auto release_message = at_scope_end([&] { xpc_release(message); });
+    const auto release_message = at_scope_end([&] { xpc_release(message); });
 
     xpc_connection_send_message_with_reply(connection, message, _queue, handler);
 

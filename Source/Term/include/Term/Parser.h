@@ -80,8 +80,7 @@ enum class Type : uint8_t {
     set_cursor_style          // payload type - CursorStyle
 };
 
-struct None {
-};
+struct None {};
 
 struct Title {
     enum Kind : uint8_t {

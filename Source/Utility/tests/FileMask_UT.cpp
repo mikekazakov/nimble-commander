@@ -8,13 +8,13 @@ using nc::utility::FileMask;
 
 TEST_CASE(PREFIX "MatchName - old file masks")
 {
-    auto ch = [](const char8_t *str) -> const char * { return reinterpret_cast<const char *>(str); };
+    const auto ch = [](const char8_t *str) -> const char * { return reinterpret_cast<const char *>(str); };
 
     struct TC {
         const char *mask;
         const char *name;
         bool result;
-    } cases[] = {
+    } const cases[] = {
         // primitive *.ext mask
         {.mask = "*.jpg", .name = "1.jpg", .result = true},
         {.mask = "*.jpg", .name = "11.jpg", .result = true},
@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "MatchName - old file masks")
         {.mask = ",,", .name = "meow.txt", .result = false},
     };
 
-    for( auto &tc : cases ) {
+    for( const auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
         const FileMask mask(tc.mask);
@@ -146,7 +146,7 @@ TEST_CASE(PREFIX "MatchName - regexes")
         const char *mask;
         const char *name;
         bool result;
-    } cases[] = {
+    } const cases[] = {
         {.mask = ".*", .name = "", .result = false},
         {.mask = ".*", .name = "a", .result = true},
         {.mask = ".*", .name = "ab", .result = true},
@@ -166,7 +166,7 @@ TEST_CASE(PREFIX "MatchName - regexes")
         {.mask = "(meow|woof)\\.txt", .name = "woof.txt", .result = true},
         {.mask = "(meow|woof)\\.txt", .name = "blah.txt", .result = false},
     };
-    for( auto &tc : cases ) {
+    for( const auto &tc : cases ) {
         INFO(tc.mask);
         INFO(tc.name);
         const FileMask mask(tc.mask, FileMask::Type::RegEx);

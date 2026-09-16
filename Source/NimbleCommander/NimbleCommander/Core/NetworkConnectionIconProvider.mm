@@ -10,7 +10,7 @@ static const auto g_16px = NSMakeSize(16, 16);
 static NSImage *Generic()
 {
     const auto image = [] {
-        auto m = [NSImage imageNamed:@"GenericNetworkServer16px"];
+        const auto m = [NSImage imageNamed:@"GenericNetworkServer16px"];
         m.size = g_16px;
         return m;
     }();
@@ -20,7 +20,7 @@ static NSImage *Generic()
 static NSImage *Share()
 {
     const auto image = [] {
-        auto m = [NSImage imageNamed:@"GenericLANServer16px"];
+        const auto m = [NSImage imageNamed:@"GenericLANServer16px"];
         m.size = g_16px;
         return m;
     }();

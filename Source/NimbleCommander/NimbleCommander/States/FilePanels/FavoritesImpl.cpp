@@ -123,7 +123,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed(int _amount) const
     const auto now = time(nullptr);
     const auto last_date = now - g_MaxTimeRange;
 
-    auto is_favorite = [this](size_t footprint) { // O(n), n = number of favorites
+    const auto is_favorite = [this](size_t footprint) { // O(n), n = number of favorites
         return std::ranges::find_if(m_Favorites, [footprint](auto &f) { return f.footprint == footprint; }) !=
                end(m_Favorites);
     };
@@ -197,7 +197,7 @@ std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl:
     if( !_json.HasMember("location") )
         return std::nullopt;
     if( auto l = m_Persistency.JSONToLocation(_json["location"]) ) {
-        auto location = std::make_shared<Location>();
+        const auto location = std::make_shared<Location>();
         location->verbose_path = m_Persistency.MakeVerbosePathString(*l);
         location->hosts_stack = std::move(*l);
         v.location = location;
@@ -244,7 +244,7 @@ FavoriteLocationsStorageImpl::JSONToFavorite(const config::Value &_json)
     if( !_json.HasMember("location") )
         return std::nullopt;
     if( auto l = m_Persistency.JSONToLocation(_json["location"]) ) {
-        auto location = std::make_shared<Location>();
+        const auto location = std::make_shared<Location>();
         location->verbose_path = m_Persistency.MakeVerbosePathString(*l);
         location->hosts_stack = std::move(*l);
         f.location = location;
@@ -255,7 +255,7 @@ FavoriteLocationsStorageImpl::JSONToFavorite(const config::Value &_json)
     if( _json.HasMember("title") && _json["title"].IsString() )
         f.title = _json["title"].GetString();
 
-    auto fp_string = m_Persistency.MakeFootprintString(f.location->hosts_stack);
+    const auto fp_string = m_Persistency.MakeFootprintString(f.location->hosts_stack);
     f.footprint = std::hash<std::string>()(fp_string);
     return std::move(f);
 }
@@ -269,14 +269,14 @@ void FavoriteLocationsStorageImpl::StoreData(config::Config &_config, const char
     const auto now = time(nullptr);
 
     Value manual(kArrayType);
-    for( auto &favorite : m_Favorites )
+    for( const auto &favorite : m_Favorites )
         if( auto v = FavoriteToJSON(favorite); v.GetType() != kNullType )
             manual.PushBack(std::move(v), g_CrtAllocator);
 
     json.AddMember(MakeStandaloneString("manual"), std::move(manual), g_CrtAllocator);
 
     Value automatic(kArrayType);
-    for( auto &visit : m_Visits )
+    for( const auto &visit : m_Visits )
         if( visit.second.last_visit + g_MaxTimeRange > now )
             if( auto v = VisitToJSON(visit.second); v.GetType() != kNullType )
                 automatic.PushBack(std::move(v), g_CrtAllocator);
@@ -300,8 +300,8 @@ void FavoriteLocationsStorageImpl::LoadData(config::Config &_config, const char 
         auto &automatic = json["automatic"];
         for( int i = 0, e = automatic.Size(); i != e; ++i )
             if( auto v = JSONToVisit(automatic[i]) ) {
-                auto fp_string = m_Persistency.MakeFootprintString(v->location->hosts_stack);
-                auto fp = std::hash<std::string>()(fp_string);
+                const auto fp_string = m_Persistency.MakeFootprintString(v->location->hosts_stack);
+                const auto fp = std::hash<std::string>()(fp_string);
                 m_Visits[fp] = std::move(*v);
             }
     }

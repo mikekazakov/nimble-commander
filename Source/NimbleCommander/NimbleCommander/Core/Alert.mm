@@ -149,7 +149,7 @@ namespace nc::core {
 void ShowExceptionAlert(const std::string &_message)
 {
     if( dispatch_is_main_queue() ) {
-        auto alert = [[Alert alloc] init];
+        const auto alert = [[Alert alloc] init];
         alert.messageText = @"Unexpected exception was caught:";
         alert.informativeText = !_message.empty() ? [NSString stringWithUTF8StdString:_message] : @"Unknown exception";
         [alert runModal];

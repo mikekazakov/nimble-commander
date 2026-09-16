@@ -93,7 +93,7 @@ TEST_CASE(PREFIX "execute a detached console app")
          .expected = "echopars\n" + (basedir / "test.txt").string() + "\nz z\n"},                   //
     };
 
-    auto run = [&] {
+    const auto run = [&] {
         ExternalToolExecution ex{ctx, et};
         auto pid = ex.StartDetached();
         REQUIRE(pid);
@@ -233,7 +233,7 @@ TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
          .interp = ExternalTool::GUIArgumentInterpretation::PassAllAsArguments},
     };
 
-    auto run = [&] {
+    const auto run = [&] {
         ExternalToolExecution ex{ctx, et};
         auto pid = ex.StartDetachedUI();
         REQUIRE(pid); // <-- Flaky!

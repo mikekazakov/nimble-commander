@@ -27,7 +27,7 @@ void Entry::ToStat(VFSStat &_stat) const
 
 const Entry *Directory::EntryByName(const std::string &_name) const
 {
-    auto i = std::ranges::find_if(entries, [&](auto &_e) { return _e.name == _name; });
+    const auto i = std::ranges::find_if(entries, [&](auto &_e) { return _e.name == _name; });
     return i != end(entries) ? &(*i) : nullptr;
 }
 
@@ -43,7 +43,7 @@ void Cache::MarkDirectoryDirty(std::string_view _path)
     assert(!_path.empty() && _path.back() == '/');
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);
-    if( auto d = FindDirectoryInt(_path) )
+    if( const auto d = FindDirectoryInt(_path) )
         d->dirty_structure = true;
 }
 
@@ -54,7 +54,7 @@ std::shared_ptr<Directory> Cache::FindDirectoryInt(std::string_view _path) const
 
     assert(_path.back() == '/');
 
-    auto i = m_Directories.find(_path);
+    const auto i = m_Directories.find(_path);
     if( i != m_Directories.end() )
         return i->second;
 
@@ -78,7 +78,7 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);
 
-    auto i = m_Directories.find(dir);
+    const auto i = m_Directories.find(dir);
     if( i != m_Directories.end() )
         i->second = _directory;
     else
@@ -97,7 +97,7 @@ void Cache::CommitNewFile(const std::string &_path)
         dir_path += "/";
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);
-    auto dir = FindDirectoryInt(dir_path.native());
+    const auto dir = FindDirectoryInt(dir_path.native());
     if( dir != nullptr ) {
         if( auto entry = dir->EntryByName(p.filename().native()) ) {
             entry->dirty = true;
@@ -105,7 +105,7 @@ void Cache::CommitNewFile(const std::string &_path)
             return;
         }
 
-        auto copy = std::make_shared<Directory>(*dir);
+        const auto copy = std::make_shared<Directory>(*dir);
         copy->entries.emplace_back(p.filename().native());
         copy->entries.back().mode = S_IFREG;
         copy->entries.back().dirty = true;
@@ -127,7 +127,7 @@ void Cache::MakeEntryDirty(const std::string &_path)
         dir_path += "/";
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);
-    auto dir = FindDirectoryInt(dir_path.native());
+    const auto dir = FindDirectoryInt(dir_path.native());
     if( dir ) {
         auto entry = dir->EntryByName(p.filename().native());
         if( entry ) {
@@ -147,7 +147,7 @@ void Cache::CommitRMD(const std::string &_path)
     std::filesystem::path p = _path;
     p += "/";
 
-    auto i = m_Directories.find(p.native());
+    const auto i = m_Directories.find(p.native());
     if( i != m_Directories.end() )
         m_Directories.erase(i);
 }
@@ -170,9 +170,9 @@ void Cache::CommitMKD(const std::string &_path)
         dir_path += "/";
 
     const std::lock_guard<std::mutex> lock(m_CacheLock);
-    auto dir = FindDirectoryInt(dir_path.native());
+    const auto dir = FindDirectoryInt(dir_path.native());
     if( dir != nullptr ) {
-        auto copy = std::make_shared<Directory>(*dir);
+        const auto copy = std::make_shared<Directory>(*dir);
         copy->entries.emplace_back(p.filename().native());
         copy->entries.back().mode = S_IFDIR;
         copy->entries.back().dirty = true;
@@ -204,12 +204,12 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     const Entry *old_entry = nullptr;
     auto dir = FindDirectoryInt(old_par_path.native());
     if( dir ) {
-        auto copy = std::make_shared<Directory>();
+        const auto copy = std::make_shared<Directory>();
         copy->path = dir->path;
         copy->dirty_structure = dir->dirty_structure;
         copy->has_dirty_items = dir->has_dirty_items;
 
-        for( auto &i : dir->entries )
+        for( const auto &i : dir->entries )
             if( i.name != old_path.filename() ) {
                 copy->entries.emplace_back(i);
             }
@@ -230,7 +230,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     if( !same_dir && old_entry ) {
         dir = FindDirectoryInt(new_par_path.native());
         if( dir ) {
-            auto copy = std::make_shared<Directory>(*dir);
+            const auto copy = std::make_shared<Directory>(*dir);
 
             Entry e(new_path.filename().native());
             e.size = old_entry->size;
@@ -248,9 +248,9 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
         old_path /= "/";
     if( new_path != "/" )
         new_path /= "/";
-    auto self_dir = m_Directories.find(old_path.c_str());
+    const auto self_dir = m_Directories.find(old_path.c_str());
     if( self_dir != m_Directories.end() ) {
-        auto data = self_dir->second;
+        const auto data = self_dir->second;
         m_Directories.erase(self_dir);
         m_Directories.emplace(new_path.native(), data);
     }
@@ -268,14 +268,14 @@ void Cache::EraseEntryInt(std::string_view _path)
     if( dir_path != "/" )
         dir_path += "/";
 
-    auto dir = FindDirectoryInt(dir_path.native());
+    const auto dir = FindDirectoryInt(dir_path.native());
     if( dir ) {
-        auto copy = std::make_shared<Directory>();
+        const auto copy = std::make_shared<Directory>();
         copy->path = dir->path;
         copy->dirty_structure = dir->dirty_structure;
         copy->has_dirty_items = dir->has_dirty_items;
 
-        for( auto &i : dir->entries )
+        for( const auto &i : dir->entries )
             if( i.name != p.filename() )
                 copy->entries.emplace_back(i);
         m_Directories.find(dir_path.native())->second = copy;

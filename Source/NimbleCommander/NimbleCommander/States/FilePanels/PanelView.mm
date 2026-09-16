@@ -1074,7 +1074,7 @@ struct StateStorage {
                 if( listing.Title().empty() )
                     return NSLocalizedString(@"__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE", "");
                 else {
-                    auto fmt = NSLocalizedString(@"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE", "");
+                    const auto fmt = NSLocalizedString(@"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE", "");
                     return [NSString localizedStringWithFormat:fmt, [NSString stringWithUTF8StdString:listing.Title()]];
                 }
             }

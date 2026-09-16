@@ -19,7 +19,7 @@ void ShowTerminal::Perform(MainWindowFilePanelState *_target, [[maybe_unused]] i
 {
     std::string path;
 
-    if( auto pc = _target.activePanelController )
+    if( const auto pc = _target.activePanelController )
         if( pc.isUniform && pc.vfs->IsNativeFS() )
             path = pc.currentDirectoryPath;
 

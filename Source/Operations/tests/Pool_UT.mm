@@ -33,7 +33,7 @@ static bool check_until_or_die(std::function<bool()> _predicate, std::chrono::na
 
 TEST_CASE(PREFIX "Is constructible and empty by default")
 {
-    auto pool = Pool::Make();
+    const auto pool = Pool::Make();
     CHECK(pool->Empty());
     CHECK(pool->OperationsCount() == 0);
     CHECK(pool->RunningOperationsCount() == 0);
@@ -62,7 +62,7 @@ TEST_CASE(PREFIX "Enques and reports the operation back as running")
     auto pool = Pool::Make();
 
     // add an operation and check it's running and reported
-    auto op = std::make_shared<MyOperation>();
+    const auto op = std::make_shared<MyOperation>();
     CHECK(op->State() == nc::ops::OperationState::Cold);
 
     pool->Enqueue(op);
@@ -86,7 +86,7 @@ TEST_CASE(PREFIX "Enques and reports the operation back as running")
 
 TEST_CASE(PREFIX "Obeys concurrency settings")
 {
-    auto pool = Pool::Make();
+    const auto pool = Pool::Make();
 
     struct MyJob : public Job {
         void Perform() override
@@ -102,9 +102,9 @@ TEST_CASE(PREFIX "Obeys concurrency settings")
         Job *GetJob() noexcept override { return &job; }
         MyJob job;
     };
-    auto op1 = std::make_shared<MyOperation>();
-    auto op2 = std::make_shared<MyOperation>();
-    auto op3 = std::make_shared<MyOperation>();
+    const auto op1 = std::make_shared<MyOperation>();
+    const auto op2 = std::make_shared<MyOperation>();
+    const auto op3 = std::make_shared<MyOperation>();
     SECTION("Concurrency = 5")
     {
         pool->SetConcurrency(5);
@@ -175,7 +175,7 @@ TEST_CASE(PREFIX "Drains pending queues as operation complete")
         MyJob job;
     };
 
-    auto op1 = std::make_shared<MyOperation>();
+    const auto op1 = std::make_shared<MyOperation>();
     auto op2 = std::make_shared<MyOperation>();
     auto op3 = std::make_shared<MyOperation>();
     pool->Enqueue(op1);

@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "Generic cases")
     QueuedAtomicHolder<ChildrenTracker::Event> ncalled;
     ncalled.strict(false);
 
-    auto cb = [&ncalled, current = ChildrenTracker::Event{}](ChildrenTracker::Event _event) mutable {
+    const auto cb = [&ncalled, current = ChildrenTracker::Event{}](ChildrenTracker::Event _event) mutable {
         current.forks += _event.forks;
         current.execs += _event.execs;
         current.exits += _event.exits;

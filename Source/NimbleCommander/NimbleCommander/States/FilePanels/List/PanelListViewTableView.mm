@@ -36,7 +36,7 @@ using namespace nc::panel;
         __weak PanelListViewTableView *weak_self = self;
         m_ThemeObservation =
             NCAppDelegate.me.themesManager.ObserveChanges(ThemesManager::Notifications::FilePanelsList, [weak_self] {
-                if( auto strong_self = weak_self )
+                if( const auto strong_self = weak_self )
                     [strong_self setupColors];
             });
     }

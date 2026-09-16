@@ -11,7 +11,7 @@ using nc::utility::FontGeometryInfo;
 TEST_CASE(PREFIX "CalculateStringsWidths works for all sizes of input")
 {
     const size_t sz = 1'000'000;
-    auto font = [NSFont fontWithName:@"Helvetica Neue" size:13];
+    const auto font = [NSFont fontWithName:@"Helvetica Neue" size:13];
     std::vector<CFStringRef> vec(sz);
     std::vector<unsigned short> exp(sz);
     for( size_t n = 0; n != sz; ++n ) {
@@ -38,7 +38,7 @@ TEST_CASE(PREFIX "CalculateStringsWidths works for all sizes of input")
 
 TEST_CASE(PREFIX "CalculateStringsWidths treats newlines")
 {
-    auto font = [NSFont fontWithName:@"Helvetica Neue" size:13];
+    const auto font = [NSFont fontWithName:@"Helvetica Neue" size:13];
     CFStringRef str = CFSTR("Hello, \nworld!");
     auto widths = FontGeometryInfo::CalculateStringsWidths({&str, 1}, font);
     REQUIRE(widths.size() == 1);

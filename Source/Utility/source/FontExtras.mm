@@ -125,7 +125,7 @@ static const auto g_InfiniteRectPath = CGPathCreateWithRect(CGRectMake(0, 0, CGF
 static void CalculateWidthsOfStringsBulk(const CFStringRef *_str_first,
                                          const CFStringRef *_str_last,
                                          unsigned short *_out_width_first,
-                                         [[maybe_unused]] unsigned short *_out_width_last,
+                                         [[maybe_unused]] const unsigned short *_out_width_last,
                                          CFDictionaryRef _attributes)
 {
     const auto strings_amount = static_cast<int>(_str_last - _str_first);
@@ -139,7 +139,7 @@ static void CalculateWidthsOfStringsBulk(const CFStringRef *_str_first,
     for( int i = 0; i < strings_amount; ++i ) {
         const auto str = _str_first[i];
         if( HasNewlines(str) ) {
-            auto replaced = ReplaceNewlines(str, CFSTR(" "));
+            const auto replaced = ReplaceNewlines(str, CFSTR(" "));
             CFStringAppend(storage.get(), replaced.get());
         }
         else {

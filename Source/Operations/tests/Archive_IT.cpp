@@ -37,7 +37,7 @@ TEST_CASE(PREFIX "valid signature after extracting an application")
     const auto source_fn = "Chess.app";
     const auto source_dir = std::filesystem::path("/System/Applications");
     const auto source_path = source_dir / source_fn;
-    auto item = FetchItems(source_dir, {source_fn}, *TestEnv().vfs_native);
+    const auto item = FetchItems(source_dir, {source_fn}, *TestEnv().vfs_native);
     Compression comp_operation{item, tmp_dir.directory.native(), TestEnv().vfs_native};
     comp_operation.Start();
     comp_operation.Wait();
@@ -67,7 +67,7 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
     const auto orig_noise = MakeNoise(xattr_size);
     REQUIRE(close(creat(source_path.c_str(), 0755)) == 0);
     REQUIRE(setxattr(source_path.c_str(), xattr_name, orig_noise.data(), xattr_size, 0, 0) == 0);
-    auto item = FetchItems(tmp_dir.directory, {source_fn}, *TestEnv().vfs_native);
+    const auto item = FetchItems(tmp_dir.directory, {source_fn}, *TestEnv().vfs_native);
 
     Compression operation{item, tmp_dir.directory.native(), TestEnv().vfs_native};
     operation.Start();

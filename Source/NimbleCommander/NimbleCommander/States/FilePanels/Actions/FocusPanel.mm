@@ -8,11 +8,11 @@ namespace nc::panel::actions {
 
 void FocusLeftPanel::Perform(MainWindowFilePanelState *_target, [[maybe_unused]] id _sender) const
 {
-    auto sv = _target.splitView;
+    const auto sv = _target.splitView;
     if( sv.isLeftCollapsed )
         [sv expandLeftView];
 
-    if( auto cur_pc = _target.activePanelController ) {
+    if( const auto cur_pc = _target.activePanelController ) {
         if( ![_target isLeftController:cur_pc] )
             [_target.window makeFirstResponder:sv.leftTabbedHolder.current];
     }
@@ -23,10 +23,10 @@ void FocusLeftPanel::Perform(MainWindowFilePanelState *_target, [[maybe_unused]]
 
 void FocusRightPanel::Perform(MainWindowFilePanelState *_target, [[maybe_unused]] id _sender) const
 {
-    auto sv = _target.splitView;
+    const auto sv = _target.splitView;
     if( sv.isRightCollapsed )
         [sv expandRightView];
-    if( auto cur_pc = _target.activePanelController ) {
+    if( const auto cur_pc = _target.activePanelController ) {
         if( ![_target isRightController:cur_pc] )
             [_target.window makeFirstResponder:sv.rightTabbedHolder.current];
     }

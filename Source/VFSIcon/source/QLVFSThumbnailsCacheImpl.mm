@@ -14,10 +14,10 @@ QLVFSThumbnailsCacheImpl::~QLVFSThumbnailsCacheImpl() = default;
 
 NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
-    auto key = MakeKey(_file_path, _host, _px_size);
+    const auto key = MakeKey(_file_path, _host, _px_size);
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         if( m_Thumbnails.count(key) )
             return m_Thumbnails.at(key);
     }
@@ -30,18 +30,18 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_pat
     auto key = MakeKey(_file_path, _host, _px_size);
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         if( m_Thumbnails.count(key) )
             return m_Thumbnails.at(key);
     }
 
-    auto image = ProduceThumbnail(_file_path,
-                                  std::filesystem::path(_file_path).extension(),
-                                  _host,
-                                  CGSizeMake(double(_px_size), double(_px_size)));
+    const auto image = ProduceThumbnail(_file_path,
+                                        std::filesystem::path(_file_path).extension(),
+                                        _host,
+                                        CGSizeMake(double(_px_size), double(_px_size)));
 
     {
-        auto lock = std::lock_guard{m_Lock};
+        const auto lock = std::lock_guard{m_Lock};
         m_Thumbnails.insert(std::move(key), image);
     }
 
@@ -67,7 +67,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_path,
 std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size)
 {
     auto key = _host.MakePathVerbose(_file_path);
-    key += "\x01";
+    key += '\001';
     key += std::to_string(_px_size);
     return key;
 }

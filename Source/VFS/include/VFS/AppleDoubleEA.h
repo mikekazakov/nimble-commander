@@ -21,6 +21,6 @@ struct AppleDoubleEA {
  */
 std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
 
-std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file);
+std::vector<std::byte> BuildAppleDoubleFromEA(const VFSFile &_file);
 
 } // namespace nc::vfs

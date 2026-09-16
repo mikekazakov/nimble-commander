@@ -69,7 +69,7 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
     if( !act_pc || !opp_pc )
         return;
 
-    auto entries = _target.activePanelController.selectedEntriesOrFocusedEntry;
+    const auto entries = _target.activePanelController.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
 
@@ -87,9 +87,9 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto path = cd.resultDestination;
-      auto host = cd.resultHost;
-      auto opts = cd.resultOptions;
+      const auto path = cd.resultDestination;
+      const auto host = cd.resultHost;
+      const auto opts = cd.resultOptions;
       if( !host || path.empty() )
           return; // ui invariant is broken
 
@@ -150,9 +150,9 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto path = cd.resultDestination;
-      auto host = cd.resultHost;
-      auto opts = cd.resultOptions;
+      const auto path = cd.resultDestination;
+      const auto host = cd.resultHost;
+      const auto opts = cd.resultOptions;
       if( !host || path.empty() )
           return; // ui invariant is broken
 
@@ -216,7 +216,7 @@ void MoveTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
     if( act_uniform && !act_pc.vfs->IsWritable() )
         return;
 
-    auto entries = act_pc.selectedEntriesOrFocusedEntry;
+    const auto entries = act_pc.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
 
@@ -231,9 +231,9 @@ void MoveTo::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto path = cd.resultDestination;
-      auto host = cd.resultHost;
-      auto opts = cd.resultOptions;
+      const auto path = cd.resultDestination;
+      const auto host = cd.resultHost;
+      const auto opts = cd.resultOptions;
       if( !host || path.empty() )
           return; // ui invariant is broken
 
@@ -288,9 +288,9 @@ void MoveAs::Perform(MainWindowFilePanelState *_target, id /*_sender*/) const
       if( returnCode != NSModalResponseOK )
           return;
 
-      auto path = cd.resultDestination;
-      auto host = cd.resultHost;
-      auto opts = cd.resultOptions;
+      const auto path = cd.resultDestination;
+      const auto host = cd.resultHost;
+      const auto opts = cd.resultOptions;
       if( !host || path.empty() )
           return; // ui invariant is broken
 

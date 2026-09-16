@@ -42,7 +42,7 @@ static std::chrono::milliseconds UploadingCheckDelay()
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = [] {
-        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_CheckDelay, [] { delay = fetch(); });
+        [[clang::no_destroy]] static const auto ticket = GlobalConfig().Observe(g_CheckDelay, [] { delay = fetch(); });
         return fetch();
     }();
     return delay;
@@ -55,7 +55,7 @@ static std::chrono::milliseconds UploadingDropDelay()
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = [] {
-        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_DropDelay, [] { delay = fetch(); });
+        [[clang::no_destroy]] static const auto ticket = GlobalConfig().Observe(g_DropDelay, [] { delay = fetch(); });
         return fetch();
     }();
     return delay;
@@ -75,7 +75,7 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
     __weak PanelController *weak_origin_controller = _origin_controller;
     const VFSHostWeakPtr weak_host = _original_vfs;
 
-    auto on_file_change = [weak_host, weak_origin_controller, _native_path, _original_path] {
+    const auto on_file_change = [weak_host, weak_origin_controller, _native_path, _original_path] {
         dispatch_assert_main_queue();
         // in event of the file change - fetch a fresh listing in the background, return to the main thread and fire up
         // a copying operation to transfer an updated file to the original storage
@@ -168,7 +168,7 @@ void FileOpener::Open(std::string_view _file_at_path,
                        this] {
             dispatch_assert_background_queue();
 
-            auto activity_ticket = [panel registerExtActivity];
+            const auto activity_ticket = [panel registerExtActivity];
             if( host->IsDirectory(filepath, vfs::Flags::None) ) {
                 NSBeep();
                 return;
@@ -271,7 +271,7 @@ void FileOpener::Open(std::span<std::string> _filepaths,
                          _host,
                          handler_app_url,
                          this] mutable {
-        auto activity_ticket = [_panel registerExtActivity];
+        const auto activity_ticket = [_panel registerExtActivity];
         NSMutableArray *const arr = [NSMutableArray arrayWithCapacity:filepaths.size()];
 
         // Remove any directories and any items that failed to stat from the list of files to be opened.
@@ -293,7 +293,7 @@ void FileOpener::Open(std::span<std::string> _filepaths,
             }
         }
 
-        for( auto &i : filepaths ) {
+        for( const auto &i : filepaths ) {
             if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
                 RegisterRemoteFileUploading(i, _host, *tmp_path, _panel);
                 if( NSString *const s = [NSString stringWithUTF8StdString:*tmp_path] )
@@ -334,7 +334,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
     assert(!_filepath.empty() && _host && _ext_ed && _panel);
 
     if( _host->IsNativeFS() ) {
-        if( auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
+        if( const auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
             [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
                                                  params:_ext_ed->SubstituteFileName(_filepath)
                                               fileTitle:_file_title];
@@ -342,7 +342,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
     else
         dispatch_to_default([=,
                              this] { // do downloading down in a background thread
-            auto activity_ticket = [_panel registerExtActivity];
+            const auto activity_ticket = [_panel registerExtActivity];
 
             if( _host->IsDirectory(_filepath, vfs::Flags::None) ) {
                 NSBeep();
@@ -365,7 +365,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                 dispatch_to_main_queue([=] { // when we sucessfuly download a file -
                                              // request terminal execution in main
                                              // thread
-                    if( auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
+                    if( const auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
                         [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
                                                              params:_ext_ed->SubstituteFileName(*tmp_path)
                                                           fileTitle:_file_title];

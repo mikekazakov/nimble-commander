@@ -573,7 +573,7 @@ static void Expect(const ScreenBuffer &buffer,
 
 TEST_CASE(PREFIX "Simple cases")
 {
-    for( auto test_case : g_SimpleCases ) {
+    for( const auto test_case : g_SimpleCases ) {
         ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
@@ -591,7 +591,7 @@ TEST_CASE(PREFIX "Simple cases")
 
 TEST_CASE(PREFIX "Response cases")
 {
-    for( auto test_case : g_ResponseCases ) {
+    for( const auto test_case : g_ResponseCases ) {
         ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
@@ -613,7 +613,7 @@ TEST_CASE(PREFIX "Response cases")
 
 TEST_CASE(PREFIX "UTF cases")
 {
-    for( auto test_case : g_UTFCases ) {
+    for( const auto test_case : g_UTFCases ) {
         ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
@@ -2627,7 +2627,7 @@ TEST_CASE(PREFIX "vttest(8.7) - Insert Character")
 
 TEST_CASE(PREFIX "rn escape assumption")
 {
-    auto string = std::string_view("\r\n");
+    const auto string = std::string_view("\r\n");
     REQUIRE(string.size() == 2);
     REQUIRE(string[0] == 13);
     REQUIRE(string[1] == 10);

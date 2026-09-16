@@ -416,9 +416,9 @@ static NSMenu *BuildTagColorMenu()
 - (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
     auto pb_item_with_type = [&](NSString *_type) -> NSPasteboardItem * {
-        auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
-                                          requiringSecureCoding:false
-                                                          error:nil];
+        const auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                                requiringSecureCoding:false
+                                                                error:nil];
         NSPasteboardItem *const pbitem = [[NSPasteboardItem alloc] init];
         [pbitem setData:data forType:_type];
         return pbitem;

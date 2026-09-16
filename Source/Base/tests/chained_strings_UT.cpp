@@ -28,7 +28,7 @@ TEST_CASE(PREFIX "basic")
     CHECK(str == strings.back().c_str());
     CHECK(strings.singleblock() == true);
 
-    for( auto i : strings )
+    for( const auto i : strings )
         CHECK(str == i.c_str());
 
     const std::string long_str("this is a very long string which will presumably "
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX "blocks")
     CHECK(strings.size() == amount);
 
     unsigned total_sz = 0;
-    for( auto i : strings )
+    for( const auto i : strings )
         total_sz += i.size();
 
     CHECK(total_sz == str.size() * amount);

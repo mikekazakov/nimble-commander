@@ -51,7 +51,7 @@ NSString *StatisticsFormatter::WithItems() const
 
 NSString *StatisticsFormatter::WithBytes() const
 {
-    auto &formatter = ByteCountFormatter::Instance();
+    const auto &formatter = ByteCountFormatter::Instance();
     const auto fmt_type = ByteCountFormatter::Adaptive8;
 
     const auto volume_total = m_Stats.VolumeTotal(Statistics::SourceType::Bytes);

@@ -16,7 +16,7 @@ bool FollowSymlink::Predicate(PanelController *_target) const
 
 bool FollowSymlink::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    if( auto vfs_item = _target.view.item ) {
+    if( const auto vfs_item = _target.view.item ) {
         _item.title = [NSString
             stringWithFormat:NSLocalizedString(@"Follow \u201c%@\u201d", "Follow a symlink"), vfs_item.DisplayNameNS()];
     }
@@ -39,7 +39,7 @@ void FollowSymlink::Perform(PanelController *_target, [[maybe_unused]] id _sende
     if( symlink_target.empty() )
         return;
 
-    auto request = std::make_shared<DirectoryChangeRequest>();
+    const auto request = std::make_shared<DirectoryChangeRequest>();
     request->VFS = item.Host();
     request->LoadPreviousViewState = false;
     request->PerformAsynchronous = true;

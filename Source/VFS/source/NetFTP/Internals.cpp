@@ -11,7 +11,7 @@ namespace nc::vfs::ftp {
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     Log::Trace("CURLWriteDataIntoString({}, {}, {}, {}) called", buffer, size, nmemb, userp);
-    auto sz = size * nmemb;
+    const auto sz = size * nmemb;
     char *tmp = static_cast<char *>(alloca(sz + 1));
     memcpy(tmp, buffer, sz);
     tmp[sz] = 0;
@@ -121,7 +121,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, std::
     return 1;
 }
 
-static int parse_dir_win(const char *line, struct stat *sbuf, char *file, [[maybe_unused]] std::string &link)
+static int parse_dir_win(const char *line, struct stat *sbuf, char *file, [[maybe_unused]] const std::string &link)
 {
     char date[9];
     char hour[8];

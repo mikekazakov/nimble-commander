@@ -124,8 +124,8 @@ TEST_CASE(PREFIX "Settings()")
 TEST_CASE(PREFIX "Loads main settings from an override file")
 {
     const TempTestDir dir;
-    auto base = dir.directory / "base";
-    auto ovr = dir.directory / "ovr";
+    const auto base = dir.directory / "base";
+    const auto ovr = dir.directory / "ovr";
     std::filesystem::create_directory(base);
     std::filesystem::create_directory(ovr);
     SECTION("Sane overrides")
@@ -165,8 +165,8 @@ TEST_CASE(PREFIX "Loads main settings from an override file")
 TEST_CASE(PREFIX "React to changes in the overrides directory")
 {
     const TempTestDir dir;
-    auto base = dir.directory / "base";
-    auto ovr = dir.directory / "ovr";
+    const auto base = dir.directory / "base";
+    const auto ovr = dir.directory / "ovr";
     std::filesystem::create_directory(base);
     std::filesystem::create_directory(ovr);
     std::ofstream{base / "Main.json"} << R"({ "langs": [

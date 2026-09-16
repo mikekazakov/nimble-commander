@@ -256,7 +256,7 @@ int PosixIOInterfaceRouted::stat(const char *_path, struct ::stat *_st) noexcept
         return super::stat(_path, _st);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -294,7 +294,7 @@ int PosixIOInterfaceRouted::lstat(const char *_path, struct ::stat *_st) noexcep
         return super::PosixIOInterfaceNative::lstat(_path, _st);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -351,7 +351,7 @@ int PosixIOInterfaceRouted::mkdir(const char *_path, mode_t _mode) noexcept
         return super::mkdir(_path, _mode);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -392,7 +392,7 @@ int PosixIOInterfaceRouted::chown(const char *_path, uid_t _uid, gid_t _gid) noe
         return super::chown(_path, _uid, _gid);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -428,7 +428,7 @@ int PosixIOInterfaceRouted::chflags(const char *_path, u_int _flags) noexcept
         return super::chflags(_path, _flags);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -464,7 +464,7 @@ int PosixIOInterfaceRouted::lchflags(const char *_path, u_int _flags) noexcept
         return super::lchflags(_path, _flags);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -499,7 +499,7 @@ int PosixIOInterfaceRouted::rmdir(const char *_path) noexcept
         return super::rmdir(_path);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -534,7 +534,7 @@ int PosixIOInterfaceRouted::unlink(const char *_path) noexcept
         return super::unlink(_path);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -570,7 +570,7 @@ int PosixIOInterfaceRouted::rename(const char *_old, const char *_new) noexcept
         return super::rename(_old, _new);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -605,7 +605,7 @@ ssize_t PosixIOInterfaceRouted::readlink(const char *_path, char *_symlink, size
         return super::readlink(_path, _symlink, _buf_sz);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -651,7 +651,7 @@ int PosixIOInterfaceRouted::symlink(const char *_value, const char *_symlink_pat
         return super::symlink(_value, _symlink_path);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -687,7 +687,7 @@ int PosixIOInterfaceRouted::link(const char *_path_exist, const char *_path_newn
         return super::link(_path_exist, _path_newnode);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -723,7 +723,7 @@ int PosixIOInterfaceRouted::chmod(const char *_path, mode_t _mode) noexcept
         return super::chmod(_path, _mode);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -759,7 +759,7 @@ int PosixIOInterfaceRouted::chmtime(const char *_path, time_t _time) noexcept
         return super::chmtime(_path, _time);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -795,7 +795,7 @@ int PosixIOInterfaceRouted::chatime(const char *_path, time_t _time) noexcept
         return super::chatime(_path, _time);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -831,7 +831,7 @@ int PosixIOInterfaceRouted::chbtime(const char *_path, time_t _time) noexcept
         return super::chbtime(_path, _time);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -867,7 +867,7 @@ int PosixIOInterfaceRouted::chctime(const char *_path, time_t _time) noexcept
         return super::chctime(_path, _time);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -904,7 +904,7 @@ int PosixIOInterfaceRouted::killpg(int _pid, int _signal) noexcept
         return super::killpg(_pid, _signal);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);
@@ -939,7 +939,7 @@ int PosixIOInterfaceRouted::trash(const char *_path) noexcept
         return super::trash(_path);
     }
 
-    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+    if( const auto err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
         errno = static_cast<int>(err);

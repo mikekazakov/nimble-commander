@@ -50,16 +50,16 @@ OptionsExporter::OptionsExporter(const Model &_data) : m_Data(_data)
 Value OptionsExporter::Export() const
 {
     Value json(rapidjson::kObjectType);
-    auto add_bool = [&](const char *_name, bool _v) {
+    const auto add_bool = [&](const char *_name, bool _v) {
         json.AddMember(Value(_name, g_CrtAllocator), Value(_v), g_CrtAllocator);
     };
-    auto add_int = [&](const char *_name, int _v) {
+    const auto add_int = [&](const char *_name, int _v) {
         json.AddMember(Value(_name, g_CrtAllocator), Value(_v), g_CrtAllocator);
     };
-    auto add_string = [&](const char *_name, const std::string &_v) {
+    const auto add_string = [&](const char *_name, const std::string &_v) {
         json.AddMember(Value(_name, g_CrtAllocator), config::MakeStandaloneString(_v), g_CrtAllocator);
     };
-    auto sort_mode = m_Data.SortMode();
+    const auto sort_mode = m_Data.SortMode();
     add_bool(g_RestorationSepDirsKey, sort_mode.sep_dirs);
     add_bool(g_RestorationExtlessDirsKey, sort_mode.extensionless_dirs);
     add_bool(g_RestorationShowHiddenKey, m_Data.HardFiltering().show_hidden);
@@ -98,7 +98,7 @@ void OptionsImporter::Import(const Value &_options)
         }
     }
     if( auto v = GetOptionalIntFromObject(_options, g_RestorationSortModeKey) )
-        if( auto mode = static_cast<SortMode::Mode>(*v); nc::panel::data::SortMode::validate(mode) )
+        if( const auto mode = static_cast<SortMode::Mode>(*v); nc::panel::data::SortMode::validate(mode) )
             sort_mode.sort = mode;
     m_Data.SetSortMode(sort_mode);
 

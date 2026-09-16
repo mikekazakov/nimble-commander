@@ -268,7 +268,7 @@ std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, siz
     return eas;
 }
 
-std::vector<std::byte> BuildAppleDoubleFromEA(VFSFile &_file)
+std::vector<std::byte> BuildAppleDoubleFromEA(const VFSFile &_file)
 {
     const unsigned ret_xattr_count = _file.XAttrCount();
     if( ret_xattr_count == 0 )

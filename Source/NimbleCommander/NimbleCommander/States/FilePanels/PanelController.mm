@@ -455,7 +455,7 @@ static void HeatUpConfigValues()
         m_DirectoryReLoadingQ.Run([=] {
             if( m_DirectoryReLoadingQ.IsStopped() )
                 return;
-            auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing(
+            const auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing(
                 m_Data.Listing(), [&] { return m_DirectoryReLoadingQ.IsStopped(); });
             if( listing )
                 dispatch_to_main_queue([=] { [self reloadRefreshedListing:listing]; });
@@ -930,7 +930,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         dispatch_or_run_in_main_queue([=] {
             [m_View savePathState];
             m_Data.Load(*listing, data::Model::PanelType::Directory);
-            for( auto &i : _request->RequestSelectedEntries )
+            for( const auto &i : _request->RequestSelectedEntries )
                 m_Data.CustomFlagsSelectSorted(m_Data.SortedIndexForName(i), true);
             m_DataGeneration++;
             [m_View dataUpdated];
@@ -1004,7 +1004,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         while( true ) {
             if( vfs->IterateDirectoryListing(path.native(), [](const VFSDirEnt &) { return false; }) ) {
                 dispatch_to_main_queue([=] {
-                    auto request = std::make_shared<DirectoryChangeRequest>();
+                    const auto request = std::make_shared<DirectoryChangeRequest>();
                     request->RequestedDirectory = path.native();
                     request->VFS = vfs;
                     request->PerformAsynchronous = true;
@@ -1020,7 +1020,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         }
 
         // we can't work on this vfs. currently for simplicity - just go home
-        auto request = std::make_shared<DirectoryChangeRequest>();
+        const auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = nc::base::CommonPaths::Home();
         request->VFS = m_NativeHost->SharedPtr();
         request->PerformAsynchronous = true;

@@ -137,7 +137,7 @@ std::expected<void, Error> FTPHost::DownloadAndCacheListing(ftp::CURLInstance *_
     if( !listing )
         return std::unexpected(listing.error());
 
-    auto dir = ParseListing(listing->c_str());
+    const auto dir = ParseListing(listing->c_str());
     m_Cache->InsertLISTDirectory(_path, dir);
     std::string path = _path;
     InformDirectoryChanged(path.back() == '/' ? path : path + "/");
@@ -247,7 +247,7 @@ FTPHost::Stat(std::string_view _path, unsigned long _flags, const VFSCancelCheck
 
     // try to find dir from cache
     if( !(_flags & VFSFlags::F_ForceRefresh) ) {
-        if( auto dir = m_Cache->FindDirectory(parent_dir.native()) ) {
+        if( const auto dir = m_Cache->FindDirectory(parent_dir.native()) ) {
             Log::Trace("found a cached directory '{}', outdated={}", parent_dir.native(), dir->IsOutdated());
             auto entry = dir->EntryByName(filename);
             if( entry ) {
@@ -313,7 +313,7 @@ FTPHost::FetchDirectoryListing(std::string_view _path, unsigned long _flags, con
         listing_source.filenames.emplace_back("..");
         listing_source.unix_types.emplace_back(DT_DIR);
         listing_source.unix_modes.emplace_back(S_IRUSR | S_IWUSR | S_IFDIR);
-        auto curtime = time(nullptr);
+        const auto curtime = time(nullptr);
         listing_source.sizes.insert(0, ListingInput::unknown_size);
         listing_source.atimes.insert(0, curtime);
         listing_source.btimes.insert(0, curtime);
@@ -558,7 +558,7 @@ std::expected<void, Error> FTPHost::Rename(std::string_view _old_path,
 
 void FTPHost::MakeDirectoryStructureDirty(const char *_path)
 {
-    if( auto dir = m_Cache->FindDirectory(_path) ) {
+    if( const auto dir = m_Cache->FindDirectory(_path) ) {
         InformDirectoryChanged(dir->path);
         dir->dirty_structure = true;
     }
@@ -597,7 +597,7 @@ void FTPHost::InformDirectoryChanged(const std::string &_dir_wth_sl)
 {
     assert(_dir_wth_sl.back() == '/');
     const std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
-    for( auto &i : m_UpdateHandlers )
+    for( const auto &i : m_UpdateHandlers )
         if( i.path == _dir_wth_sl )
             i.handler();
 }
@@ -615,7 +615,7 @@ FTPHost::IterateDirectoryListing(std::string_view _path, const std::function<boo
     if( !dir )
         return std::unexpected(dir.error());
 
-    for( auto &i : (*dir)->entries ) {
+    for( const auto &i : (*dir)->entries ) {
         VFSDirEnt e;
         e.type = static_cast<VFSDirEnt::Type>(IFTODT(i.mode));
         e.name = i.name;

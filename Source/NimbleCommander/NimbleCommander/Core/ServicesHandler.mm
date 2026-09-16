@@ -17,8 +17,8 @@ ServicesHandler::ServicesHandler(std::function<NCMainWindowController *()> _wind
 static NSURL *ExtractFirstURL(NSPasteboard *_pboard)
 {
     for( NSPasteboardItem *item in _pboard.pasteboardItems )
-        if( auto url_string = [item stringForType:@"public.file-url"] )
-            if( auto url = [NSURL URLWithString:url_string] )
+        if( const auto url_string = [item stringForType:@"public.file-url"] )
+            if( const auto url = [NSURL URLWithString:url_string] )
                 return url;
     return nil;
 }
@@ -27,7 +27,7 @@ void ServicesHandler::OpenFolder(NSPasteboard *_pboard,
                                  [[maybe_unused]] NSString *_user_data,
                                  [[maybe_unused]] __strong NSString **_error)
 {
-    auto url = ExtractFirstURL(_pboard);
+    const auto url = ExtractFirstURL(_pboard);
     if( !url )
         return;
 
@@ -41,8 +41,8 @@ void ServicesHandler::OpenFolder(NSPasteboard *_pboard,
 
 void ServicesHandler::GoToFolder(const std::string &_path)
 {
-    if( auto wnd = m_WindowProvider() ) {
-        auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
+    if( const auto wnd = m_WindowProvider() ) {
+        const auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = _path;
         ctx->VFS = m_NativeHost;
         ctx->InitiatedByUser = true;
@@ -82,12 +82,12 @@ void ServicesHandler::RevealItem(NSPasteboard *_pboard,
 {
     std::vector<std::string> paths;
     for( NSPasteboardItem *item in _pboard.pasteboardItems ) {
-        if( auto url_string = [item stringForType:@"public.file-url"] ) {
-            if( auto url = [NSURL URLWithString:url_string] )
+        if( const auto url_string = [item stringForType:@"public.file-url"] ) {
+            if( const auto url = [NSURL URLWithString:url_string] )
                 if( auto path = url.fileSystemRepresentation )
                     paths.emplace_back(path);
         }
-        else if( auto path_string = [item stringForType:@"NSFilenamesPboardType"] ) {
+        else if( const auto path_string = [item stringForType:@"NSFilenamesPboardType"] ) {
             if( auto fs = path_string.fileSystemRepresentation )
                 paths.emplace_back(fs);
         }
@@ -118,8 +118,8 @@ void ServicesHandler::RevealItems(const std::vector<std::string> &_paths)
     if( directory.empty() || filenames.empty() )
         return;
 
-    if( auto wnd = m_WindowProvider() ) {
-        auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
+    if( const auto wnd = m_WindowProvider() ) {
+        const auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = directory;
         ctx->VFS = m_NativeHost;
         ctx->RequestFocusedEntry = filenames.front();

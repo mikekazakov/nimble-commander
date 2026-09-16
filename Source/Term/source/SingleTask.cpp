@@ -82,7 +82,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
     m_TaskBinaryName = img_name;
 
     // remember current locale and stuff
-    auto env = BuildEnv();
+    const auto env = BuildEnv();
 
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);

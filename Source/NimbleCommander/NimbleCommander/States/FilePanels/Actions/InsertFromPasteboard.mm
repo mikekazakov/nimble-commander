@@ -39,7 +39,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard(vfs::Nati
     NSPasteboard *const pasteboard = NSPasteboard.generalPasteboard;
     if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
         // input should be an array of filepaths as NSStrings
-        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
+        const auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
 
         // currently fetching listings synchronously, which is BAAAD
         // (but we're on native vfs, at least for now)

@@ -10,7 +10,7 @@ namespace nc::panel::actions {
 
 bool OpenXAttr::Predicate(PanelController *_target) const
 {
-    auto i = _target.view.item;
+    const auto i = _target.view.item;
     return i && i.Host()->IsNativeFS();
 }
 
@@ -20,8 +20,8 @@ void OpenXAttr::Perform(PanelController *_target, id /*_sender*/) const
         return;
 
     try {
-        auto host = std::make_shared<vfs::XAttrHost>(_target.view.item.Path(), _target.view.item.Host());
-        auto context = std::make_shared<DirectoryChangeRequest>();
+        const auto host = std::make_shared<vfs::XAttrHost>(_target.view.item.Path(), _target.view.item.Host());
+        const auto context = std::make_shared<DirectoryChangeRequest>();
         context->VFS = host;
         context->RequestedDirectory = "/";
         context->InitiatedByUser = true;

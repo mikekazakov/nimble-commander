@@ -99,8 +99,7 @@ unsigned ExternalToolsParameters::GetMaximumTotalFiles() const
 
 namespace {
 
-struct InterpretInvertFlag {
-};
+struct InterpretInvertFlag {};
 struct SetMaximumFilesFlag {
     unsigned maximum = 0;
 };
@@ -128,17 +127,17 @@ Eat(const std::string_view _source) noexcept
     bool list = false;
     bool in_prompt = false;
 
-    auto error = [&] {
+    const auto error = [&] {
         const auto error_pos = prev.data() - _source.data();
         return std::unexpected(
             fmt::format("Parse error:\n{}⚠️{}", _source.substr(0, error_pos), _source.substr(error_pos)));
     };
-    auto reset_placeholder = [&] {
+    const auto reset_placeholder = [&] {
         number.reset();
         prompt.reset();
         placeholder = minus = list = in_prompt = false;
     };
-    auto location = [&] {
+    const auto location = [&] {
         if( left_right )
             return minus ? ExternalToolsParameters::Location::Right : ExternalToolsParameters::Location::Left;
         else
@@ -445,7 +444,7 @@ void ExternalToolsStorage::LoadToolsFromConfig()
     bool did_invent_any_uuids = false;
 
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         m_Tools.clear();
 
         ankerl::unordered_dense::set<base::UUID> uuids;
@@ -475,27 +474,27 @@ void ExternalToolsStorage::LoadToolsFromConfig()
 
 size_t ExternalToolsStorage::ToolsCount() const
 {
-    auto guard = std::lock_guard{m_ToolsLock};
+    const auto guard = std::lock_guard{m_ToolsLock};
     return m_Tools.size();
 }
 
 std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
 {
-    auto guard = std::lock_guard{m_ToolsLock};
+    const auto guard = std::lock_guard{m_ToolsLock};
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
 }
 
 std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(const base::UUID &_uuid) const
 {
-    auto guard = std::lock_guard{m_ToolsLock};
+    const auto guard = std::lock_guard{m_ToolsLock};
 
-    auto it = std::ranges::find_if(m_Tools, [&](auto &_tool) { return _tool->m_UUID == _uuid; });
+    const auto it = std::ranges::find_if(m_Tools, [&](auto &_tool) { return _tool->m_UUID == _uuid; });
     return it == m_Tools.end() ? nullptr : *it;
 }
 
 std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
 {
-    auto guard = std::lock_guard{m_ToolsLock};
+    const auto guard = std::lock_guard{m_ToolsLock};
     return m_Tools;
 }
 
@@ -508,12 +507,12 @@ void ExternalToolsStorage::WriteToolsToConfig() const
 {
     std::vector<std::shared_ptr<const ExternalTool>> tools;
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         tools = m_Tools;
     }
 
     nc::config::Value json_tools{rapidjson::kArrayType};
-    for( auto &t : tools )
+    for( const auto &t : tools )
         json_tools.PushBack(SaveTool(*t), nc::config::g_CrtAllocator);
     m_Config.Set(m_ConfigPath, json_tools);
 }
@@ -532,7 +531,7 @@ void ExternalToolsStorage::CommitChanges()
 void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)
 {
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         if( _at_index >= m_Tools.size() )
             return;
         if( *m_Tools[_at_index] == _tool )
@@ -545,7 +544,7 @@ void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)
 void ExternalToolsStorage::InsertTool(ExternalTool _tool)
 {
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         if( std::ranges::any_of(m_Tools, [&](auto &_existing) { return _existing->m_UUID == _tool.m_UUID; }) ) {
             throw std::invalid_argument("Duplicate UUID");
         }
@@ -560,10 +559,10 @@ void ExternalToolsStorage::MoveTool(const size_t _at_index, const size_t _to_ind
         return;
 
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         if( _at_index >= m_Tools.size() || _to_index >= m_Tools.size() )
             return;
-        auto v = m_Tools[_at_index];
+        const auto v = m_Tools[_at_index];
         m_Tools.erase(next(begin(m_Tools), _at_index));
         m_Tools.insert(next(begin(m_Tools), _to_index), v);
     }
@@ -574,7 +573,7 @@ void ExternalToolsStorage::MoveTool(const size_t _at_index, const size_t _to_ind
 void ExternalToolsStorage::RemoveTool(size_t _at_index)
 {
     {
-        auto lock = std::lock_guard{m_ToolsLock};
+        const auto lock = std::lock_guard{m_ToolsLock};
         if( _at_index >= m_Tools.size() )
             return;
 
@@ -585,7 +584,7 @@ void ExternalToolsStorage::RemoveTool(size_t _at_index)
 
 std::string ExternalToolsStorage::NewTitle() const
 {
-    auto lock = std::lock_guard{m_ToolsLock};
+    const auto lock = std::lock_guard{m_ToolsLock};
     ankerl::unordered_dense::set<std::string> names;
     for( const auto &et : m_Tools ) {
         names.emplace(et->m_Title);
@@ -645,13 +644,13 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
     size_t num_files = 0;
 
     bool append = false;
-    auto commit = [&](std::string _arg) {
+    const auto commit = [&](std::string _arg) {
         if( append && !result.empty() )
             result.back() += _arg;
         else
             result.push_back(std::move(_arg));
     };
-    auto panel_cursor_for_location =
+    const auto panel_cursor_for_location =
         [&](ExternalToolsParameters::Location _location) -> std::pair<const panel::data::Model *, int> {
         switch( _location ) {
             case ExternalToolsParameters::Location::Left:
@@ -666,7 +665,8 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
                                                        : std::make_pair(m_Ctx.left_data, m_Ctx.left_cursor_pos);
         }
     };
-    auto info_from_item = [](const VFSListingItem &_item, ExternalToolsParameters::FileInfo _info) -> std::string {
+    const auto info_from_item = [](const VFSListingItem &_item,
+                                   ExternalToolsParameters::FileInfo _info) -> std::string {
         assert(_item);
         using FI = ExternalToolsParameters::FileInfo;
         switch( _info ) {
@@ -711,7 +711,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
             const auto [panel, idx] = panel_cursor_for_location(v.location);
 
             std::vector<VFSListingItem> items;
-            for( auto ind : panel->SortedDirectoryEntries() ) {
+            for( const auto ind : panel->SortedDirectoryEntries() ) {
                 if( panel->VolatileDataAtRawPosition(ind).is_selected() )
                     if( auto e = panel->EntryAtRawPosition(ind) )
                         items.emplace_back(std::move(e));
@@ -725,7 +725,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
             }
 
             if( v.as_parameters ) {
-                for( auto &item : items ) {
+                for( const auto &item : items ) {
                     if( num_files++ >= max_files )
                         break;
                     commit(info_from_item(item, v.what));
@@ -733,11 +733,11 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
             }
             else {
                 std::string list;
-                for( auto &item : items ) {
+                for( const auto &item : items ) {
                     if( num_files++ >= max_files )
                         break;
                     if( !list.empty() )
-                        list += "\n";
+                        list += '\n';
                     list += info_from_item(item, v.what);
                 }
                 if( !list.empty() ) {
@@ -810,7 +810,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetached()
 
 std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork() const
 {
-    auto args = BuildArguments();
+    const auto args = BuildArguments();
 
     const int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
     if( pid < 0 ) {
@@ -854,7 +854,7 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
     };
 
     auto ctx = std::make_shared<Ctx>();
-    auto handler = ^(NSRunningApplication *_Nullable app, NSError *_Nullable error) {
+    const auto handler = ^(NSRunningApplication *_Nullable app, NSError *_Nullable error) {
       std::unique_lock lock{ctx->mut};
       ctx->app = app;
       ctx->error = error;

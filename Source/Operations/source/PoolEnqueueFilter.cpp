@@ -18,15 +18,15 @@ void PoolEnqueueFilter::Set(std::string_view _id, bool _enable) noexcept
     const auto type = IDtoType(_id);
     if( type == nullptr )
         return;
-    auto lock = std::lock_guard{m_Mutex};
+    const auto lock = std::lock_guard{m_Mutex};
     m_Enabled[std::type_index(*type)] = _enable;
 }
 
 bool PoolEnqueueFilter::ShouldEnqueue(const Operation &_operation) const noexcept
 {
     const std::type_info &operation_type = typeid(_operation);
-    auto lock = std::lock_guard{m_Mutex};
-    auto it = m_Enabled.find(std::type_index(operation_type));
+    const auto lock = std::lock_guard{m_Mutex};
+    const auto it = m_Enabled.find(std::type_index(operation_type));
     if( it == m_Enabled.end() )
         return true;
     return it->second;
@@ -34,7 +34,7 @@ bool PoolEnqueueFilter::ShouldEnqueue(const Operation &_operation) const noexcep
 
 void PoolEnqueueFilter::Reset() noexcept
 {
-    auto lock = std::lock_guard{m_Mutex};
+    const auto lock = std::lock_guard{m_Mutex};
     m_Enabled.clear();
 }
 
@@ -53,7 +53,7 @@ const std::type_info *PoolEnqueueFilter::IDtoType(std::string_view _id) noexcept
         m.emplace("link", &typeid(Linkage));
         return m;
     }();
-    if( auto it = mapping.find(_id); it != mapping.end() )
+    if( const auto it = mapping.find(_id); it != mapping.end() )
         return it->second;
     return nullptr;
 }
@@ -71,7 +71,7 @@ std::string_view PoolEnqueueFilter::TypetoID(const std::type_info &_type) noexce
         m.emplace(typeid(Linkage), "link");
         return m;
     }();
-    if( auto it = mapping.find(std::type_index(_type)); it != mapping.end() )
+    if( const auto it = mapping.find(std::type_index(_type)); it != mapping.end() )
         return it->second;
     return {};
 }

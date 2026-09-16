@@ -13,7 +13,7 @@ TEST_CASE(PREFIX "non-contested passage")
     bool flag = false;
     nc::spinlock lock;
     {
-        auto guard = std::lock_guard{lock};
+        const auto guard = std::lock_guard{lock};
         flag = true;
     }
     CHECK(flag == true);
@@ -27,9 +27,9 @@ TEST_CASE(PREFIX "contested passage")
     nc::spinlock lock;
     int counter = 0;
 
-    auto worker = [&]() {
+    const auto worker = [&]() {
         for( int i = 0; i < increments_per_thread; ++i ) {
-            auto guard = std::lock_guard{lock};
+            const auto guard = std::lock_guard{lock};
             ++counter;
         }
     };

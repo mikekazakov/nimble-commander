@@ -76,7 +76,7 @@ CTCache::DisplayChar CTCache::GetChar(char32_t _code) noexcept
     if( static_cast<size_t>(_code) < m_BasicLatinChars.size() )
         return m_BasicLatinChars[static_cast<size_t>(_code)];
 
-    if( auto it = m_OtherChars.find(_code); it != m_OtherChars.end() )
+    if( const auto it = m_OtherChars.find(_code); it != m_OtherChars.end() )
         return it->second;
 
     auto line = Build(_code);
@@ -105,12 +105,12 @@ CTLineRef CTCache::Build(char32_t _code)
     const void *keys[2] = {kCTFontAttributeName, kCTForegroundColorFromContextAttributeName};
     const void *values[2] = {m_Fonts.front().get(), kCFBooleanTrue};
 
-    auto str_dict = base::CFPtr<CFDictionaryRef>::adopt(
+    const auto str_dict = base::CFPtr<CFDictionaryRef>::adopt(
         CFDictionaryCreate(nullptr, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if( !str_dict )
         return {};
 
-    auto str_attr =
+    const auto str_attr =
         base::CFPtr<CFAttributedStringRef>::adopt(CFAttributedStringCreate(nullptr, str.get(), str_dict.get()));
     if( !str_attr )
         return {};
@@ -122,7 +122,7 @@ CTCache::DisplayChar CTCache::Internalize(CTLineRef _line)
 {
     assert(_line);
 
-    auto insert_full = [=, this] -> DisplayChar {
+    const auto insert_full = [=, this] -> DisplayChar {
         m_Complexes.emplace_back(_line);
         return {.kind = Kind::Complex, .index = static_cast<uint32_t>(m_Complexes.size() - 1)};
     };
@@ -248,14 +248,14 @@ void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, 
     }
 
     // 2nd sort simple glyphs by their font number
-    auto less_font = [](auto &_lhs, auto &_rhs) { return _lhs.font < _rhs.font; };
+    const auto less_font = [](auto &_lhs, auto &_rhs) { return _lhs.font < _rhs.font; };
     std::ranges::sort(simple_glyphs, less_font);
     std::ranges::sort(simple_box_glyphs, less_font);
 
     // 3rd - draw normal simple glyphs, font by font
     std::pmr::vector<uint16_t> glyphs_to_ct(&mem_resource);
     std::pmr::vector<CGPoint> pos_to_ct(&mem_resource);
-    auto flush = [&](CTFontRef _font) {
+    const auto flush = [&](CTFontRef _font) {
         assert(pos_to_ct.size() == glyphs_to_ct.size());
         if( !glyphs_to_ct.empty() ) {
             CGContextSetTextPosition(_ctx, 0., 0.);
@@ -323,7 +323,7 @@ std::shared_ptr<CTCache> CTCacheRegistry::CacheForFont(base::CFPtr<CTFontRef> _f
     std::erase_if(m_Caches, [](auto &ptr) { return ptr.expired(); });
 
     // 2nd pass - try to find an existing cache, O(n)
-    auto it =
+    const auto it =
         std::ranges::find_if(m_Caches, [&](auto &ptr) { return CFEqual(ptr.lock()->GetBaseFont(), _font.get()); });
     if( it != m_Caches.end() )
         return it->lock();

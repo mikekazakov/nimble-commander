@@ -104,7 +104,7 @@ bool VFSPathStack::weak_equal(const VFSPathStack &_r) const
         return false;
     auto i = begin(m_Stack);
     auto j = begin(_r.m_Stack);
-    auto e = end(m_Stack);
+    const auto e = end(m_Stack);
     for( ; i != e; ++i, ++j )
         if( !i->weak_equal(*j) )
             return false;
@@ -165,7 +165,7 @@ std::hash<nc::vfs::VFSPathStack>::operator()(const hash<nc::vfs::VFSPathStack>::
         str += i.fs_tag;
         str += i.junction;
         // we need to incorporate options somehow here. or not?
-        str += "|"; // really need this?
+        str += '|'; // really need this?
     }
     str += _v.m_Path;
     return std::hash<std::string>()(str);

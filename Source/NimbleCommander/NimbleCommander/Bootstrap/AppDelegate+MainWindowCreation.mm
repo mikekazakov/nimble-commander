@@ -106,7 +106,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
 
     std::vector<std::string> split;
     for( const auto str : std::views::split(std::string_view{strings}, ',') )
-        if( auto trimmed = nc::base::Trim(std::string_view{str}); !trimmed.empty() )
+        if( const auto trimmed = nc::base::Trim(std::string_view{str}); !trimmed.empty() )
             split.emplace_back(trimmed);
     return split;
 }

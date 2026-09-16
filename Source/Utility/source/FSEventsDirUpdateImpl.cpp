@@ -110,7 +110,7 @@ FSEventStreamRef FSEventsDirUpdateImpl::CreateEventStream(const std::string &pat
 
     CFArrayRef pathsToWatch = CFArrayCreate(nullptr, reinterpret_cast<const void **>(&cf_path), 1, nullptr);
     FSEventStreamRef stream = nullptr;
-    auto create_stream = [&] {
+    const auto create_stream = [&] {
         const auto flags = kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagWatchRoot;
         auto context = FSEventStreamContext{
             .version = 0, .info = context_ptr, .retain = nullptr, .release = nullptr, .copyDescription = nullptr};
@@ -141,7 +141,7 @@ static void StartStream(FSEventStreamRef _stream)
 {
     assert(_stream != nullptr);
 
-    auto schedule_and_run = [=] {
+    const auto schedule_and_run = [=] {
         FSEventStreamScheduleWithRunLoop(_stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         const bool started = FSEventStreamStart(_stream);
         if( !started ) {
@@ -187,10 +187,10 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(std::string_view _path, std::functi
     // monotonically increase current ticket to get a next unique one
     const auto ticket = m_LastTicket++;
 
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
 
     // check if this path already presents in watched paths
-    if( auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
+    if( const auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
         Log::Trace("Using an already existing watcher for '{}'", _path);
         it->second->handlers.emplace_back(ticket, std::move(_handler));
         return ticket;
@@ -198,7 +198,7 @@ uint64_t FSEventsDirUpdateImpl::AddWatchPath(std::string_view _path, std::functi
 
     // create a new watch stream
     Log::Trace("Creating a new watcher for '{}'", _path);
-    auto ep = m_Watches.emplace(dir_path, std::make_unique<WatchData>());
+    const auto ep = m_Watches.emplace(dir_path, std::make_unique<WatchData>());
     assert(ep.second == true);
     WatchData &w = *ep.first->second;
     w.stream = CreateEventStream(dir_path, &w);
@@ -220,7 +220,7 @@ template <class Container, class Iterator>
 static inline void unordered_erase(Container &_c, Iterator _i)
 {
     // can do this since erase() requires a valid iterator => thus c is not empty.
-    auto last = std::prev(std::end(_c));
+    const auto last = std::prev(std::end(_c));
 
     if( last != _i )
         std::iter_swap(_i, last);
@@ -238,7 +238,7 @@ void FSEventsDirUpdateImpl::RemoveWatchPathWithTicket(uint64_t _ticket)
         return;
     }
 
-    auto lock = std::lock_guard{m_Lock};
+    const auto lock = std::lock_guard{m_Lock};
 
     for( auto i = m_Watches.begin(), e = m_Watches.end(); i != e; ++i ) {
         auto &watch = *i->second;
@@ -261,7 +261,7 @@ void FSEventsDirUpdateImpl::OnVolumeDidUnmount(const std::string &_on_path)
     // locking??
     for( auto &i : m_Watches ) {
         if( i.second->path.starts_with(_on_path) ) {
-            for( auto &h : i.second->handlers )
+            for( const auto &h : i.second->handlers )
                 h.second();
         }
     }

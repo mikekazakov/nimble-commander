@@ -282,7 +282,10 @@ static NSOpenPanel *BuildAppChoose()
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;
     panel.canChooseDirectories = false;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     panel.allowedFileTypes = @[@"app"];
+#pragma clang diagnostic pop
     panel.directoryURL = [[NSURL alloc] initFileURLWithPath:@"/Applications" isDirectory:true];
     return panel;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabAutomaticSwitchingSheet.h"
@@ -508,7 +508,10 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
 
         NSSavePanel *panel = [NSSavePanel savePanel];
         panel.nameFieldStringValue = [NSString stringWithUTF8StdString:theme_name];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         panel.allowedFileTypes = @[@"json"];
+#pragma clang diagnostic pop
         panel.allowsOtherFileTypes = false;
         panel.directoryURL = [NSFileManager.defaultManager URLForDirectory:NSDesktopDirectory
                                                                   inDomain:NSUserDomainMask
@@ -558,7 +561,10 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
 - (IBAction)onImportClicked:(id) [[maybe_unused]] sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     panel.allowedFileTypes = @[@"json"];
+#pragma clang diagnostic pop
     panel.allowsOtherFileTypes = false;
     if( [panel runModal] == NSModalResponseOK && panel.URL != nil ) {
         NSURL *url = panel.URL;

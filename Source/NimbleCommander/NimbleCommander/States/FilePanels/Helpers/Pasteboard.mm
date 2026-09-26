@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pasteboard.h"
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>
@@ -40,7 +40,10 @@ bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_item
                     [urls addObject:url];
 
     [_pasteboard clearContents];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_pasteboard declareTypes:@[(__bridge NSString *)kUTTypeFileURL] owner:nil];
+#pragma clang diagnostic pop
     return [_pasteboard writeObjects:urls];
 }
 

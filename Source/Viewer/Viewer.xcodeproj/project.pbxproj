@@ -703,7 +703,6 @@
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = resources/ViewerResources.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.ViewerResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -719,7 +718,6 @@
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = resources/ViewerResources.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.ViewerResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

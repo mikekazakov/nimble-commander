@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <VFSIcon/Log.h>
 #include <Cocoa/Cocoa.h>
@@ -11,7 +11,10 @@ namespace nc::vfsicon {
 WorkspaceExtensionIconsCacheImpl::WorkspaceExtensionIconsCacheImpl(const nc::utility::UTIDB &_uti_db) : m_UTIDB(_uti_db)
 {
     m_GenericFolderIcon = [NSImage imageNamed:NSImageNameFolder];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_GenericFileIcon = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
+#pragma clang diagnostic pop
 }
 
 WorkspaceExtensionIconsCacheImpl::~WorkspaceExtensionIconsCacheImpl() = default;

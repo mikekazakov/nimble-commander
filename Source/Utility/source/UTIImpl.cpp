@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Base/CFPtr.h>
@@ -17,8 +17,11 @@ std::string UTIDBImpl::UTIForExtension(std::string_view _extension) const
 
     std::string uti;
     if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_extension)) ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         const auto cf_uti = CFPtr<CFStringRef>::adopt(
             UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext.get(), nullptr));
+#pragma clang diagnostic pop
         if( cf_uti ) {
             uti = base::CFStringGetUTF8StdString(cf_uti.get());
             m_ExtensionToUTI.emplace(_extension, uti);
@@ -39,7 +42,10 @@ bool UTIDBImpl::IsDeclaredUTI(std::string_view _uti) const
     }
 
     if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_uti)) ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         const bool declared = UTTypeIsDeclared(ext.get());
+#pragma clang diagnostic pop
         m_DeclaredUTIs.emplace(_uti, declared);
         return declared;
     }
@@ -60,7 +66,10 @@ static void TraverseConformingUTIs(
     if( !uti )
         return;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const auto declaration = CFPtr<CFDictionaryRef>::adopt(UTTypeCopyDeclaration(uti.get()));
+#pragma clang diagnostic pop
     if( !declaration )
         return;
 

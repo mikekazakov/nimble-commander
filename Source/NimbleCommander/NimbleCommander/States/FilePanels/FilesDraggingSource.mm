@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilesDraggingSource.h"
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
@@ -15,7 +15,10 @@ static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespane
 static const auto g_PasteboardFileURLPromiseUTI = static_cast<NSString *>(kPasteboardTypeFileURLPromise);
 
 // "public.file-url"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static const auto g_PasteboardFileURLUTI = static_cast<NSString *>(kUTTypeFileURL);
+#pragma clang diagnostic pop
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -38,8 +41,11 @@ static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
         m_Item = _item;
 
         // for File URL Promise. need to check if this is necessary
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setString:static_cast<NSString *>(kUTTypeData)
                 forType:static_cast<NSString *>(kPasteboardTypeFilePromiseContent)];
+#pragma clang diagnostic pop
     }
     return self;
 }

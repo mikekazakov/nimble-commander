@@ -183,7 +183,7 @@ TEST_CASE(PREFIX "gracefully discards non-compressed input")
     for( const auto &tc : cases ) {
         REQUIRE(nc::base::WriteAtomically(path, {reinterpret_cast<const std::byte *>(tc.data()), tc.size()}));
         try {
-            std::make_shared<ArchiveRawHost>(path.c_str(), TestEnv().vfs_native);
+            std::ignore = std::make_shared<ArchiveRawHost>(path.c_str(), TestEnv().vfs_native);
             CHECK(false);
         } catch( ErrorException &ex ) {
             CHECK(ex.error() == Error{Error::POSIX, EFTYPE});

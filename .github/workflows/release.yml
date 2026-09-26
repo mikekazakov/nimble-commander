@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
 
 env:
-  XC_VERSION: ${{ '26.5' }}
+  XC_VERSION: ${{ '27.0' }}
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: xcode-27
     if: github.ref == 'refs/heads/main' # run this job only for the main branch
     steps:
     - name: Select latest Xcode

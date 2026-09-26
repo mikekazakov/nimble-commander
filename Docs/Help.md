@@ -11,12 +11,12 @@ This website contains an in-depth study of this kind of software: [Less is More:
 
 The current version of Nimble Commander supports any Mac running one of the following versions of macOS:
 
+- macOS 26 Golden Gate
 - macOS 26 Tahoe
 - macOS 15 Sequoia
 - macOS 14 Sonoma
 - macOS 13 Ventura
 - macOS 12 Monterey
-- macOS 11 Big Sur
 
 While not a strict policy, a maintenance goal is to support the last six major releases of macOS.
 This typically covers Mac hardware with a time span of approximately 12 years.
@@ -27,7 +27,8 @@ Below is the compatibility table for the older releases:
 
 | Versions      | Architecture  | Minimum macOS Version
 | ------------- | ------------- | -----------------
-| 1.8.0 -       | x64 & ARM64   | macOS 11
+| 1.9.0 -       | x64 & ARM64   | macOS 12
+| 1.8.0 - 1.8.0 | x64 & ARM64   | macOS 11
 | 1.2.9 - 1.7.0 | x64 & ARM64   | macOS 10.15
 | 1.2.0 - 1.2.7 | x64           | OS X 10.11 El Capitan
 | 1.1.0 - 1.1.5 | x64           | OS X 10.10 Yosemite

@@ -175,7 +175,7 @@ TEST_CASE(PREFIX "Compressing kernel into encrypted archive")
     REQUIRE(native_host->Exists(operation.ArchivePath()));
 
     try {
-        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host);
+        std::ignore = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath(), native_host);
         REQUIRE(false);
     } catch( const ErrorException &e ) {
         REQUIRE(e.error() == Error{Error::POSIX, ENEEDAUTH});

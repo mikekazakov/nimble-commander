@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "HexadecimalColor.h"
 #include "StringExtras.h"
@@ -48,13 +48,129 @@ TEST_CASE(PREFIX "[NSColor colorWithHexString:(std::string_view)_hex]")
 
 TEST_CASE(PREFIX "System colors can be deserialized and serialized")
 {
-    for( const auto name : NSColor.systemColorNames ) {
+    for( const std::string_view &name : NSColor.systemColorNames ) {
         // we CAN'T verify a symmetric round-trip name-wise, but we CAN verify that a result is the same color
-        auto orig_color = [NSColor colorWithHexString:name];
+        NSColor *orig_color = [NSColor colorWithHexString:name];
         const auto hex = [orig_color toHexStdString]; // might be different than the 'name'
         auto restored_color = [NSColor colorWithHexString:hex];
         CHECK(orig_color == restored_color); // should be equal up to the pointer. works even for tagged pointers!
     }
+}
+
+TEST_CASE(PREFIX "System colors serialization, direct")
+{
+    NSAppearance *appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    [appearance performAsCurrentDrawingAppearance:^{
+      // Current colors, 1:1 mapping
+      struct CurrentTC {
+          std::string_view str;
+          NSColor *color;
+      } const current_tcs[] = {
+          {"@blackColor", NSColor.blackColor},
+          {"@darkGrayColor", NSColor.darkGrayColor},
+          {"@lightGrayColor", NSColor.lightGrayColor},
+          {"@whiteColor", NSColor.whiteColor},
+          {"@grayColor", NSColor.grayColor},
+          {"@redColor", NSColor.redColor},
+          {"@greenColor", NSColor.greenColor},
+          {"@blueColor", NSColor.blueColor},
+          {"@cyanColor", NSColor.cyanColor},
+          {"@yellowColor", NSColor.yellowColor},
+          {"@magentaColor", NSColor.magentaColor},
+          {"@orangeColor", NSColor.orangeColor},
+          {"@brownColor", NSColor.brownColor},
+          {"@clearColor", NSColor.clearColor},
+          {"@controlColor", NSColor.controlColor},
+          {"@controlTextColor", NSColor.controlTextColor},
+          {"@controlBackgroundColor", NSColor.controlBackgroundColor},
+          {"@selectedControlColor", NSColor.selectedControlColor},
+          {"@selectedControlTextColor", NSColor.selectedControlTextColor},
+          {"@disabledControlTextColor", NSColor.disabledControlTextColor},
+          {"@textColor", NSColor.textColor},
+          {"@textBackgroundColor", NSColor.textBackgroundColor},
+          {"@selectedTextColor", NSColor.selectedTextColor},
+          {"@selectedTextBackgroundColor", NSColor.selectedTextBackgroundColor},
+          {"@gridColor", NSColor.gridColor},
+          {"@keyboardFocusIndicatorColor", NSColor.keyboardFocusIndicatorColor},
+          {"@windowBackgroundColor", NSColor.windowBackgroundColor},
+          {"@underPageBackgroundColor", NSColor.underPageBackgroundColor},
+          {"@labelColor", NSColor.labelColor},
+          {"@secondaryLabelColor", NSColor.secondaryLabelColor},
+          {"@tertiaryLabelColor", NSColor.tertiaryLabelColor},
+          {"@quaternaryLabelColor", NSColor.quaternaryLabelColor},
+          {"@windowFrameTextColor", NSColor.windowFrameTextColor},
+          {"@selectedMenuItemTextColor", NSColor.selectedMenuItemTextColor},
+          {"@highlightColor", NSColor.highlightColor},
+          {"@shadowColor", NSColor.shadowColor},
+          {"@headerTextColor", NSColor.headerTextColor},
+          {"@alternateSelectedControlTextColor", NSColor.alternateSelectedControlTextColor},
+          {"@linkColor", NSColor.linkColor},
+          {"@placeholderTextColor", NSColor.placeholderTextColor},
+          {"@systemRedColor", NSColor.systemRedColor},
+          {"@systemGreenColor", NSColor.systemGreenColor},
+          {"@systemBlueColor", NSColor.systemBlueColor},
+          {"@systemOrangeColor", NSColor.systemOrangeColor},
+          {"@systemYellowColor", NSColor.systemYellowColor},
+          {"@systemBrownColor", NSColor.systemBrownColor},
+          {"@systemPinkColor", NSColor.systemPinkColor},
+          {"@systemPurpleColor", NSColor.systemPurpleColor},
+          {"@systemGrayColor", NSColor.systemGrayColor},
+          {"@systemTealColor", NSColor.systemTealColor},
+          {"@systemIndigoColor", NSColor.systemIndigoColor},
+          {"@systemMintColor", NSColor.systemMintColor},
+          {"@systemCyanColor", NSColor.systemCyanColor},
+          {"@findHighlightColor", NSColor.findHighlightColor},
+          {"@separatorColor", NSColor.separatorColor},
+          {"@selectedContentBackgroundColor", NSColor.selectedContentBackgroundColor},
+          {"@unemphasizedSelectedContentBackgroundColor", NSColor.unemphasizedSelectedContentBackgroundColor},
+          // {"@alternatingContentBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
+          {"@alternatingContentBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
+          {"@unemphasizedSelectedTextBackgroundColor", NSColor.unemphasizedSelectedTextBackgroundColor},
+          {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
+          {"@controlAccentColor", NSColor.controlAccentColor},
+      };
+      for( const CurrentTC &tc : current_tcs ) {
+          INFO(tc.str);
+          CHECK([tc.color toHexStdString] == tc.str);             // serialization
+          CHECK([NSColor colorWithHexString:tc.str] == tc.color); // deserialization
+      }
+
+      // Replaced colors, check only deserialization
+      struct ReplacementTC {
+          std::string_view str;
+          NSColor *color;
+      } const replacement_tcs[] = {
+          {"@secondarySelectedControlColor", NSColor.unemphasizedSelectedContentBackgroundColor},
+          {"@alternateSelectedControlColor", NSColor.selectedContentBackgroundColor},
+          {"@controlAlternatingRowBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
+          {"@controlAlternatingRowBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
+      };
+      for( const ReplacementTC &tc : replacement_tcs ) {
+          INFO(tc.str);
+          CHECK([NSColor colorWithHexString:tc.str] == tc.color); // deserialization
+      }
+
+      // Dropped colors, check only deserialization
+      struct DroppedTC {
+          std::string_view str;
+          NSColor *color;
+      } const dropped_tcs[] = {
+          {"@controlShadowColor", NSColor.systemPinkColor},
+          {"@controlDarkShadowColor", NSColor.systemPinkColor},
+          {"@controlHighlightColor", NSColor.systemPinkColor},
+          {"@controlLightHighlightColor", NSColor.systemPinkColor},
+          {"@scrollBarColor", NSColor.systemPinkColor},
+          {"@knobColor", NSColor.systemPinkColor},
+          {"@selectedKnobColor", NSColor.systemPinkColor},
+          {"@windowFrameColor", NSColor.systemPinkColor},
+          {"@selectedMenuItemColor", NSColor.systemPinkColor},
+          {"@headerColor", NSColor.systemPinkColor},
+      };
+      for( const DroppedTC &tc : dropped_tcs ) {
+          INFO(tc.str);
+          CHECK([NSColor colorWithHexString:tc.str] == tc.color); // deserialization
+      }
+    }];
 }
 
 #undef PREFIX

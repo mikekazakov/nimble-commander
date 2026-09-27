@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/UnorderedUtil.h>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
@@ -89,103 +89,162 @@ static constexpr void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[
     }
 }
 
-// TODO: unit test for a round-trip!
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-[[clang::no_destroy]]                                                   //
-static const ankerl::unordered_dense::map<std::string,                  //
-                                          NSColor *,                    //
-                                          nc::UnorderedStringHashEqual, //
-                                          nc::UnorderedStringHashEqual> //
-    g_SystemColors = {
-        {"@blackColor", NSColor.blackColor},
-        {"@darkGrayColor", NSColor.darkGrayColor},
-        {"@lightGrayColor", NSColor.lightGrayColor},
-        {"@whiteColor", NSColor.whiteColor},
-        {"@grayColor", NSColor.grayColor},
-        {"@redColor", NSColor.redColor},
-        {"@greenColor", NSColor.greenColor},
-        {"@blueColor", NSColor.blueColor},
-        {"@cyanColor", NSColor.cyanColor},
-        {"@yellowColor", NSColor.yellowColor},
-        {"@magentaColor", NSColor.magentaColor},
-        {"@orangeColor", NSColor.orangeColor},
-        {"@brownColor", NSColor.brownColor},
-        {"@clearColor", NSColor.clearColor},
-        {"@controlShadowColor", NSColor.controlShadowColor},
-        {"@controlDarkShadowColor", NSColor.controlDarkShadowColor},
-        {"@controlColor", NSColor.controlColor},
-        {"@controlHighlightColor", NSColor.controlHighlightColor},
-        {"@controlLightHighlightColor", NSColor.controlLightHighlightColor},
-        {"@controlTextColor", NSColor.controlTextColor},
-        {"@controlBackgroundColor", NSColor.controlBackgroundColor},
-        {"@selectedControlColor", NSColor.selectedControlColor},
-        {"@secondarySelectedControlColor", NSColor.secondarySelectedControlColor},
-        {"@selectedControlTextColor", NSColor.selectedControlTextColor},
-        {"@disabledControlTextColor", NSColor.disabledControlTextColor},
-        {"@textColor", NSColor.textColor},
-        {"@textBackgroundColor", NSColor.textBackgroundColor},
-        {"@selectedTextColor", NSColor.selectedTextColor},
-        {"@selectedTextBackgroundColor", NSColor.selectedTextBackgroundColor},
-        {"@gridColor", NSColor.gridColor},
-        {"@keyboardFocusIndicatorColor", NSColor.keyboardFocusIndicatorColor},
-        {"@windowBackgroundColor", NSColor.windowBackgroundColor},
-        {"@underPageBackgroundColor", NSColor.underPageBackgroundColor},
-        {"@labelColor", NSColor.labelColor},
-        {"@secondaryLabelColor", NSColor.secondaryLabelColor},
-        {"@tertiaryLabelColor", NSColor.tertiaryLabelColor},
-        {"@quaternaryLabelColor", NSColor.quaternaryLabelColor},
-        {"@scrollBarColor", NSColor.scrollBarColor},
-        {"@knobColor", NSColor.knobColor},
-        {"@selectedKnobColor", NSColor.selectedKnobColor},
-        {"@windowFrameColor", NSColor.windowFrameColor},
-        {"@windowFrameTextColor", NSColor.windowFrameTextColor},
-        {"@selectedMenuItemColor", NSColor.selectedMenuItemColor},
-        {"@selectedMenuItemTextColor", NSColor.selectedMenuItemTextColor},
-        {"@highlightColor", NSColor.highlightColor},
-        {"@shadowColor", NSColor.shadowColor},
-        {"@headerColor", NSColor.headerColor},
-        {"@headerTextColor", NSColor.headerTextColor},
-        {"@alternateSelectedControlColor", NSColor.alternateSelectedControlColor},
-        {"@alternateSelectedControlTextColor", NSColor.alternateSelectedControlTextColor},
-        {"@controlAlternatingRowBackgroundColors0", NSColor.controlAlternatingRowBackgroundColors[0]},
-        {"@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1]},
-        {"@linkColor", NSColor.linkColor},
-        {"@placeholderTextColor", NSColor.placeholderTextColor},
-        {"@systemRedColor", NSColor.systemRedColor},
-        {"@systemGreenColor", NSColor.systemGreenColor},
-        {"@systemBlueColor", NSColor.systemBlueColor},
-        {"@systemOrangeColor", NSColor.systemOrangeColor},
-        {"@systemYellowColor", NSColor.systemYellowColor},
-        {"@systemBrownColor", NSColor.systemBrownColor},
-        {"@systemPinkColor", NSColor.systemPinkColor},
-        {"@systemPurpleColor", NSColor.systemPurpleColor},
-        {"@systemGrayColor", NSColor.systemGrayColor},
-        {"@systemTealColor", NSColor.systemTealColor},
-        {"@systemIndigoColor", NSColor.systemIndigoColor},
-        {"@systemMintColor", NSColor.systemMintColor},
-        {"@findHighlightColor", NSColor.findHighlightColor},
-        {"@separatorColor", NSColor.separatorColor},
-        {"@selectedContentBackgroundColor", NSColor.selectedContentBackgroundColor},
-        {"@unemphasizedSelectedContentBackgroundColor", NSColor.unemphasizedSelectedContentBackgroundColor},
-        {"@alternatingContentBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
-        {"@alternatingContentBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
-        {"@unemphasizedSelectedTextBackgroundColor", NSColor.unemphasizedSelectedTextBackgroundColor},
-        {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
-        {"@controlAccentColor", NSColor.controlAccentColor},
+[[clang::no_destroy]]
+static const ankerl::unordered_dense::map<std::string,
+                                          NSColor *,
+                                          nc::UnorderedStringHashEqual,
+                                          nc::UnorderedStringHashEqual> g_SystemColorsDeserializationMap = {
+    {"@blackColor", NSColor.blackColor},
+    {"@darkGrayColor", NSColor.darkGrayColor},
+    {"@lightGrayColor", NSColor.lightGrayColor},
+    {"@whiteColor", NSColor.whiteColor},
+    {"@grayColor", NSColor.grayColor},
+    {"@redColor", NSColor.redColor},
+    {"@greenColor", NSColor.greenColor},
+    {"@blueColor", NSColor.blueColor},
+    {"@cyanColor", NSColor.cyanColor},
+    {"@yellowColor", NSColor.yellowColor},
+    {"@magentaColor", NSColor.magentaColor},
+    {"@orangeColor", NSColor.orangeColor},
+    {"@brownColor", NSColor.brownColor},
+    {"@clearColor", NSColor.clearColor},
+    {"@controlShadowColor", NSColor.systemPinkColor},     // DEPR, NO REPLACEMENT
+    {"@controlDarkShadowColor", NSColor.systemPinkColor}, // DEPR, NO REPLACEMENT
+    {"@controlColor", NSColor.controlColor},
+    {"@controlHighlightColor", NSColor.systemPinkColor},      // DEPR, NO REPLACEMENT
+    {"@controlLightHighlightColor", NSColor.systemPinkColor}, // DEPR, NO REPLACEMENT
+    {"@controlTextColor", NSColor.controlTextColor},
+    {"@controlBackgroundColor", NSColor.controlBackgroundColor},
+    {"@selectedControlColor", NSColor.selectedControlColor},
+    {"@secondarySelectedControlColor", NSColor.unemphasizedSelectedContentBackgroundColor}, // DEPR, REPLACEMENT
+    {"@selectedControlTextColor", NSColor.selectedControlTextColor},
+    {"@disabledControlTextColor", NSColor.disabledControlTextColor},
+    {"@textColor", NSColor.textColor},
+    {"@textBackgroundColor", NSColor.textBackgroundColor},
+    {"@selectedTextColor", NSColor.selectedTextColor},
+    {"@selectedTextBackgroundColor", NSColor.selectedTextBackgroundColor},
+    {"@gridColor", NSColor.gridColor},
+    {"@keyboardFocusIndicatorColor", NSColor.keyboardFocusIndicatorColor},
+    {"@windowBackgroundColor", NSColor.windowBackgroundColor},
+    {"@underPageBackgroundColor", NSColor.underPageBackgroundColor},
+    {"@labelColor", NSColor.labelColor},
+    {"@secondaryLabelColor", NSColor.secondaryLabelColor},
+    {"@tertiaryLabelColor", NSColor.tertiaryLabelColor},
+    {"@quaternaryLabelColor", NSColor.quaternaryLabelColor},
+    {"@scrollBarColor", NSColor.systemPinkColor},    // DEPR, NO REPLACEMENT
+    {"@knobColor", NSColor.systemPinkColor},         // DEPR, NO REPLACEMENT
+    {"@selectedKnobColor", NSColor.systemPinkColor}, // DEPR, NO REPLACEMENT
+    {"@windowFrameColor", NSColor.systemPinkColor},  // DEPR, NO REPLACEMENT
+    {"@windowFrameTextColor", NSColor.windowFrameTextColor},
+    {"@selectedMenuItemColor", NSColor.systemPinkColor}, // DEPR, NO REPLACEMENT
+    {"@selectedMenuItemTextColor", NSColor.selectedMenuItemTextColor},
+    {"@highlightColor", NSColor.highlightColor},
+    {"@shadowColor", NSColor.shadowColor},
+    {"@headerColor", NSColor.systemPinkColor}, // DEPR, NO REPLACEMENT
+    {"@headerTextColor", NSColor.headerTextColor},
+    {"@alternateSelectedControlColor", NSColor.selectedContentBackgroundColor}, // DEPR, REPLACEMENT
+    {"@alternateSelectedControlTextColor", NSColor.alternateSelectedControlTextColor},
+    {"@controlAlternatingRowBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]}, // DEPR, REPLACEMENT
+    {"@controlAlternatingRowBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]}, // DEPR, REPLACEMENT
+    {"@linkColor", NSColor.linkColor},
+    {"@placeholderTextColor", NSColor.placeholderTextColor},
+    {"@systemRedColor", NSColor.systemRedColor},
+    {"@systemGreenColor", NSColor.systemGreenColor},
+    {"@systemBlueColor", NSColor.systemBlueColor},
+    {"@systemOrangeColor", NSColor.systemOrangeColor},
+    {"@systemYellowColor", NSColor.systemYellowColor},
+    {"@systemBrownColor", NSColor.systemBrownColor},
+    {"@systemPinkColor", NSColor.systemPinkColor},
+    {"@systemPurpleColor", NSColor.systemPurpleColor},
+    {"@systemGrayColor", NSColor.systemGrayColor},
+    {"@systemTealColor", NSColor.systemTealColor},
+    {"@systemIndigoColor", NSColor.systemIndigoColor},
+    {"@systemMintColor", NSColor.systemMintColor},
+    {"@systemCyanColor", NSColor.systemCyanColor},
+    {"@findHighlightColor", NSColor.findHighlightColor},
+    {"@separatorColor", NSColor.separatorColor},
+    {"@selectedContentBackgroundColor", NSColor.selectedContentBackgroundColor},
+    {"@unemphasizedSelectedContentBackgroundColor", NSColor.unemphasizedSelectedContentBackgroundColor},
+    {"@alternatingContentBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
+    {"@alternatingContentBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
+    {"@unemphasizedSelectedTextBackgroundColor", NSColor.unemphasizedSelectedTextBackgroundColor},
+    {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
+    {"@controlAccentColor", NSColor.controlAccentColor},
 };
 
-#pragma clang diagnostic pop
+[[clang::no_destroy]]
+static const ankerl::unordered_dense::map<NSColor *, std::string> g_SystemColorsSerializationMap = {
+    {NSColor.blackColor, "@blackColor"},
+    {NSColor.darkGrayColor, "@darkGrayColor"},
+    {NSColor.lightGrayColor, "@lightGrayColor"},
+    {NSColor.whiteColor, "@whiteColor"},
+    {NSColor.grayColor, "@grayColor"},
+    {NSColor.redColor, "@redColor"},
+    {NSColor.greenColor, "@greenColor"},
+    {NSColor.blueColor, "@blueColor"},
+    {NSColor.cyanColor, "@cyanColor"},
+    {NSColor.yellowColor, "@yellowColor"},
+    {NSColor.magentaColor, "@magentaColor"},
+    {NSColor.orangeColor, "@orangeColor"},
+    {NSColor.brownColor, "@brownColor"},
+    {NSColor.clearColor, "@clearColor"},
+    {NSColor.controlColor, "@controlColor"},
+    {NSColor.controlTextColor, "@controlTextColor"},
+    {NSColor.controlBackgroundColor, "@controlBackgroundColor"},
+    {NSColor.selectedControlColor, "@selectedControlColor"},
+    {NSColor.selectedControlTextColor, "@selectedControlTextColor"},
+    {NSColor.disabledControlTextColor, "@disabledControlTextColor"},
+    {NSColor.textColor, "@textColor"},
+    {NSColor.textBackgroundColor, "@textBackgroundColor"},
+    {NSColor.selectedTextColor, "@selectedTextColor"},
+    {NSColor.selectedTextBackgroundColor, "@selectedTextBackgroundColor"},
+    {NSColor.gridColor, "@gridColor"},
+    {NSColor.keyboardFocusIndicatorColor, "@keyboardFocusIndicatorColor"},
+    {NSColor.windowBackgroundColor, "@windowBackgroundColor"},
+    {NSColor.underPageBackgroundColor, "@underPageBackgroundColor"},
+    {NSColor.labelColor, "@labelColor"},
+    {NSColor.secondaryLabelColor, "@secondaryLabelColor"},
+    {NSColor.tertiaryLabelColor, "@tertiaryLabelColor"},
+    {NSColor.quaternaryLabelColor, "@quaternaryLabelColor"},
+    {NSColor.windowFrameTextColor, "@windowFrameTextColor"},
+    {NSColor.selectedMenuItemTextColor, "@selectedMenuItemTextColor"},
+    {NSColor.highlightColor, "@highlightColor"},
+    {NSColor.shadowColor, "@shadowColor"},
+    {NSColor.headerTextColor, "@headerTextColor"},
+    {NSColor.alternateSelectedControlTextColor, "@alternateSelectedControlTextColor"},
+    {NSColor.linkColor, "@linkColor"},
+    {NSColor.placeholderTextColor, "@placeholderTextColor"},
+    {NSColor.systemRedColor, "@systemRedColor"},
+    {NSColor.systemGreenColor, "@systemGreenColor"},
+    {NSColor.systemBlueColor, "@systemBlueColor"},
+    {NSColor.systemOrangeColor, "@systemOrangeColor"},
+    {NSColor.systemYellowColor, "@systemYellowColor"},
+    {NSColor.systemBrownColor, "@systemBrownColor"},
+    {NSColor.systemPinkColor, "@systemPinkColor"},
+    {NSColor.systemPurpleColor, "@systemPurpleColor"},
+    {NSColor.systemGrayColor, "@systemGrayColor"},
+    {NSColor.systemTealColor, "@systemTealColor"},
+    {NSColor.systemIndigoColor, "@systemIndigoColor"},
+    {NSColor.systemMintColor, "@systemMintColor"},
+    {NSColor.systemCyanColor, "@systemCyanColor"},
+    {NSColor.findHighlightColor, "@findHighlightColor"},
+    {NSColor.separatorColor, "@separatorColor"},
+    {NSColor.selectedContentBackgroundColor, "@selectedContentBackgroundColor"},
+    {NSColor.unemphasizedSelectedContentBackgroundColor, "@unemphasizedSelectedContentBackgroundColor"},
+    {NSColor.alternatingContentBackgroundColors[0], "@alternatingContentBackgroundColors0"},
+    {NSColor.alternatingContentBackgroundColors[1], "@alternatingContentBackgroundColors1"},
+    {NSColor.unemphasizedSelectedTextBackgroundColor, "@unemphasizedSelectedTextBackgroundColor"},
+    {NSColor.unemphasizedSelectedTextColor, "@unemphasizedSelectedTextColor"},
+    {NSColor.controlAccentColor, "@controlAccentColor"},
+};
 
 static NSColor *DecodeSystemColor(std::string_view _color) noexcept
 {
     if( _color.empty() || _color.front() != '@' )
         return nil;
 
-    const auto it = g_SystemColors.find(_color);
-    if( it != g_SystemColors.end() )
+    const auto it = g_SystemColorsDeserializationMap.find(_color);
+    if( it != g_SystemColorsDeserializationMap.end() )
         return it->second;
     return nil;
 }
@@ -194,16 +253,8 @@ static NSColor *DecodeSystemColor(std::string_view _color) noexcept
 // Returns an empty string view if a corresponding color was not found.
 static std::string_view FindCorrespondingSystemColorNameViaPtr(NSColor *_for_color) noexcept
 {
-    using Map = ankerl::unordered_dense::map<void *, std::string_view>;
-    [[clang::no_destroy]] static const Map ptrs_to_original_names = [] {
-        Map map;
-        map.reserve(g_SystemColors.size());
-        for( auto &kv : g_SystemColors )
-            map.emplace((__bridge void *)kv.second, std::string_view(kv.first));
-        return map;
-    }();
-    const auto it = ptrs_to_original_names.find((__bridge void *)_for_color);
-    if( it != ptrs_to_original_names.end() )
+    const auto it = g_SystemColorsSerializationMap.find(_for_color);
+    if( it != g_SystemColorsSerializationMap.end() )
         return it->second;
     else
         return {};
@@ -217,9 +268,9 @@ static std::string_view FindCorrespondingSystemColorNameViaDescription(NSColor *
         map<std::string, std::string_view, nc::UnorderedStringHashEqual, nc::UnorderedStringHashEqual>;
     [[clang::no_destroy]] static const Map description_to_original_names = [] {
         Map map;
-        map.reserve(g_SystemColors.size());
-        for( auto &kv : g_SystemColors )
-            map.emplace(std::string(kv.second.description.UTF8String), std::string_view(kv.first));
+        map.reserve(g_SystemColorsSerializationMap.size());
+        for( auto &kv : g_SystemColorsSerializationMap )
+            map.emplace(std::string(kv.first.description.UTF8String), std::string_view(kv.second));
         return map;
     }();
 
@@ -243,9 +294,9 @@ static std::span<const std::string_view> SystemColorNames() noexcept
 {
     static const auto names = [] {
         [[clang::no_destroy]] static std::vector<std::string_view> v;
-        v.reserve(g_SystemColors.size());
-        for( const auto &kv : g_SystemColors )
-            v.push_back(kv.first);
+        v.reserve(g_SystemColorsSerializationMap.size());
+        for( const auto &kv : g_SystemColorsSerializationMap )
+            v.push_back(kv.second);
         std::ranges::sort(v);
         return std::span<const std::string_view>(v);
     }();

@@ -19,6 +19,7 @@
 #include <rapidjson/memorystream.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 using namespace std::literals;
 using nc::ThemePersistence;
@@ -508,10 +509,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
 
         NSSavePanel *panel = [NSSavePanel savePanel];
         panel.nameFieldStringValue = [NSString stringWithUTF8StdString:theme_name];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        panel.allowedFileTypes = @[@"json"];
-#pragma clang diagnostic pop
+        panel.allowedContentTypes = @[UTTypeJSON];
         panel.allowsOtherFileTypes = false;
         panel.directoryURL = [NSFileManager.defaultManager URLForDirectory:NSDesktopDirectory
                                                                   inDomain:NSUserDomainMask
@@ -561,10 +559,7 @@ static NSTableCellView *SpawnEntryTitle(NSString *_title)
 - (IBAction)onImportClicked:(id) [[maybe_unused]] sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    panel.allowedFileTypes = @[@"json"];
-#pragma clang diagnostic pop
+    panel.allowedContentTypes = @[UTTypeJSON];
     panel.allowsOtherFileTypes = false;
     if( [panel runModal] == NSModalResponseOK && panel.URL != nil ) {
         NSURL *url = panel.URL;

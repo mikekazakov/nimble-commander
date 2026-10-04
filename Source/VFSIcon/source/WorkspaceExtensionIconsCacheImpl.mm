@@ -11,10 +11,7 @@ namespace nc::vfsicon {
 WorkspaceExtensionIconsCacheImpl::WorkspaceExtensionIconsCacheImpl(const nc::utility::UTIDB &_uti_db) : m_UTIDB(_uti_db)
 {
     m_GenericFolderIcon = [NSImage imageNamed:NSImageNameFolder];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    m_GenericFileIcon = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-#pragma clang diagnostic pop
+    m_GenericFileIcon = [NSWorkspace.sharedWorkspace iconForContentType:UTTypeData];
 }
 
 WorkspaceExtensionIconsCacheImpl::~WorkspaceExtensionIconsCacheImpl() = default;

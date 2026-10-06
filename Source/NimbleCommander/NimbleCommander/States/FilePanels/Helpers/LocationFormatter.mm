@@ -45,7 +45,9 @@ ListingPromiseFormatter::Representation ListingPromiseFormatter::Render(RenderOp
             }();
 
             const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
-            rep.menu_title = [NSString stringWithFormat:@"Temporary Panel (%@)", [formatter stringFromNumber:count]];
+            rep.menu_title = [NSString stringWithFormat:NSLocalizedString(@"Temporary Panel (%@)",
+                                                                          "Temporary panel menu title with item count"),
+                                                        [formatter stringFromNumber:count]];
             rep.menu_tooltip = rep.menu_title;
         }
     };

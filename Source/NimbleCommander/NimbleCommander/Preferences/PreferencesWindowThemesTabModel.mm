@@ -83,141 +83,278 @@ static PreferencesWindowThemesTabGroupNode *SpawnGroupNode(NSString *_descriptio
 NSArray *BuildThemeSettingsNodesTree()
 {
     const auto fp_general_nodes = @[
-        SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
-        SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
-        SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor"),
-        SpawnColorNode(@"Splitter color", "filePanelsGeneralSplitterColor"),
-        SpawnColorNode(@"Top separator color", "filePanelsGeneralTopSeparatorColor"),
+        SpawnColoringRulesNode(
+            NSLocalizedStringFromTable(@"Filenames coloring rules", @"Preferences", "Theme settings entry title"),
+            "filePanelsColoringRules_v1"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Drop border color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGeneralDropBorderColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Overlay color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGeneralOverlayColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Splitter color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGeneralSplitterColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Top separator color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGeneralTopSeparatorColor"),
     ];
 
     const auto fp_tabs_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsTabsFont"),
-        SpawnColorNode(@"Text color", "filePanelsTabsTextColor"),
-        SpawnColorNode(@"Selected & key window & active", "filePanelsTabsSelectedKeyWndActiveBackgroundColor"),
-        SpawnColorNode(@"Selected & key window", "filePanelsTabsSelectedKeyWndInactiveBackgroundColor"),
-        SpawnColorNode(@"Selected", "filePanelsTabsSelectedNotKeyWndBackgroundColor"),
-        SpawnColorNode(@"Regular & key window & hover", "filePanelsTabsRegularKeyWndHoverBackgroundColor"),
-        SpawnColorNode(@"Regular & key window", "filePanelsTabsRegularKeyWndRegularBackgroundColor"),
-        SpawnColorNode(@"Regular", "filePanelsTabsRegularNotKeyWndBackgroundColor"),
-        SpawnColorNode(@"Separator", "filePanelsTabsSeparatorColor"),
-        SpawnColorNode(@"Pictogram", "filePanelsTabsPictogramColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsTabsFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsTabsTextColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Selected & key window & active", @"Preferences", "Theme settings entry title"),
+            "filePanelsTabsSelectedKeyWndActiveBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Selected & key window", @"Preferences", "Theme settings entry title"),
+            "filePanelsTabsSelectedKeyWndInactiveBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Selected", @"Preferences", "Theme settings entry title"),
+                       "filePanelsTabsSelectedNotKeyWndBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Regular & key window & hover", @"Preferences", "Theme settings entry title"),
+            "filePanelsTabsRegularKeyWndHoverBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Regular & key window", @"Preferences", "Theme settings entry title"),
+            "filePanelsTabsRegularKeyWndRegularBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Regular", @"Preferences", "Theme settings entry title"),
+                       "filePanelsTabsRegularNotKeyWndBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Separator", @"Preferences", "Theme settings entry title"),
+                       "filePanelsTabsSeparatorColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Pictogram", @"Preferences", "Theme settings entry title"),
+                       "filePanelsTabsPictogramColor")
     ];
 
     const auto fp_header_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsHeaderFont"),
-        SpawnColorNode(@"Regular text color", "filePanelsHeaderTextColor"),
-        SpawnColorNode(@"Active text color", "filePanelsHeaderActiveTextColor"),
-        SpawnColorNode(@"Active background", "filePanelsHeaderActiveBackgroundColor"),
-        SpawnColorNode(@"Inactive background", "filePanelsHeaderInactiveBackgroundColor"),
-        SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsHeaderFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Regular text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsHeaderTextColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Active text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsHeaderActiveTextColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Active background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsHeaderActiveBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Inactive background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsHeaderInactiveBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Separator", @"Preferences", "Theme settings entry title"),
+                       "filePanelsHeaderSeparatorColor")
     ];
 
     const auto fp_footer_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsFooterFont"),
-        SpawnColorNode(@"Regular text color", "filePanelsFooterTextColor"),
-        SpawnColorNode(@"Active text color", "filePanelsFooterActiveTextColor"),
-        SpawnColorNode(@"Active background", "filePanelsFooterActiveBackgroundColor"),
-        SpawnColorNode(@"Inactive background", "filePanelsFooterInactiveBackgroundColor"),
-        SpawnColorNode(@"Separator", "filePanelsFooterSeparatorsColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsFooterFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Regular text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsFooterTextColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Active text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsFooterActiveTextColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Active background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsFooterActiveBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Inactive background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsFooterInactiveBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Separator", @"Preferences", "Theme settings entry title"),
+                       "filePanelsFooterSeparatorsColor")
     ];
 
     const auto fp_brief_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsBriefFont"),
-        SpawnIntNode(@"Row vertical padding", "filePanelsBriefRowVerticalPadding"),
-        SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
-        SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
-        SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
-        SpawnColorNode(@"Focused item background, active", "filePanelsBriefFocusedActiveItemBackgroundColor"),
-        SpawnColorNode(@"Focused item background, inactive", "filePanelsBriefFocusedInactiveItemBackgroundColor"),
-        SpawnColorNode(@"Selected item background", "filePanelsBriefSelectedItemBackgroundColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsBriefFont"),
+        SpawnIntNode(NSLocalizedStringFromTable(@"Row vertical padding", @"Preferences", "Theme settings entry title"),
+                     "filePanelsBriefRowVerticalPadding"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Grid color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsBriefGridColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Even row background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsBriefRegularEvenRowBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Odd row background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsBriefRegularOddRowBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, active", @"Preferences", "Theme settings entry title"),
+                       "filePanelsBriefFocusedActiveItemBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, inactive", @"Preferences", "Theme settings entry title"),
+                       "filePanelsBriefFocusedInactiveItemBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Selected item background", @"Preferences", "Theme settings entry title"),
+            "filePanelsBriefSelectedItemBackgroundColor")
     ];
 
     const auto fp_list_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsListFont"),
-        SpawnIntNode(@"Row vertical padding", "filePanelsListRowVerticalPadding"),
-        SpawnIntNode(@"Secondary text opacity (%)", "filePanelsListSecondaryColumnsOpacity"),
-        SpawnColorNode(@"Grid color", "filePanelsListGridColor"),
-        SpawnFontNode(@"Header font", "filePanelsListHeaderFont"),
-        SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),
-        SpawnColorNode(@"Header text color", "filePanelsListHeaderTextColor"),
-        SpawnColorNode(@"Header separator", "filePanelsListHeaderSeparatorColor"),
-        SpawnColorNode(@"Focused item background, active", "filePanelsListFocusedActiveRowBackgroundColor"),
-        SpawnColorNode(@"Focused item background, inactive", "filePanelsListFocusedInactiveRowBackgroundColor"),
-        SpawnColorNode(@"Selected item background", "filePanelsListSelectedItemBackgroundColor"),
-        SpawnColorNode(@"Even row background", "filePanelsListRegularEvenRowBackgroundColor"),
-        SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsListFont"),
+        SpawnIntNode(NSLocalizedStringFromTable(@"Row vertical padding", @"Preferences", "Theme settings entry title"),
+                     "filePanelsListRowVerticalPadding"),
+        SpawnIntNode(
+            NSLocalizedStringFromTable(@"Secondary text opacity (%)", @"Preferences", "Theme settings entry title"),
+            "filePanelsListSecondaryColumnsOpacity"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Grid color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListGridColor"),
+        SpawnFontNode(NSLocalizedStringFromTable(@"Header font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsListHeaderFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Header background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListHeaderBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Header text color", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListHeaderTextColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Header separator", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListHeaderSeparatorColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, active", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListFocusedActiveRowBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, inactive", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListFocusedInactiveRowBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Selected item background", @"Preferences", "Theme settings entry title"),
+            "filePanelsListSelectedItemBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Even row background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListRegularEvenRowBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Odd row background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsListRegularOddRowBackgroundColor")
     ];
 
     const auto fp_gallery_nodes = @[
-        SpawnFontNode(@"Text font", "filePanelsGalleryFont"),
-        SpawnColorNode(@"Background", "filePanelsGalleryBackgroundColor"),
-        SpawnColorNode(@"Focused item background, active", "filePanelsGalleryFocusedActiveItemBackgroundColor"),
-        SpawnColorNode(@"Focused item background, inactive", "filePanelsGalleryFocusedInactiveItemBackgroundColor"),
-        SpawnColorNode(@"Selected item background", "filePanelsGallerySelectedItemBackgroundColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "filePanelsGalleryFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Background", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGalleryBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, active", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGalleryFocusedActiveItemBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(
+                           @"Focused item background, inactive", @"Preferences", "Theme settings entry title"),
+                       "filePanelsGalleryFocusedInactiveItemBackgroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Selected item background", @"Preferences", "Theme settings entry title"),
+            "filePanelsGallerySelectedItemBackgroundColor")
     ];
 
-    const auto fp_group = SpawnGroupNode(@"File panels", @[
-        SpawnGroupNode(@"General", fp_general_nodes),
-        SpawnGroupNode(@"Tabs", fp_tabs_nodes),
-        SpawnGroupNode(@"Header", fp_header_nodes),
-        SpawnGroupNode(@"Footer", fp_footer_nodes),
-        SpawnGroupNode(@"Brief mode", fp_brief_nodes),
-        SpawnGroupNode(@"List mode", fp_list_nodes),
-        SpawnGroupNode(@"Gallery mode", fp_gallery_nodes)
-    ]);
+    const auto fp_group =
+        SpawnGroupNode(NSLocalizedStringFromTable(@"File panels", @"Preferences", "Theme settings group title"), @[
+            SpawnGroupNode(NSLocalizedStringFromTable(@"General", @"Preferences", "Theme settings group title"),
+                           fp_general_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"Tabs", @"Preferences", "Theme settings group title"),
+                           fp_tabs_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"Header", @"Preferences", "Theme settings group title"),
+                           fp_header_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"Footer", @"Preferences", "Theme settings group title"),
+                           fp_footer_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"Brief mode", @"Preferences", "Theme settings group title"),
+                           fp_brief_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"List mode", @"Preferences", "Theme settings group title"),
+                           fp_list_nodes),
+            SpawnGroupNode(NSLocalizedStringFromTable(@"Gallery mode", @"Preferences", "Theme settings group title"),
+                           fp_gallery_nodes)
+        ]);
 
     const auto viewer_nodes = @[
-        SpawnFontNode(@"Text font", "viewerFont"),
-        SpawnColorNode(@"Overlay color", "viewerOverlayColor"),
-        SpawnColorNode(@"Foreground color", "viewerTextColor"),
-        SpawnColorNode(@"Syntax color - keyword", "viewerTextSyntaxKeywordColor"),
-        SpawnColorNode(@"Syntax color - operator", "viewerTextSyntaxOperatorColor"),
-        SpawnColorNode(@"Syntax color - identifier", "viewerTextSyntaxIdentifierColor"),
-        SpawnColorNode(@"Syntax color - number", "viewerTextSyntaxNumberColor"),
-        SpawnColorNode(@"Syntax color - string", "viewerTextSyntaxStringColor"),
-        SpawnColorNode(@"Syntax color - comment", "viewerTextSyntaxCommentColor"),
-        SpawnColorNode(@"Syntax color - preprocessor", "viewerTextSyntaxPreprocessorColor"),
-        SpawnColorNode(@"Selection color", "viewerSelectionColor"),
-        SpawnColorNode(@"Background color", "viewerBackgroundColor")
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "viewerFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Overlay color", @"Preferences", "Theme settings entry title"),
+                       "viewerOverlayColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Foreground color", @"Preferences", "Theme settings entry title"),
+                       "viewerTextColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - keyword", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxKeywordColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - operator", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxOperatorColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - identifier", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxIdentifierColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - number", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxNumberColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - string", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxStringColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - comment", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxCommentColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Syntax color - preprocessor", @"Preferences", "Theme settings entry title"),
+            "viewerTextSyntaxPreprocessorColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Selection color", @"Preferences", "Theme settings entry title"),
+                       "viewerSelectionColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Background color", @"Preferences", "Theme settings entry title"),
+                       "viewerBackgroundColor")
     ];
 
     const auto term_nodes = @[
-        SpawnFontNode(@"Text font", "terminalFont"),
-        SpawnColorNode(@"Overlay color", "terminalOverlayColor"),
-        SpawnColorNode(@"Foreground color", "terminalForegroundColor"),
-        SpawnColorNode(@"Foreground bold color", "terminalBoldForegroundColor"),
-        SpawnColorNode(@"Background", "terminalBackgroundColor"),
-        SpawnColorNode(@"Selection", "terminalSelectionColor"),
-        SpawnColorNode(@"Cursor color", "terminalCursorColor"),
-        SpawnColorNode(@"ANSI color 0 (black)", "terminalAnsiColor0"),
-        SpawnColorNode(@"ANSI color 1 (red)", "terminalAnsiColor1"),
-        SpawnColorNode(@"ANSI color 2 (green)", "terminalAnsiColor2"),
-        SpawnColorNode(@"ANSI color 3 (yellow)", "terminalAnsiColor3"),
-        SpawnColorNode(@"ANSI color 4 (blue)", "terminalAnsiColor4"),
-        SpawnColorNode(@"ANSI color 5 (magenta)", "terminalAnsiColor5"),
-        SpawnColorNode(@"ANSI color 6 (cyan)", "terminalAnsiColor6"),
-        SpawnColorNode(@"ANSI color 7 (white)", "terminalAnsiColor7"),
-        SpawnColorNode(@"ANSI color 8 (bright black)", "terminalAnsiColor8"),
-        SpawnColorNode(@"ANSI color 9 (bright red)", "terminalAnsiColor9"),
-        SpawnColorNode(@"ANSI color 10 (bright green)", "terminalAnsiColorA"),
-        SpawnColorNode(@"ANSI color 11 (bright yellow)", "terminalAnsiColorB"),
-        SpawnColorNode(@"ANSI color 12 (bright blue)", "terminalAnsiColorC"),
-        SpawnColorNode(@"ANSI color 13 (bright magenta)", "terminalAnsiColorD"),
-        SpawnColorNode(@"ANSI color 14 (bright cyan)", "terminalAnsiColorE"),
-        SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
+        SpawnFontNode(NSLocalizedStringFromTable(@"Text font", @"Preferences", "Theme settings entry title"),
+                      "terminalFont"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Overlay color", @"Preferences", "Theme settings entry title"),
+                       "terminalOverlayColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Foreground color", @"Preferences", "Theme settings entry title"),
+                       "terminalForegroundColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"Foreground bold color", @"Preferences", "Theme settings entry title"),
+            "terminalBoldForegroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Background", @"Preferences", "Theme settings entry title"),
+                       "terminalBackgroundColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Selection", @"Preferences", "Theme settings entry title"),
+                       "terminalSelectionColor"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"Cursor color", @"Preferences", "Theme settings entry title"),
+                       "terminalCursorColor"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 0 (black)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor0"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"ANSI color 1 (red)", @"Preferences", "Theme settings entry title"),
+                       "terminalAnsiColor1"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 2 (green)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor2"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 3 (yellow)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor3"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"ANSI color 4 (blue)", @"Preferences", "Theme settings entry title"),
+                       "terminalAnsiColor4"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 5 (magenta)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor5"),
+        SpawnColorNode(NSLocalizedStringFromTable(@"ANSI color 6 (cyan)", @"Preferences", "Theme settings entry title"),
+                       "terminalAnsiColor6"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 7 (white)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor7"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 8 (bright black)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor8"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 9 (bright red)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColor9"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 10 (bright green)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorA"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 11 (bright yellow)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorB"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 12 (bright blue)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorC"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 13 (bright magenta)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorD"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 14 (bright cyan)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorE"),
+        SpawnColorNode(
+            NSLocalizedStringFromTable(@"ANSI color 15 (bright white)", @"Preferences", "Theme settings entry title"),
+            "terminalAnsiColorF"),
     ];
 
     const auto general_nodes = @[
-        [[PreferencesWindowThemesTabItemNode alloc] initWithTitle:@"Theme title"
-                                                         forEntry:"themeName"
-                                                           ofType:PreferencesWindowThemesTabItemType::ThemeTitle],
-        SpawnAppearanceNode(@"UI Appearance", "themeAppearance")
+        [[PreferencesWindowThemesTabItemNode alloc]
+            initWithTitle:NSLocalizedStringFromTable(@"Theme title", @"Preferences", "Theme settings entry title")
+                 forEntry:"themeName"
+                   ofType:PreferencesWindowThemesTabItemType::ThemeTitle],
+        SpawnAppearanceNode(NSLocalizedStringFromTable(@"UI Appearance", @"Preferences", "Theme settings entry title"),
+                            "themeAppearance")
     ];
 
     return @[
-        SpawnGroupNode(@"General", general_nodes),
+        SpawnGroupNode(NSLocalizedStringFromTable(@"General", @"Preferences", "Theme settings group title"),
+                       general_nodes),
         fp_group,
-        SpawnGroupNode(@"Viewer", viewer_nodes),
-        SpawnGroupNode(@"Terminal", term_nodes)
+        SpawnGroupNode(NSLocalizedStringFromTable(@"Viewer", @"Preferences", "Theme settings group title"),
+                       viewer_nodes),
+        SpawnGroupNode(NSLocalizedStringFromTable(@"Terminal", @"Preferences", "Theme settings group title"),
+                       term_nodes)
     ];
 }

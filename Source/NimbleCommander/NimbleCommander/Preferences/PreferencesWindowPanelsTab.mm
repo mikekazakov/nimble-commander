@@ -306,8 +306,13 @@ static NSMenu *BuildTagColorMenu()
         if( [_column.identifier isEqualToString:@"name"] ) {
             if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(_row)) ) {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-                tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", _row]
-                                                 : [NSString stringWithUTF8StdString:l->name];
+                tf.stringValue =
+                    l->name.empty()
+                        ? [NSString stringWithFormat:NSLocalizedStringFromTable(@"Layout #%ld",
+                                                                                @"Preferences",
+                                                                                "Fallback name for an unnamed layout"),
+                                                     _row]
+                        : [NSString stringWithUTF8StdString:l->name];
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;

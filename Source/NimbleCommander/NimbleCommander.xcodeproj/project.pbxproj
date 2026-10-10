@@ -189,6 +189,7 @@
 		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF1257552CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1257542CA96CAD003906C6 /* PanelListViewTableHeaderCell.swift */; };
 		CF12580E2CB5C1B4003906C6 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF12580D2CB5C1B4003906C6 /* PreferencesWindow.swift */; };
+		CF2697A6307ACB3B001BD6F4 /* Preferences.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CFC762962D3C59C3000498AA /* Preferences.xcstrings */; };
 		CF35C5B42FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF35C5B22FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.h */; };
 		CF35C5B52FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF35C5B32FBA3CF400370B89 /* PanelTabBarThemeProviderImpl.mm */; };
 		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
@@ -2859,6 +2860,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF2697A6307ACB3B001BD6F4 /* Preferences.xcstrings in Resources */,
 				CFC7627B2D3C53B6000498AA /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

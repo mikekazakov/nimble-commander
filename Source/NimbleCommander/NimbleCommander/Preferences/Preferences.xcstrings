@@ -1,6 +1,222 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Active background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Active background"
+          }
+        }
+      }
+    },
+    "Active text color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Active text color"
+          }
+        }
+      }
+    },
+    "ANSI color 0 (black)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 0 (black)"
+          }
+        }
+      }
+    },
+    "ANSI color 1 (red)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 1 (red)"
+          }
+        }
+      }
+    },
+    "ANSI color 2 (green)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 2 (green)"
+          }
+        }
+      }
+    },
+    "ANSI color 3 (yellow)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 3 (yellow)"
+          }
+        }
+      }
+    },
+    "ANSI color 4 (blue)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 4 (blue)"
+          }
+        }
+      }
+    },
+    "ANSI color 5 (magenta)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 5 (magenta)"
+          }
+        }
+      }
+    },
+    "ANSI color 6 (cyan)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 6 (cyan)"
+          }
+        }
+      }
+    },
+    "ANSI color 7 (white)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 7 (white)"
+          }
+        }
+      }
+    },
+    "ANSI color 8 (bright black)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 8 (bright black)"
+          }
+        }
+      }
+    },
+    "ANSI color 9 (bright red)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 9 (bright red)"
+          }
+        }
+      }
+    },
+    "ANSI color 10 (bright green)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 10 (bright green)"
+          }
+        }
+      }
+    },
+    "ANSI color 11 (bright yellow)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 11 (bright yellow)"
+          }
+        }
+      }
+    },
+    "ANSI color 12 (bright blue)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 12 (bright blue)"
+          }
+        }
+      }
+    },
+    "ANSI color 13 (bright magenta)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 13 (bright magenta)"
+          }
+        }
+      }
+    },
+    "ANSI color 14 (bright cyan)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 14 (bright cyan)"
+          }
+        }
+      }
+    },
+    "ANSI color 15 (bright white)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ANSI color 15 (bright white)"
+          }
+        }
+      }
+    },
     "Are you sure you want to clear saved file states?" : {
       "comment" : "Message text asking if user really wants to clear saved viewer file states",
       "extractionState" : "manual",
@@ -37,6 +253,78 @@
         }
       }
     },
+    "Background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Background"
+          }
+        }
+      }
+    },
+    "Background color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Background color"
+          }
+        }
+      }
+    },
+    "Brief mode" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Brief mode"
+          }
+        }
+      }
+    },
+    "Cursor color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cursor color"
+          }
+        }
+      }
+    },
+    "Custom" : {
+      "comment" : "Custom font button title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Custom"
+          }
+        }
+      }
+    },
+    "Drop border color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drop border color"
+          }
+        }
+      }
+    },
     "edit" : {
       "comment" : "Coloring rules edit button title",
       "extractionState" : "manual",
@@ -61,14 +349,194 @@
         }
       }
     },
+    "Even row background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Even row background"
+          }
+        }
+      }
+    },
+    "File panels" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File panels"
+          }
+        }
+      }
+    },
+    "Filenames coloring rules" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filenames coloring rules"
+          }
+        }
+      }
+    },
+    "Focused item background, active" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Focused item background, active"
+          }
+        }
+      }
+    },
+    "Focused item background, inactive" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Focused item background, inactive"
+          }
+        }
+      }
+    },
+    "Footer" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Footer"
+          }
+        }
+      }
+    },
+    "Foreground bold color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Foreground bold color"
+          }
+        }
+      }
+    },
+    "Foreground color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Foreground color"
+          }
+        }
+      }
+    },
+    "Gallery mode" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Gallery mode"
+          }
+        }
+      }
+    },
     "General" : {
-      "comment" : "General preferences tab title",
+      "comment" : "General preferences tab title\nTheme settings group title",
       "extractionState" : "manual",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Основное"
+          }
+        }
+      }
+    },
+    "Grid color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Grid color"
+          }
+        }
+      }
+    },
+    "Header" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Header"
+          }
+        }
+      }
+    },
+    "Header background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Header background"
+          }
+        }
+      }
+    },
+    "Header font" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Header font"
+          }
+        }
+      }
+    },
+    "Header separator" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Header separator"
+          }
+        }
+      }
+    },
+    "Header text color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Header text color"
           }
         }
       }
@@ -85,6 +553,66 @@
         }
       }
     },
+    "Inactive background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Inactive background"
+          }
+        }
+      }
+    },
+    "Layout #%ld" : {
+      "comment" : "Fallback name for an unnamed layout",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Layout #%ld"
+          }
+        }
+      }
+    },
+    "List mode" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List mode"
+          }
+        }
+      }
+    },
+    "Odd row background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Odd row background"
+          }
+        }
+      }
+    },
+    "Overlay color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Overlay color"
+          }
+        }
+      }
+    },
     "Panels" : {
       "comment" : "General preferences tab title",
       "extractionState" : "manual",
@@ -97,14 +625,338 @@
         }
       }
     },
+    "Pictogram" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pictogram"
+          }
+        }
+      }
+    },
+    "Regular" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular"
+          }
+        }
+      }
+    },
+    "Regular & key window" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular & key window"
+          }
+        }
+      }
+    },
+    "Regular & key window & hover" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular & key window & hover"
+          }
+        }
+      }
+    },
+    "Regular text color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Regular text color"
+          }
+        }
+      }
+    },
+    "Row vertical padding" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Row vertical padding"
+          }
+        }
+      }
+    },
+    "Secondary text opacity (%)" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Secondary text opacity (%)"
+          }
+        }
+      }
+    },
+    "Selected" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected"
+          }
+        }
+      }
+    },
+    "Selected & key window" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected & key window"
+          }
+        }
+      }
+    },
+    "Selected & key window & active" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected & key window & active"
+          }
+        }
+      }
+    },
+    "Selected item background" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected item background"
+          }
+        }
+      }
+    },
+    "Selection" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selection"
+          }
+        }
+      }
+    },
+    "Selection color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selection color"
+          }
+        }
+      }
+    },
+    "Separator" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Separator"
+          }
+        }
+      }
+    },
+    "Splitter color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Splitter color"
+          }
+        }
+      }
+    },
+    "Standard" : {
+      "comment" : "Standard font button title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Standard"
+          }
+        }
+      }
+    },
+    "Syntax color - comment" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - comment"
+          }
+        }
+      }
+    },
+    "Syntax color - identifier" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - identifier"
+          }
+        }
+      }
+    },
+    "Syntax color - keyword" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - keyword"
+          }
+        }
+      }
+    },
+    "Syntax color - number" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - number"
+          }
+        }
+      }
+    },
+    "Syntax color - operator" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - operator"
+          }
+        }
+      }
+    },
+    "Syntax color - preprocessor" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - preprocessor"
+          }
+        }
+      }
+    },
+    "Syntax color - string" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Syntax color - string"
+          }
+        }
+      }
+    },
+    "Tabs" : {
+      "comment" : "Theme settings group title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tabs"
+          }
+        }
+      }
+    },
     "Terminal" : {
-      "comment" : "General preferences tab title",
+      "comment" : "General preferences tab title\nTheme settings group title",
       "extractionState" : "manual",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Терминал"
+          }
+        }
+      }
+    },
+    "Text color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Text color"
+          }
+        }
+      }
+    },
+    "Text font" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Text font"
+          }
+        }
+      }
+    },
+    "Theme title" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Theme title"
           }
         }
       }
@@ -169,8 +1021,32 @@
         }
       }
     },
+    "Top separator color" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Top separator color"
+          }
+        }
+      }
+    },
+    "UI Appearance" : {
+      "comment" : "Theme settings entry title",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "UI Appearance"
+          }
+        }
+      }
+    },
     "Viewer" : {
-      "comment" : "General preferences tab title",
+      "comment" : "General preferences tab title\nTheme settings group title",
       "extractionState" : "manual",
       "localizations" : {
         "ru" : {

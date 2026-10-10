@@ -355,8 +355,11 @@ using namespace nc::panel;
         int index = 0;
         for( NSMenuItem *item in menu.itemArray ) {
             if( auto l = m_Storage->GetLayout(index) ) {
-                item.title = l->name.empty() ? [NSString stringWithFormat:@"Layout #%d", index + 1]
-                                             : [NSString stringWithUTF8StdString:l->name];
+                item.title = l->name.empty()
+                                 ? [NSString stringWithFormat:NSLocalizedString(@"Layout #%d",
+                                                                                "Fallback name for an unnamed layout"),
+                                                              index + 1]
+                                 : [NSString stringWithUTF8StdString:l->name];
             }
             index++;
         }

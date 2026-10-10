@@ -50,8 +50,10 @@
     int index = 0;
     for( auto &value_name : m_ValueNames ) {
         const auto label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        label.stringValue = !value_name.empty() ? [NSString stringWithUTF8StdString:(value_name + ":")]
-                                                : [NSString stringWithFormat:@"Parameter #%d:", index];
+        label.stringValue =
+            !value_name.empty()
+                ? [NSString stringWithUTF8StdString:(value_name + ":")]
+                : [NSString stringWithFormat:NSLocalizedString(@"Parameter #%d:", "Fallback parameter label"), index];
         label.bordered = false;
         label.editable = false;
         label.drawsBackground = false;

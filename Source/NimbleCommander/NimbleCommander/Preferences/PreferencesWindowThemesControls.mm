@@ -158,7 +158,7 @@ using nc::ThemeAppearance;
 
         m_Custom = [[NSButton alloc] initWithFrame:NSRect()];
         m_Custom.translatesAutoresizingMaskIntoConstraints = false;
-        m_Custom.title = @"Custom";
+        m_Custom.title = NSLocalizedStringFromTable(@"Custom", @"Preferences", "Custom font button title");
         m_Custom.buttonType = NSButtonTypeMomentaryLight;
         m_Custom.bezelStyle = NSBezelStyleRecessed;
         static_cast<NSButtonCell *>(m_Custom.cell).controlSize = NSControlSizeMini;
@@ -168,7 +168,7 @@ using nc::ThemeAppearance;
 
         m_System = [[NSButton alloc] initWithFrame:NSRect()];
         m_System.translatesAutoresizingMaskIntoConstraints = false;
-        m_System.title = @"Standard";
+        m_System.title = NSLocalizedStringFromTable(@"Standard", @"Preferences", "Standard font button title");
         m_System.buttonType = NSButtonTypeMomentaryLight;
         m_System.bezelStyle = NSBezelStyleRecessed;
         static_cast<NSButtonCell *>(m_System.cell).controlSize = NSControlSizeMini;

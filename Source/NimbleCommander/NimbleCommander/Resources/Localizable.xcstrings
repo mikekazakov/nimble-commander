@@ -1309,6 +1309,18 @@
         }
       }
     },
+    "Layout #%d" : {
+      "comment" : "Fallback name for an unnamed layout",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Layout #%d"
+          }
+        }
+      }
+    },
     "Left GoTo" : {
       "comment" : "Toolbar palette",
       "localizations" : {
@@ -1502,6 +1514,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Оранжевый"
+          }
+        }
+      }
+    },
+    "Parameter #%d:" : {
+      "comment" : "Fallback parameter label",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Parameter #%d:"
           }
         }
       }
@@ -1874,6 +1898,18 @@
         }
       }
     },
+    "Temporary Panel (%@)" : {
+      "comment" : "Temporary panel menu title with item count",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Temporary Panel (%@)"
+          }
+        }
+      }
+    },
     "Terminate and Close" : {
       "comment" : "User confirmation on message box",
       "localizations" : {
@@ -2091,6 +2127,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Невозможно запустить внешний инструмент “%s”."
+          }
+        }
+      }
+    },
+    "Unexpected exception was caught:" : {
+      "comment" : "Alert message for an unhandled exception",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unexpected exception was caught:"
+          }
+        }
+      }
+    },
+    "Unknown exception" : {
+      "comment" : "Alert informative text when no exception details are available",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unknown exception"
           }
         }
       }

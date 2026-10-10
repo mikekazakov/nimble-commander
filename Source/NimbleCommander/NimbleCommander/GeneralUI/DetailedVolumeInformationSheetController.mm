@@ -335,31 +335,31 @@ static NSString *Bool2ToString(const bool b[2])
     if( m_Capabilities.attr.vol.obj_count[0] )
         [[self ObjectsCountTextField] setIntegerValue:m_Attributes.obj_count];
     else
-        [[self ObjectsCountTextField] setStringValue:@"N/A"];
+        [[self ObjectsCountTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.file_count[0] )
         [[self FileCountTextField] setIntegerValue:m_Attributes.file_count];
     else
-        [[self FileCountTextField] setStringValue:@"N/A"];
+        [[self FileCountTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.dir_count[0] )
         [[self FoldersCountTextField] setIntegerValue:m_Attributes.dir_count];
     else
-        [[self FoldersCountTextField] setStringValue:@"N/A"];
+        [[self FoldersCountTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.max_obj_count[0] )
         [[self MaxObjectsTextField] setIntegerValue:m_Attributes.max_obj_count];
     else
-        [[self MaxObjectsTextField] setStringValue:@"N/A"];
+        [[self MaxObjectsTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.io_block_size[0] )
         [[self IOBlockSizeTextField] setIntegerValue:m_Attributes.io_block_size];
     else
-        [[self IOBlockSizeTextField] setStringValue:@"N/A"];
+        [[self IOBlockSizeTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.min_allocation[0] )
         [[self MinAllocationTextField] setIntegerValue:m_Attributes.min_allocation];
     else
-        [[self MinAllocationTextField] setStringValue:@"N/A"];
+        [[self MinAllocationTextField] setStringValue:NSLocalizedString(@"N/A", "")];
     if( m_Capabilities.attr.vol.allocation_clump[0] )
         [[self AllocationClumpTextField] setIntegerValue:m_Attributes.allocation_clump];
     else
-        [[self AllocationClumpTextField] setStringValue:@"N/A"];
+        [[self AllocationClumpTextField] setStringValue:NSLocalizedString(@"N/A", "")];
 }
 
 - (IBAction)OnOK:(id) [[maybe_unused]] sender

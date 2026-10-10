@@ -150,8 +150,12 @@ void ShowExceptionAlert(const std::string &_message)
 {
     if( dispatch_is_main_queue() ) {
         const auto alert = [[Alert alloc] init];
-        alert.messageText = @"Unexpected exception was caught:";
-        alert.informativeText = !_message.empty() ? [NSString stringWithUTF8StdString:_message] : @"Unknown exception";
+        alert.messageText =
+            NSLocalizedString(@"Unexpected exception was caught:", "Alert message for an unhandled exception");
+        alert.informativeText =
+            !_message.empty() ? [NSString stringWithUTF8StdString:_message]
+                              : NSLocalizedString(@"Unknown exception",
+                                                  "Alert informative text when no exception details are available");
         [alert runModal];
     }
     else {

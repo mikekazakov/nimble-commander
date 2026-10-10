@@ -3,7 +3,6 @@
   "strings" : {
     "Active background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15,7 +14,6 @@
     },
     "Active text color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -27,7 +25,6 @@
     },
     "ANSI color 0 (black)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -39,7 +36,6 @@
     },
     "ANSI color 1 (red)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -51,7 +47,6 @@
     },
     "ANSI color 2 (green)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -63,7 +58,6 @@
     },
     "ANSI color 3 (yellow)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -75,7 +69,6 @@
     },
     "ANSI color 4 (blue)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -87,7 +80,6 @@
     },
     "ANSI color 5 (magenta)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -99,7 +91,6 @@
     },
     "ANSI color 6 (cyan)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -111,7 +102,6 @@
     },
     "ANSI color 7 (white)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -123,7 +113,6 @@
     },
     "ANSI color 8 (bright black)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -135,7 +124,6 @@
     },
     "ANSI color 9 (bright red)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -147,7 +135,6 @@
     },
     "ANSI color 10 (bright green)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -159,7 +146,6 @@
     },
     "ANSI color 11 (bright yellow)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -171,7 +157,6 @@
     },
     "ANSI color 12 (bright blue)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -183,7 +168,6 @@
     },
     "ANSI color 13 (bright magenta)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -195,7 +179,6 @@
     },
     "ANSI color 14 (bright cyan)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -207,7 +190,6 @@
     },
     "ANSI color 15 (bright white)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -255,7 +237,6 @@
     },
     "Background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -267,7 +248,6 @@
     },
     "Background color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -279,7 +259,6 @@
     },
     "Brief mode" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -291,7 +270,6 @@
     },
     "Cursor color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -303,7 +281,6 @@
     },
     "Custom" : {
       "comment" : "Custom font button title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -315,7 +292,6 @@
     },
     "Drop border color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -351,7 +327,6 @@
     },
     "Even row background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -363,7 +338,6 @@
     },
     "File panels" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -375,7 +349,6 @@
     },
     "Filenames coloring rules" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -387,7 +360,6 @@
     },
     "Focused item background, active" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -399,7 +371,6 @@
     },
     "Focused item background, inactive" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -411,7 +382,6 @@
     },
     "Footer" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -423,7 +393,6 @@
     },
     "Foreground bold color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -435,7 +404,6 @@
     },
     "Foreground color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -447,7 +415,6 @@
     },
     "Gallery mode" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -471,7 +438,6 @@
     },
     "Grid color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -483,7 +449,6 @@
     },
     "Header" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -495,7 +460,6 @@
     },
     "Header background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -507,7 +471,6 @@
     },
     "Header font" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -519,7 +482,6 @@
     },
     "Header separator" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -531,7 +493,6 @@
     },
     "Header text color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -555,7 +516,6 @@
     },
     "Inactive background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -567,7 +527,6 @@
     },
     "Layout #%ld" : {
       "comment" : "Fallback name for an unnamed layout",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -579,7 +538,6 @@
     },
     "List mode" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -591,7 +549,6 @@
     },
     "Odd row background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -603,7 +560,6 @@
     },
     "Overlay color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -627,7 +583,6 @@
     },
     "Pictogram" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -639,7 +594,6 @@
     },
     "Regular" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -651,7 +605,6 @@
     },
     "Regular & key window" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -663,7 +616,6 @@
     },
     "Regular & key window & hover" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -675,7 +627,6 @@
     },
     "Regular text color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -687,7 +638,6 @@
     },
     "Row vertical padding" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -699,7 +649,6 @@
     },
     "Secondary text opacity (%)" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -711,7 +660,6 @@
     },
     "Selected" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -723,7 +671,6 @@
     },
     "Selected & key window" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -735,7 +682,6 @@
     },
     "Selected & key window & active" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -747,7 +693,6 @@
     },
     "Selected item background" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -759,7 +704,6 @@
     },
     "Selection" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -771,7 +715,6 @@
     },
     "Selection color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -783,7 +726,6 @@
     },
     "Separator" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -795,7 +737,6 @@
     },
     "Splitter color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -807,7 +748,6 @@
     },
     "Standard" : {
       "comment" : "Standard font button title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -819,7 +759,6 @@
     },
     "Syntax color - comment" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -831,7 +770,6 @@
     },
     "Syntax color - identifier" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -843,7 +781,6 @@
     },
     "Syntax color - keyword" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -855,7 +792,6 @@
     },
     "Syntax color - number" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -867,7 +803,6 @@
     },
     "Syntax color - operator" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -879,7 +814,6 @@
     },
     "Syntax color - preprocessor" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -891,7 +825,6 @@
     },
     "Syntax color - string" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -903,7 +836,6 @@
     },
     "Tabs" : {
       "comment" : "Theme settings group title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -927,7 +859,6 @@
     },
     "Text color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -939,7 +870,6 @@
     },
     "Text font" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -951,7 +881,6 @@
     },
     "Theme title" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1023,7 +952,6 @@
     },
     "Top separator color" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1035,7 +963,6 @@
     },
     "UI Appearance" : {
       "comment" : "Theme settings entry title",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -1,0 +1,138 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Adjust the logging settings" : {
+      "comment" : "SpdLog window: settings button tooltip",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Adjust the logging settings"
+          }
+        }
+      }
+    },
+    "all" : {
+      "comment" : "SpdLog window: submenu applying a level to all loggers",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "all"
+          }
+        }
+      }
+    },
+    "Autoscroll to the bottom" : {
+      "comment" : "SpdLog window: autoscroll button tooltip",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Autoscroll to the bottom"
+          }
+        }
+      }
+    },
+    "Clear the logs" : {
+      "comment" : "SpdLog window: clear button tooltip",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Clear the logs"
+          }
+        }
+      }
+    },
+    "Critical" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Critical"
+          }
+        }
+      }
+    },
+    "Debug" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Debug"
+          }
+        }
+      }
+    },
+    "Error" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error"
+          }
+        }
+      }
+    },
+    "Info" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Info"
+          }
+        }
+      }
+    },
+    "Logs" : {
+      "comment" : "SpdLog window: window title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Logs"
+          }
+        }
+      }
+    },
+    "Off" : {
+      "comment" : "SpdLog window: logging level, turns logging off",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Off"
+          }
+        }
+      }
+    },
+    "Trace" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Trace"
+          }
+        }
+      }
+    },
+    "Warning" : {
+      "comment" : "SpdLog window: logging level",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Warning"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

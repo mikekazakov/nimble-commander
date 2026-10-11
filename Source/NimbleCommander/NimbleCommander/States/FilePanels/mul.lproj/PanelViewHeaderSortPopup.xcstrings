@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Времени создания ↓"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建时间 ↓"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Времени создания ↑"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建时间 ↑"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Времени добавления ↑"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加时间 ↑"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Настройки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选项"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Расширению ↓"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扩展名 ↓"
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Времени открытия ↑"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问时间 ↑"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Без учета регистра"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不区分大小写"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Времени модификации ↓"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改时间 ↓"
           }
         }
       }
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "Размеру ↓"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小 ↓"
+          }
         }
       }
     },
@@ -177,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Естественное"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自然"
           }
         }
       }
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "Размеру ↑"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小 ↑"
+          }
         }
       }
     },
@@ -213,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "С учетом регистра"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "区分大小写"
           }
         }
       }
@@ -232,6 +304,12 @@
             "state" : "translated",
             "value" : "Времени модификации ↑"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改时间 ↑"
+          }
         }
       }
     },
@@ -249,6 +327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Имени ↑"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称 ↑"
           }
         }
       }
@@ -268,6 +352,12 @@
             "state" : "translated",
             "value" : "Отделять папки от файлов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹与文件分开显示"
+          }
         }
       }
     },
@@ -285,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Времени открытия ↓"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问时间 ↓"
           }
         }
       }
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Расширению ↑"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扩展名 ↑"
+          }
         }
       }
     },
@@ -321,6 +423,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировать по"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排序方式"
           }
         }
       }
@@ -340,6 +448,12 @@
             "state" : "translated",
             "value" : "Времени добавления ↓"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加时间 ↓"
+          }
         }
       }
     },
@@ -357,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Имени ↓"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称 ↓"
           }
         }
       }
@@ -376,6 +496,12 @@
             "state" : "translated",
             "value" : "Cравнение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比较方式"
+          }
         }
       }
     },
@@ -393,6 +519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Папки без расширения"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无扩展名的文件夹"
           }
         }
       }

@@ -266,6 +266,7 @@
 				en,
 				Base,
 				ru,
+				zh-Hans,
 			);
 			mainGroup = CF8D0D4F1D9E4D7400ADFF14;
 			productRefGroup = CF8D0D591D9E4D7400ADFF14 /* Products */;

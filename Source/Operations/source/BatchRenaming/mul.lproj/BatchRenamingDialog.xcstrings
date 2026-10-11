@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "[A x-y] Символы x-y, отступ пробелами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A x-y] 从第 x 到第 y 个字符，用空格填充"
+          }
         }
       }
     },
@@ -30,6 +36,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "7"
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "^O"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^O"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Nx-y] Символы с x по y"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx-y] 从第 x 到第 y 个字符"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "[E0x-y] Символы x-y, отступ нулями"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E0x-y] 从第 x 到第 y 个字符，用零填充"
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[N0x-y] Символы x-y, отступ нулями"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N0x-y] 从第 x 到第 y 个字符，用零填充"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Вставить расширение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入扩展名"
+          }
         }
       }
     },
@@ -142,6 +184,12 @@
             "state" : "translated",
             "value" : "[s] Секунды в 2-значном формате"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[s] 两位数的秒"
+          }
         }
       }
     },
@@ -156,6 +204,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘↩"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "⌘↩"
@@ -178,6 +232,12 @@
             "state" : "translated",
             "value" : "[Gx-] Символы начиная с символа x"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx-] 从第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -192,6 +252,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "4"
@@ -214,6 +280,12 @@
             "state" : "translated",
             "value" : "[N-x-] Символы с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x-] 从倒数第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -231,6 +303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[M] Месяц в 2-значном формате"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[M] 两位数的月份"
           }
         }
       }
@@ -250,6 +328,12 @@
             "state" : "translated",
             "value" : "[C] Счетчик"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[C] 计数器"
+          }
         }
       }
     },
@@ -264,6 +348,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^T"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^T"
@@ -286,6 +376,12 @@
             "state" : "translated",
             "value" : "[Gx-y] Символы x по y"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx-y] 从第 x 到第 y 个字符"
+          }
         }
       }
     },
@@ -303,6 +399,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
           }
         }
       }
@@ -322,6 +424,12 @@
             "state" : "translated",
             "value" : "[Nx--y] Символы с x по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx--y] 从第 x 个到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -339,6 +447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[YMD] Дата"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[YMD] 日期"
           }
         }
       }
@@ -358,6 +472,12 @@
             "state" : "translated",
             "value" : "[m] Минуты в 2-значном формате"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[m] 两位数的分钟"
+          }
         }
       }
     },
@@ -372,6 +492,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^D"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^D"
@@ -394,6 +520,12 @@
             "state" : "translated",
             "value" : "Без изменений"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持不变"
+          }
         }
       }
     },
@@ -412,6 +544,12 @@
             "state" : "translated",
             "value" : "Вставить имя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入名称"
+          }
         }
       }
     },
@@ -426,6 +564,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E]"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "[E]"
@@ -448,6 +592,12 @@
             "state" : "translated",
             "value" : "[Px--y] Символы с x по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px--y] 从第 x 个到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -462,6 +612,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "5"
@@ -484,6 +640,12 @@
             "state" : "translated",
             "value" : "Изменить регистр"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改大小写"
+          }
         }
       }
     },
@@ -498,6 +660,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "8"
@@ -520,6 +688,12 @@
             "state" : "translated",
             "value" : "Отмена"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -537,6 +711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Nx,y] y символов начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx,y] 从第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -556,6 +736,12 @@
             "state" : "translated",
             "value" : "[Cx+y/z:w] -\"\"-, с шириной w"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y/z:w] -\"\"-，宽度为 w"
+          }
         }
       }
     },
@@ -570,6 +756,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^A"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^A"
@@ -592,6 +784,12 @@
             "state" : "translated",
             "value" : "Шаг:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "步长："
+          }
         }
       }
     },
@@ -609,6 +807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[E] Расширение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E] 扩展名"
           }
         }
       }
@@ -628,6 +832,12 @@
             "state" : "translated",
             "value" : "[Px] x-ый символ имени"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px] 文件名的第 x 个字符"
+          }
         }
       }
     },
@@ -645,6 +855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "]] Закрывающая квадратная скобка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "]] 右方括号"
           }
         }
       }
@@ -664,6 +880,12 @@
             "state" : "translated",
             "value" : "[G-x-] Символы с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x-] 从倒数第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -681,6 +903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переименованный"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已重命名"
           }
         }
       }
@@ -700,6 +928,12 @@
             "state" : "translated",
             "value" : "[A0x-y] Символы x-y, отступ нулями"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A0x-y] 从第 x 到第 y 个字符，用零填充"
+          }
         }
       }
     },
@@ -717,6 +951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Начать с:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "起始于："
           }
         }
       }
@@ -736,6 +976,12 @@
             "state" : "translated",
             "value" : "[Px-] Символы начиная с символа x"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px-] 从第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -753,6 +999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Px-y] Символы x по y"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px-y] 从第 x 到第 y 个字符"
           }
         }
       }
@@ -772,6 +1024,12 @@
             "state" : "translated",
             "value" : "[U] ВЕРХНИЙ РЕГИСТР"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[U] 大写"
+          }
         }
       }
     },
@@ -786,6 +1044,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^R"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^R"
@@ -808,6 +1072,12 @@
             "state" : "translated",
             "value" : "Удалить объект"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除项目"
+          }
         }
       }
     },
@@ -822,6 +1092,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^N"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^N"
@@ -844,6 +1120,12 @@
             "state" : "translated",
             "value" : "[E-x-] Символы с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x-] 从倒数第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -861,6 +1143,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить расширение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入扩展名"
           }
         }
       }
@@ -880,6 +1168,12 @@
             "state" : "translated",
             "value" : "Вставить полное имя файла"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入文件名"
+          }
         }
       }
     },
@@ -897,6 +1191,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[P x-y] Символы x-y, отступ пробелами"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P x-y] 从第 x 到第 y 个字符，用空格填充"
           }
         }
       }
@@ -916,6 +1216,12 @@
             "state" : "translated",
             "value" : "[y] Год в 2-значной форме"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[y] 两位数的年份"
+          }
         }
       }
     },
@@ -933,6 +1239,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[E] Расширение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E] 扩展名"
           }
         }
       }
@@ -952,6 +1264,12 @@
             "state" : "translated",
             "value" : "Вставить счетчик"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入计数器"
+          }
         }
       }
     },
@@ -969,6 +1287,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ex-] Символы начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex-] 从第 x 个字符开始的字符"
           }
         }
       }
@@ -988,6 +1312,12 @@
             "state" : "translated",
             "value" : "[Ax-y] Символы x по y"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax-y] 从第 x 到第 y 个字符"
+          }
         }
       }
     },
@@ -1005,6 +1335,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ax--y] Символы с x по y-последний символ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax--y] 从第 x 个到倒数第 y 个字符"
           }
         }
       }
@@ -1024,6 +1360,12 @@
             "state" : "translated",
             "value" : "[F] С Заглавных Букв"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[F] 每个单词首字母大写"
+          }
         }
       }
     },
@@ -1041,6 +1383,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ax] x-ый символ имени"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax] 文件名的第 x 个字符"
           }
         }
       }
@@ -1060,6 +1408,12 @@
             "state" : "translated",
             "value" : "[N x-y] Символы x-y, отступ пробелами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N x-y] 从第 x 到第 y 个字符，用空格填充"
+          }
         }
       }
     },
@@ -1077,6 +1431,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Цифр:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位数："
           }
         }
       }
@@ -1096,6 +1456,12 @@
             "state" : "translated",
             "value" : "[Gx] x-ый символ имени"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx] 文件名的第 x 个字符"
+          }
         }
       }
     },
@@ -1114,6 +1480,12 @@
             "state" : "translated",
             "value" : "Исходный"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原始"
+          }
         }
       }
     },
@@ -1128,6 +1500,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1x"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "1x"
@@ -1150,6 +1528,12 @@
             "state" : "translated",
             "value" : "1"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1"
+          }
         }
       }
     },
@@ -1167,6 +1551,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Найти:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索内容："
           }
         }
       }
@@ -1186,6 +1576,12 @@
             "state" : "translated",
             "value" : "Маска переименования"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名模式"
+          }
         }
       }
     },
@@ -1203,6 +1599,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[n] Исходный регистр"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[n] 原始大小写"
           }
         }
       }
@@ -1222,6 +1624,12 @@
             "state" : "translated",
             "value" : "[G x-y] Символы x-y, отступ пробелами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G x-y] 从第 x 到第 y 个字符，用空格填充"
+          }
         }
       }
     },
@@ -1239,6 +1647,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[N-x-y] Символы с x-последнего по y-последний символ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x-y] 从倒数第 x 到倒数第 y 个字符"
           }
         }
       }
@@ -1258,6 +1672,12 @@
             "state" : "translated",
             "value" : "[C] Счетчик по-умолчанию"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[C] 默认计数器"
+          }
         }
       }
     },
@@ -1275,6 +1695,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Поиск и замена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索并替换"
           }
         }
       }
@@ -1294,6 +1720,12 @@
             "state" : "translated",
             "value" : "[d] Локализованная дата"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[d] 本地化日期"
+          }
         }
       }
     },
@@ -1311,6 +1743,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ax-] Символы начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax-] 从第 x 个字符开始的字符"
           }
         }
       }
@@ -1330,6 +1768,12 @@
             "state" : "translated",
             "value" : "Верхний/нижний регистр"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大写/小写"
+          }
         }
       }
     },
@@ -1347,6 +1791,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ax,y] y символов начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ax,y] 从第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -1366,6 +1816,12 @@
             "state" : "translated",
             "value" : "[P-x-y] Символы с x-последнего по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x-y] 从倒数第 x 到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -1383,6 +1839,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Аа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aa"
           }
         }
       }
@@ -1402,6 +1864,12 @@
             "state" : "translated",
             "value" : "[E-x-y] Символы с x-последнего по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x-y] 从倒数第 x 到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -1419,6 +1887,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[hms] Время"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[hms] 时间"
           }
         }
       }
@@ -1438,6 +1912,12 @@
             "state" : "translated",
             "value" : "[Nx] x-ый символ имени"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx] 名称的第 x 个字符"
+          }
         }
       }
     },
@@ -1455,6 +1935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[P-x-] Символы с x-последнего символа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x-] 从倒数第 x 个字符开始的字符"
           }
         }
       }
@@ -1474,6 +1960,12 @@
             "state" : "translated",
             "value" : "Вставить счетчик"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入计数器"
+          }
         }
       }
     },
@@ -1488,6 +1980,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^L"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^L"
@@ -1510,6 +2008,12 @@
             "state" : "translated",
             "value" : "[Cx+y] -\"\"-, шаг по y "
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y] -\"\"-，步长为 y "
+          }
         }
       }
     },
@@ -1527,6 +2031,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Задать счетчик"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定义计数器"
           }
         }
       }
@@ -1546,6 +2056,12 @@
             "state" : "translated",
             "value" : "Вставить время"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入时间"
+          }
         }
       }
     },
@@ -1563,6 +2079,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[N-x,y] y символов начиная с x-последнего символа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N-x,y] 从倒数第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -1582,6 +2104,12 @@
             "state" : "translated",
             "value" : "[N] Имя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N] 名称"
+          }
         }
       }
     },
@@ -1596,6 +2124,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "2"
@@ -1618,6 +2152,12 @@
             "state" : "translated",
             "value" : "Вставить имя родителя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入父文件名"
+          }
         }
       }
     },
@@ -1636,6 +2176,12 @@
             "state" : "translated",
             "value" : "[D] День в 2-значной форме"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[D] 两位数的日"
+          }
         }
       }
     },
@@ -1650,6 +2196,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "9"
@@ -1672,6 +2224,12 @@
             "state" : "translated",
             "value" : "Вставить время"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入名称"
+          }
         }
       }
     },
@@ -1690,6 +2248,12 @@
             "state" : "translated",
             "value" : "ВЕРХНИЙ РЕГИСТР"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大写"
+          }
         }
       }
     },
@@ -1704,6 +2268,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^E"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^E"
@@ -1726,6 +2296,12 @@
             "state" : "translated",
             "value" : "Вставить полное имя файла"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入文件名"
+          }
         }
       }
     },
@@ -1743,6 +2319,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ex--y] Символы с x по y-последний символ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex--y] 从第 x 个到倒数第 y 个字符"
           }
         }
       }
@@ -1762,6 +2344,12 @@
             "state" : "translated",
             "value" : "Вставить имя родителя родителя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入祖父文件名"
+          }
         }
       }
     },
@@ -1776,6 +2364,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^P"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^P"
@@ -1798,6 +2392,12 @@
             "state" : "translated",
             "value" : "6"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6"
+          }
         }
       }
     },
@@ -1815,6 +2415,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[P] Полное имя родителя"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P] 父文件名"
           }
         }
       }
@@ -1834,6 +2440,12 @@
             "state" : "translated",
             "value" : "[G] Имя родителя родителя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G] 祖父文件名"
+          }
         }
       }
     },
@@ -1851,6 +2463,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Cx+y/z] -\"\"-, каждые z файлов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx+y/z] -\"\"-，每 z 个文件"
           }
         }
       }
@@ -1870,6 +2488,12 @@
             "state" : "translated",
             "value" : "Вставить имя родителя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入父文件名"
+          }
         }
       }
     },
@@ -1887,6 +2511,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить имя родителя родителя"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入祖父文件名"
           }
         }
       }
@@ -1906,6 +2536,12 @@
             "state" : "translated",
             "value" : "Заменить на:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "替换为："
+          }
         }
       }
     },
@@ -1924,6 +2560,12 @@
             "state" : "translated",
             "value" : "Вставить время"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入时间"
+          }
         }
       }
     },
@@ -1938,6 +2580,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E]"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "[E]"
@@ -1960,6 +2608,12 @@
             "state" : "translated",
             "value" : "RegExp"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则"
+          }
         }
       }
     },
@@ -1974,6 +2628,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^W"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^W"
@@ -1996,6 +2656,12 @@
             "state" : "translated",
             "value" : "нижний регистр"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小写"
+          }
         }
       }
     },
@@ -2013,6 +2679,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[h] Часы в 2-значном форме, 24 часа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[h] 两位数的 24 小时制小时"
           }
         }
       }
@@ -2032,6 +2704,12 @@
             "state" : "translated",
             "value" : "[P-x,y] y символов начиная с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P-x,y] 从倒数第 x 个字符开始的 y 个字符"
+          }
         }
       }
     },
@@ -2049,6 +2727,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Px,y] y символов начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Px,y] 从第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -2068,6 +2752,12 @@
             "state" : "translated",
             "value" : "[Gx--y] Символы с x по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx--y] 从第 x 个到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -2082,6 +2772,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^I"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^I"
@@ -2104,6 +2800,12 @@
             "state" : "translated",
             "value" : "[E-x,y] y символов начиная с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E-x,y] 从倒数第 x 个字符开始的 y 个字符"
+          }
         }
       }
     },
@@ -2122,6 +2824,12 @@
             "state" : "translated",
             "value" : "[E x-y] Символы x-y, отступ пробелами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[E x-y] 从第 x 到第 y 个字符，用空格填充"
+          }
         }
       }
     },
@@ -2136,6 +2844,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^S"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^S"
@@ -2158,6 +2872,12 @@
             "state" : "translated",
             "value" : "[Ex] x-ый символ расширения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex] 扩展名的第 x 个字符"
+          }
         }
       }
     },
@@ -2175,6 +2895,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[A] Полное имя"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A] 文件名"
           }
         }
       }
@@ -2194,6 +2920,12 @@
             "state" : "translated",
             "value" : "[Y] Год в 4-значном формате"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Y] 四位数的年份"
+          }
         }
       }
     },
@@ -2208,6 +2940,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^C"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^C"
@@ -2230,6 +2968,12 @@
             "state" : "translated",
             "value" : "[P0x-y] Символы x-y, отступ нулями"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[P0x-y] 从第 x 到第 y 个字符，用零填充"
+          }
         }
       }
     },
@@ -2247,6 +2991,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[G-x-y] Символы с x-последнего по y-последний символ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x-y] 从倒数第 x 到倒数第 y 个字符"
           }
         }
       }
@@ -2266,6 +3016,12 @@
             "state" : "translated",
             "value" : "[Nx-] Символы начиная с символа x"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Nx-] 从第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -2283,6 +3039,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Ex,y] y символов начиная с символа x"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex,y] 从第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -2302,6 +3064,12 @@
             "state" : "translated",
             "value" : "[[ Открывающая квадратная скобка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[[ 左方括号"
+          }
         }
       }
     },
@@ -2320,6 +3088,12 @@
             "state" : "translated",
             "value" : "[A-x-] y символов начиная с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x-] 从倒数第 x 个字符开始的字符"
+          }
         }
       }
     },
@@ -2334,6 +3108,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "3"
@@ -2356,6 +3136,12 @@
             "state" : "translated",
             "value" : "^U"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^U"
+          }
         }
       }
     },
@@ -2373,6 +3159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[L] нижний регистр"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[L] 小写"
           }
         }
       }
@@ -2392,6 +3184,12 @@
             "state" : "translated",
             "value" : "[A-x-y] Символы с x-последнего по y-последний символ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x-y] 从倒数第 x 到倒数第 y 个字符"
+          }
         }
       }
     },
@@ -2409,6 +3207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[G-x,y] y символов начиная с x-последнего символа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G-x,y] 从倒数第 x 个字符开始的 y 个字符"
           }
         }
       }
@@ -2428,6 +3232,12 @@
             "state" : "translated",
             "value" : "С Большой Буквы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每个单词首字母大写"
+          }
         }
       }
     },
@@ -2442,6 +3252,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "10"
@@ -2464,6 +3280,12 @@
             "state" : "translated",
             "value" : "Прочее"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
         }
       }
     },
@@ -2481,6 +3303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[t] Локализованное время"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[t] 本地化时间"
           }
         }
       }
@@ -2500,6 +3328,12 @@
             "state" : "translated",
             "value" : "[Cx] Счетчик начиная с x"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Cx] 从 x 开始的计数器"
+          }
         }
       }
     },
@@ -2517,6 +3351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Изменить регистр"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改大小写"
           }
         }
       }
@@ -2536,6 +3376,12 @@
             "state" : "translated",
             "value" : "[Gx,y] y символов начиная с символа x"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Gx,y] 从第 x 个字符开始的 y 个字符"
+          }
         }
       }
     },
@@ -2553,6 +3399,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Прочее"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
           }
         }
       }
@@ -2572,6 +3424,12 @@
             "state" : "translated",
             "value" : "[Ex-y] Символы x по y"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[Ex-y] 从第 x 到第 y 个字符"
+          }
         }
       }
     },
@@ -2589,6 +3447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[N#-#] Диапазон"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N#-#] 范围"
           }
         }
       }
@@ -2608,6 +3472,12 @@
             "state" : "translated",
             "value" : "[A-x,y] y символов начиная с x-последнего символа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[A-x,y] 从倒数第 x 个字符开始的 y 个字符"
+          }
         }
       }
     },
@@ -2626,6 +3496,12 @@
             "state" : "translated",
             "value" : "[G0x-y] Символы x-y, отступ нулями"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[G0x-y] 从第 x 到第 y 个字符，用零填充"
+          }
         }
       }
     },
@@ -2643,6 +3519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[N] Имя"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[N] 名称"
           }
         }
       }

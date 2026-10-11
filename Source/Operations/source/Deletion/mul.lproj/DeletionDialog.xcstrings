@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Отмена"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     }

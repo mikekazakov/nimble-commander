@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Название"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标题"
+          }
         }
       }
     },
@@ -30,6 +36,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^V"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^V"
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "^X"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^X"
+          }
         }
       }
     },
@@ -66,6 +84,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^O"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^O"
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Избранное"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏夹"
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сбросить к Избранному по-умолчанию"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置为默认收藏夹"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Расположение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сбросить к Избранному Finder'а"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置为访达的收藏夹"
           }
         }
       }

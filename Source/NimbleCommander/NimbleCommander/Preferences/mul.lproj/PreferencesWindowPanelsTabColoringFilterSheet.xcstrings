@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Символическая ссылка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "符号链接"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Скрытый"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Обычный файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "普通文件"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Маска имени файла:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件名掩码："
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Исполняемый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可执行文件"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Выделенный"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择"
+          }
         }
       }
     },
@@ -142,6 +184,12 @@
             "state" : "translated",
             "value" : "Папка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目录"
+          }
         }
       }
     },
@@ -159,6 +207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Флаги:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标志："
           }
         }
       }

@@ -9,6 +9,12 @@
             "state" : "translated",
             "value" : "%1$@ совпадений | %2$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 个匹配 | %2$@"
+          }
         }
       }
     },
@@ -19,6 +25,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 совпадение | %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个匹配 | %@"
           }
         }
       }
@@ -31,6 +43,12 @@
             "state" : "translated",
             "value" : "2 совпадения | %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 个匹配 | %@"
+          }
         }
       }
     },
@@ -41,6 +59,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "3 совпадения | %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 个匹配 | %@"
           }
         }
       }
@@ -53,6 +77,12 @@
             "state" : "translated",
             "value" : "4 совпадения | %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 个匹配 | %@"
+          }
         }
       }
     },
@@ -63,6 +93,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "5 совпадений | %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 个匹配 | %@"
           }
         }
       }
@@ -75,6 +111,12 @@
             "state" : "translated",
             "value" : "6 совпадений | %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 个匹配 | %@"
+          }
         }
       }
     },
@@ -85,6 +127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "7 совпадений | %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 个匹配 | %@"
           }
         }
       }
@@ -97,6 +145,12 @@
             "state" : "translated",
             "value" : "8 совпадений | %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 个匹配 | %@"
+          }
         }
       }
     },
@@ -108,6 +162,12 @@
             "state" : "translated",
             "value" : "9 совпадений | %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9 个匹配 | %@"
+          }
         }
       }
     },
@@ -118,6 +178,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не найдено | %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到 | %@"
           }
         }
       }

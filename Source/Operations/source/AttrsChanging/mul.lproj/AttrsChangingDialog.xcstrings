@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "UF_APPEND"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_APPEND"
+          }
         }
       }
     },
@@ -34,6 +40,12 @@
             "state" : "translated",
             "value" : "Дополнительные права"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附加访问权限"
+          }
         }
       }
     },
@@ -48,6 +60,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_FIRMLINK"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_FIRMLINK"
@@ -70,6 +88,12 @@
             "state" : "translated",
             "value" : "Tracked"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受跟踪"
+          }
         }
       }
     },
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Обрабатывать подпапки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "处理子文件夹"
+          }
         }
       }
     },
@@ -102,6 +132,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_IMMUTABLE"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_IMMUTABLE"
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Set UID on execution"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行时设置 UID"
+          }
         }
       }
     },
@@ -138,6 +180,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmlink"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Firmlink"
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "←"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
         }
       }
     },
@@ -177,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
           }
         }
       }
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "Archived"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已归档"
+          }
         }
       }
     },
@@ -213,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restricted"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受限制"
           }
         }
       }
@@ -232,6 +304,12 @@
             "state" : "translated",
             "value" : "Hidden"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏"
+          }
         }
       }
     },
@@ -249,6 +327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compressed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已压缩"
           }
         }
       }
@@ -268,6 +352,12 @@
             "state" : "translated",
             "value" : "Группа:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群组："
+          }
         }
       }
     },
@@ -285,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Чтение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取"
           }
         }
       }
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Отменить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -318,6 +420,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_NOUNLINK"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_NOUNLINK"
@@ -340,6 +448,12 @@
             "state" : "translated",
             "value" : "Dataless"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无数据"
+          }
         }
       }
     },
@@ -357,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Время модификации:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改时间："
           }
         }
       }
@@ -376,6 +496,12 @@
             "state" : "translated",
             "value" : "Sticky bit"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘滞位"
+          }
         }
       }
     },
@@ -390,6 +516,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_DATAVAULT"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "UF_DATAVAULT"
@@ -412,6 +544,12 @@
             "state" : "translated",
             "value" : "SF_RESTRICTED"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_RESTRICTED"
+          }
         }
       }
     },
@@ -429,6 +567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set GID on execution"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行时设置 GID"
           }
         }
       }
@@ -448,6 +592,12 @@
             "state" : "translated",
             "value" : "Append-only"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅追加"
+          }
         }
       }
     },
@@ -462,6 +612,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_NODUMP"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "UF_NODUMP"
@@ -484,6 +640,12 @@
             "state" : "translated",
             "value" : "Immutable"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不可变"
+          }
         }
       }
     },
@@ -501,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Флаги пользователя"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户标志"
           }
         }
       }
@@ -520,6 +688,12 @@
             "state" : "translated",
             "value" : "Opaque"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不透明"
+          }
         }
       }
     },
@@ -538,6 +712,12 @@
             "state" : "translated",
             "value" : "Время создания:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建时间："
+          }
         }
       }
     },
@@ -552,6 +732,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_TRACKED"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "UF_TRACKED"
@@ -574,6 +760,12 @@
             "state" : "translated",
             "value" : "Выполнение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行"
+          }
         }
       }
     },
@@ -591,6 +783,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Время изменения:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改时间："
           }
         }
       }
@@ -610,6 +808,12 @@
             "state" : "translated",
             "value" : "Data vault"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据保险库"
+          }
         }
       }
     },
@@ -627,6 +831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Остальные:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他："
           }
         }
       }
@@ -646,6 +856,12 @@
             "state" : "translated",
             "value" : "Владелец:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有者："
+          }
         }
       }
     },
@@ -660,6 +876,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_HIDDEN"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "UF_HIDDEN"
@@ -682,6 +904,12 @@
             "state" : "translated",
             "value" : "Запись"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写入"
+          }
         }
       }
     },
@@ -696,6 +924,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_DATALESS"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_DATALESS"
@@ -718,6 +952,12 @@
             "state" : "translated",
             "value" : "UF_OPAQUE"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_OPAQUE"
+          }
         }
       }
     },
@@ -735,6 +975,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Immutable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不可变"
           }
         }
       }
@@ -754,6 +1000,12 @@
             "state" : "translated",
             "value" : "Владелец:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有者："
+          }
         }
       }
     },
@@ -768,6 +1020,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "←"
@@ -790,6 +1048,12 @@
             "state" : "translated",
             "value" : "UF_IMMUTABLE"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_IMMUTABLE"
+          }
         }
       }
     },
@@ -804,6 +1068,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_ARCHIVED"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_ARCHIVED"
@@ -826,6 +1096,12 @@
             "state" : "translated",
             "value" : "Группа:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群组："
+          }
         }
       }
     },
@@ -844,6 +1120,12 @@
             "state" : "translated",
             "value" : "Время доступа:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问时间："
+          }
         }
       }
     },
@@ -858,6 +1140,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "←"
@@ -880,6 +1168,12 @@
             "state" : "translated",
             "value" : "Append-only"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅追加"
+          }
         }
       }
     },
@@ -898,6 +1192,12 @@
             "state" : "translated",
             "value" : "No unlink"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不可移除链接"
+          }
         }
       }
     },
@@ -912,6 +1212,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF_APPEND"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SF_APPEND"
@@ -934,6 +1240,12 @@
             "state" : "translated",
             "value" : "Флаги системы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统标志"
+          }
         }
       }
     },
@@ -948,6 +1260,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UF_COMPRESSED"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "UF_COMPRESSED"
@@ -970,6 +1288,12 @@
             "state" : "translated",
             "value" : "←"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "←"
+          }
         }
       }
     },
@@ -987,6 +1311,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No dump"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不转储"
           }
         }
       }

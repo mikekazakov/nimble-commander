@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Введите имя жесткой ссылки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入硬链接名称"
+          }
         }
       }
     },
@@ -34,6 +40,12 @@
             "state" : "translated",
             "value" : "Создать"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建"
+          }
         }
       }
     },
@@ -51,6 +63,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отмена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }

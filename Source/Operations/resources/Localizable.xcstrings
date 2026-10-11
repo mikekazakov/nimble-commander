@@ -8,6 +8,12 @@
             "state" : "translated",
             "value" : "%1$@ “%2$@” в “%3$@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ “%2$@”至“%3$@”"
+          }
         }
       }
     },
@@ -17,6 +23,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ %2$@ объектов в “%3$@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ 个项目至“%3$@”"
           }
         }
       }
@@ -28,6 +40,12 @@
             "state" : "translated",
             "value" : "%1$@ из %2$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
         }
       }
     },
@@ -37,6 +55,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ из %2$@ - %3$@/с"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@ - %3$@/秒"
           }
         }
       }
@@ -48,6 +72,12 @@
             "state" : "translated",
             "value" : "%1$@ из %2$@ - %3$@/с, %4$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@ - %3$@/秒，%4$@"
+          }
         }
       }
     },
@@ -58,6 +88,12 @@
             "state" : "translated",
             "value" : "%1$@ из %2$@ - Пауза"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@ - 已暂停"
+          }
         }
       }
     },
@@ -67,6 +103,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ из %2$@, %3$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@，%3$@"
           }
         }
       }
@@ -79,6 +121,12 @@
             "state" : "translated",
             "value" : "%1$@ в “%2$@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 至 “%2$@”"
+          }
         }
       }
     },
@@ -89,6 +137,12 @@
             "state" : "translated",
             "value" : "Прервать"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中止"
+          }
         }
       }
     },
@@ -98,6 +152,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Изменение символической ссылки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在更改符号链接"
           }
         }
       }
@@ -110,6 +170,12 @@
             "state" : "translated",
             "value" : "Изменение файловых атрибутов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在更改文件属性"
+          }
         }
       }
     },
@@ -121,6 +187,12 @@
             "state" : "translated",
             "value" : "Групповое переименование %@ объектов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在批量重命名 %@ 个项目"
+          }
         }
       }
     },
@@ -130,6 +202,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Невозможно удалить защищенный объект"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法删除已锁定的项目"
           }
         }
       }
@@ -141,6 +219,12 @@
             "state" : "translated",
             "value" : "Невозможно переместить зищищенный объект в Корзину"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将已锁定的项目移到废纸篓"
+          }
         }
       }
     },
@@ -150,6 +234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Невозможно открыть защищенный объект"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开已锁定的项目"
           }
         }
       }
@@ -162,6 +252,12 @@
             "state" : "translated",
             "value" : "Невозможно удалить последний объект для переименования"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法移除正在重命名的最后一个项目"
+          }
         }
       }
     },
@@ -171,6 +267,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Невозможно переименовать заблокированный объект"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法重命名已锁定的项目"
           }
         }
       }
@@ -183,6 +285,12 @@
             "state" : "translated",
             "value" : "Изменить файловые атрибуты для “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改“%@”的文件属性"
+          }
         }
       }
     },
@@ -194,6 +302,12 @@
             "state" : "translated",
             "value" : "Изменить файловые атрибуты для %@ объектов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改 %@ 个所选项目的文件属性"
+          }
         }
       }
     },
@@ -203,6 +317,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ошибка верификации контрольной суммы"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "校验和验证失败"
           }
         }
       }
@@ -214,6 +334,12 @@
             "state" : "translated",
             "value" : "Завершение..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在清理…"
+          }
         }
       }
     },
@@ -223,6 +349,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
           }
         }
       }
@@ -235,6 +367,12 @@
             "state" : "translated",
             "value" : "Сжать “%@” в:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将“%@”压缩到："
+          }
         }
       }
     },
@@ -246,6 +384,12 @@
             "state" : "translated",
             "value" : "Сжать %@ объектов в:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将 %@ 个项目压缩到："
+          }
         }
       }
     },
@@ -256,6 +400,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сжатие “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在压缩“%@”"
           }
         }
       }
@@ -295,6 +445,12 @@
             "state" : "translated",
             "value" : "Сжатие %d объектов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在压缩 %d 个项目"
+          }
         }
       }
     },
@@ -304,6 +460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Продолжить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
           }
         }
       }
@@ -316,6 +478,12 @@
             "state" : "translated",
             "value" : "Скопировать “%@” в:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将“%@”拷贝到："
+          }
         }
       }
     },
@@ -326,6 +494,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скопировать %@ объектов в:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将 %@ 个项目拷贝到："
           }
         }
       }
@@ -338,6 +512,12 @@
             "state" : "translated",
             "value" : "Копирование"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在拷贝"
+          }
         }
       }
     },
@@ -347,6 +527,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создать жесткую ссылку '%@' на:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建“%@”的硬链接到："
           }
         }
       }
@@ -359,6 +545,12 @@
             "state" : "translated",
             "value" : "Создание директории “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在新建目录“%@”"
+          }
         }
       }
     },
@@ -369,6 +561,12 @@
             "state" : "translated",
             "value" : "Создание новой жесткой ссылки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在新建硬链接"
+          }
         }
       }
     },
@@ -378,6 +576,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создание новой символической ссылки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在新建符号链接"
           }
         }
       }
@@ -390,6 +594,12 @@
             "state" : "translated",
             "value" : "Удалить необратимо"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "永久删除"
+          }
         }
       }
     },
@@ -400,6 +610,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удаление “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在删除“%@”"
           }
         }
       }
@@ -412,6 +628,12 @@
             "state" : "translated",
             "value" : "Удаление %@ объектов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在删除 %@ 个项目"
+          }
         }
       }
     },
@@ -422,6 +644,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы ходите удалить “%@”?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要删除“%@”吗？"
           }
         }
       }
@@ -434,6 +662,12 @@
             "state" : "translated",
             "value" : "Вы ходите удалить %@ объектов?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要删除 %@ 个项目吗？"
+          }
         }
       }
     },
@@ -443,6 +677,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отсутствует доступ к папке"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问目录"
           }
         }
       }
@@ -454,6 +694,12 @@
             "state" : "translated",
             "value" : "Отсутствует доступ к файлу"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问文件"
+          }
         }
       }
     },
@@ -463,6 +709,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отсутствует доступ к объекту"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问项目"
           }
         }
       }
@@ -474,6 +726,12 @@
             "state" : "translated",
             "value" : "Не удалось изменить символическую ссылку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法更改符号链接"
+          }
         }
       }
     },
@@ -483,6 +741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось создать папку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法新建目录"
           }
         }
       }
@@ -494,6 +758,12 @@
             "state" : "translated",
             "value" : "Не удалось создать жесткую ссылку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法创建硬链接"
+          }
         }
       }
     },
@@ -503,6 +773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось создать символическую ссылку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法创建符号链接"
           }
         }
       }
@@ -514,6 +790,12 @@
             "state" : "translated",
             "value" : "Не удалось удалить целевой файл"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法删除目标文件"
+          }
         }
       }
     },
@@ -523,6 +805,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось удалить папку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法删除目录"
           }
         }
       }
@@ -534,6 +822,12 @@
             "state" : "translated",
             "value" : "Не удалось удалить файл"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法删除文件"
+          }
         }
       }
     },
@@ -543,6 +837,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось удалить исходный файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法删除源项目"
           }
         }
       }
@@ -554,6 +854,12 @@
             "state" : "translated",
             "value" : "Не удалось переместить объект в Корзину"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将项目移到废纸篓"
+          }
         }
       }
     },
@@ -563,6 +869,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось открыть целевой файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开目标文件"
           }
         }
       }
@@ -574,6 +886,12 @@
             "state" : "translated",
             "value" : "Не удалось выполнить chflags"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法执行 chflags"
+          }
         }
       }
     },
@@ -583,6 +901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось выполнить chmod"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法执行 chmod"
           }
         }
       }
@@ -594,6 +918,12 @@
             "state" : "translated",
             "value" : "Не удалось выполнить chown"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法执行 chown"
+          }
         }
       }
     },
@@ -603,6 +933,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось прочитать целевой файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取目标文件"
           }
         }
       }
@@ -614,6 +950,12 @@
             "state" : "translated",
             "value" : "Не удалось прочитать файл"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取文件"
+          }
         }
       }
     },
@@ -623,6 +965,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось прочитать исходный файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取源文件"
           }
         }
       }
@@ -634,6 +982,12 @@
             "state" : "translated",
             "value" : "Не удалось переименовать объект"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法重命名项目"
+          }
         }
       }
     },
@@ -643,6 +997,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось установить время файла"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法设置文件时间"
           }
         }
       }
@@ -654,6 +1014,12 @@
             "state" : "translated",
             "value" : "Не удалось разблокировать объект"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解锁项目"
+          }
         }
       }
     },
@@ -663,6 +1029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось записать файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法写入文件"
           }
         }
       }
@@ -674,6 +1046,12 @@
             "state" : "translated",
             "value" : "Не удалось записать архив"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法写入归档"
+          }
         }
       }
     },
@@ -683,6 +1061,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Объект не явлется папкой"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目不是目录"
           }
         }
       }
@@ -695,6 +1079,12 @@
             "state" : "translated",
             "value" : "Переместить в Корзину"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移到废纸篓"
+          }
         }
       }
     },
@@ -706,6 +1096,12 @@
             "state" : "translated",
             "value" : "Перенос"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在移动"
+          }
         }
       }
     },
@@ -715,6 +1111,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Заменить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覆盖"
           }
         }
       }
@@ -726,6 +1128,12 @@
             "state" : "translated",
             "value" : "Подготовка к копированию “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在准备拷贝“%@”"
+          }
         }
       }
     },
@@ -735,6 +1143,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Подготовка к копированию %@ объектов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在准备拷贝 %@ 个项目"
           }
         }
       }
@@ -746,6 +1160,12 @@
             "state" : "translated",
             "value" : "Подготовка к перемещению “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在准备移动“%@”"
+          }
         }
       }
     },
@@ -755,6 +1175,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Подготовка к перемещению %@ объектов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在准备移动 %@ 个项目"
           }
         }
       }
@@ -767,6 +1193,12 @@
             "state" : "translated",
             "value" : "Переименовать/переместить “%@” в:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将“%@”重命名/移动到："
+          }
         }
       }
     },
@@ -778,6 +1210,12 @@
             "state" : "translated",
             "value" : "Переименовать/переместить %@ объектов в:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将 %@ 个项目重命名/移动到："
+          }
         }
       }
     },
@@ -787,6 +1225,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Повторить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
           }
         }
       }
@@ -798,6 +1242,12 @@
             "state" : "translated",
             "value" : "Пропустить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过"
+          }
         }
       }
     },
@@ -807,6 +1257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пропустить все"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部跳过"
           }
         }
       }
@@ -818,6 +1274,12 @@
             "state" : "translated",
             "value" : "Символическая ссылка '%@' указывает на:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "符号链接“%@”指向："
+          }
         }
       }
     },
@@ -827,6 +1289,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Разблокировать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁"
           }
         }
       }
@@ -838,6 +1306,12 @@
             "state" : "translated",
             "value" : "Верификация результата..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在验证操作结果…"
+          }
         }
       }
     },
@@ -847,6 +1321,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ожидание в очереди..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在队列中等待…"
           }
         }
       }

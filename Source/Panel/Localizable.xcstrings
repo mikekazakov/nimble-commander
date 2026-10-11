@@ -9,6 +9,12 @@
             "state" : "translated",
             "value" : "Очистить недавние поиски"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除最近记录"
+          }
         }
       }
     },
@@ -19,6 +25,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Снять выделение по маске:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按掩码取消选择文件："
           }
         }
       }
@@ -31,6 +43,12 @@
             "state" : "translated",
             "value" : "Маска “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "掩码“%@”"
+          }
         }
       }
     },
@@ -41,6 +59,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Маска: *, или *.t?t, или *.txt,*.jpg"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "掩码：*、或 *.t?t、或 *.txt,*.jpg"
           }
         }
       }
@@ -53,6 +77,12 @@
             "state" : "translated",
             "value" : "Новый инструмент"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建工具"
+          }
         }
       }
     },
@@ -63,6 +93,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Настройки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选项"
           }
         }
       }
@@ -75,6 +111,12 @@
             "state" : "translated",
             "value" : "Недавние поиски"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近的搜索"
+          }
         }
       }
     },
@@ -85,6 +127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "RegEx “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则“%@”"
           }
         }
       }
@@ -97,6 +145,12 @@
             "state" : "translated",
             "value" : "Регулярное выражение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则表达式"
+          }
         }
       }
     },
@@ -107,6 +161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Регулярное выражение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则表达式"
           }
         }
       }
@@ -119,6 +179,12 @@
             "state" : "translated",
             "value" : "Выделить по маске:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按掩码选择文件："
+          }
         }
       }
     },
@@ -130,6 +196,12 @@
             "state" : "translated",
             "value" : "Укажите регулярное выражения для поиска имен файлов."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指定用于匹配文件名的正则表达式。"
+          }
         }
       }
     },
@@ -140,6 +212,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Используйте \"*\" для подстановки нескольких символов, \"?\" для подстановки одного символа и \",\" чтобы указать больше одной маски."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用“*”作为多字符通配符，“?”作为单字符通配符，并使用“,”指定多个掩码。"
           }
         }
       }

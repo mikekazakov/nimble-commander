@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Сохранить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储"
+          }
         }
       }
     },
@@ -34,6 +40,12 @@
             "state" : "translated",
             "value" : "Подключиться"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
         }
       }
     },
@@ -48,6 +60,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "root"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "root"
@@ -70,6 +88,12 @@
             "state" : "translated",
             "value" : "Подключиться к SFTP серверу:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到 SFTP 服务器："
+          }
         }
       }
     },
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Пароль:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码："
+          }
         }
       }
     },
@@ -102,6 +132,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "example.com"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "example.com"
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "example.com"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "example.com"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路径"
           }
         }
       }
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "path"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路径"
+          }
         }
       }
     },
@@ -178,6 +232,12 @@
             "state" : "translated",
             "value" : "Удаленный порт:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "远程端口："
+          }
         }
       }
     },
@@ -192,6 +252,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "22"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "22"
@@ -214,6 +280,12 @@
             "state" : "translated",
             "value" : "Закрыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -231,6 +303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Логин:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户名："
           }
         }
       }
@@ -250,6 +328,12 @@
             "state" : "translated",
             "value" : "пароль пользователя или ключа"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器密码或密钥口令"
+          }
         }
       }
     },
@@ -264,6 +348,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "22"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "22"
@@ -286,6 +376,12 @@
             "state" : "translated",
             "value" : "произвольное название"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意标题"
+          }
         }
       }
     },
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Название:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标题："
+          }
         }
       }
     },
@@ -318,6 +420,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "root"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "root"
@@ -340,6 +448,12 @@
             "state" : "translated",
             "value" : "🔑"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🔑"
+          }
         }
       }
     },
@@ -357,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сервер:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器："
           }
         }
       }
@@ -376,6 +496,12 @@
             "state" : "translated",
             "value" : "passwd"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
         }
       }
     },
@@ -393,6 +519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Путь к ключу:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密钥文件："
           }
         }
       }

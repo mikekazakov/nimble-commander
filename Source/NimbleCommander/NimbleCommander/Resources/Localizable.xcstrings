@@ -9,6 +9,12 @@
             "state" : "translated",
             "value" : "B"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B"
+          }
         }
       }
     },
@@ -20,6 +26,12 @@
             "state" : "translated",
             "value" : "bytes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字节"
+          }
         }
       }
     },
@@ -27,6 +39,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " KMGTP"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : " KMGTP"
@@ -42,6 +60,12 @@
             "state" : "translated",
             "value" : "Folder"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹"
+          }
         }
       }
     },
@@ -52,6 +76,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "    Up"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "    向上"
           }
         }
       }
@@ -70,6 +100,12 @@
             "state" : "translated",
             "value" : "Папка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹"
+          }
         }
       }
     },
@@ -87,6 +123,12 @@
             "state" : "translated",
             "value" : "Наверх"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向上"
+          }
         }
       }
     },
@@ -102,6 +144,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дата доступа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问日期"
           }
         }
       }
@@ -119,6 +167,12 @@
             "state" : "translated",
             "value" : "Дата добавления"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加日期"
+          }
         }
       }
     },
@@ -134,6 +188,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дата создания"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建日期"
           }
         }
       }
@@ -151,6 +211,12 @@
             "state" : "translated",
             "value" : "Дата изменения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改日期"
+          }
         }
       }
     },
@@ -166,6 +232,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Расширение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扩展名"
           }
         }
       }
@@ -183,6 +255,12 @@
             "state" : "translated",
             "value" : "Имя"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
+          }
         }
       }
     },
@@ -198,6 +276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Размер"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小"
           }
         }
       }
@@ -215,6 +299,12 @@
             "state" : "translated",
             "value" : "Теги"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签"
+          }
         }
       }
     },
@@ -231,6 +321,12 @@
             "state" : "translated",
             "value" : "Временная панель: %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时面板：%@"
+          }
         }
       }
     },
@@ -246,6 +342,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Временная панель"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时面板"
           }
         }
       }
@@ -264,6 +366,12 @@
             "state" : "translated",
             "value" : "Спасибо за использование зарегистрированной копии Nimble Commander!"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "感谢你使用 Nimble Commander 的已注册副本！请重新启动以使更改生效。"
+          }
         }
       }
     },
@@ -280,6 +388,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Успешная активация"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "激活成功"
           }
         }
       }
@@ -298,6 +412,12 @@
             "state" : "translated",
             "value" : "Это пробная версия Nimble Commander.\nЧтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.\nЭто окно появляется только в пробной версии."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这是 Nimble Commander 的试用版。\n30 天试用期结束后若需继续使用本软件，你必须购买许可证或从 Mac App Store 安装付费版本。\n此窗口仅在试用版中显示。"
+          }
         }
       }
     },
@@ -307,6 +427,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "“%1$@” is %2$@ in size.\nAre you sure you want to open it?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@”的大小为 %2$@。\n确定要打开它吗？"
           }
         }
       }
@@ -319,11 +445,35 @@
             "state" : "translated",
             "value" : "%@ доступно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用 %@"
+          }
         }
       }
     },
-    "⏎" : {},
-    "␛" : {},
+    "⏎" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⏎"
+          }
+        }
+      }
+    },
+    "␛" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "␛"
+          }
+        }
+      }
+    },
     "Allow Access" : {
       "comment" : "Asking user for granting file system access for NC - button title",
       "localizations" : {
@@ -331,6 +481,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Разрешить доступ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许访问"
           }
         }
       }
@@ -343,6 +499,12 @@
             "state" : "translated",
             "value" : "Приложения:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序："
+          }
         }
       }
     },
@@ -353,6 +515,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы действительно хотите удалить это соединение?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除此连接吗？"
           }
         }
       }
@@ -365,6 +533,12 @@
             "state" : "translated",
             "value" : "Вы действительно хотите убрать этот редактор?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要移除此编辑器吗？"
+          }
         }
       }
     },
@@ -375,6 +549,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы действительно хотите удалить эту тему?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要移除此主题吗？"
           }
         }
       }
@@ -387,6 +567,12 @@
             "state" : "translated",
             "value" : "Вы действительно хотите удалить этот инструмент?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要移除此工具吗？"
+          }
         }
       }
     },
@@ -397,6 +583,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы действительно хотите сбросить настройки к стандартным?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要将设置重置为默认值吗？"
           }
         }
       }
@@ -409,6 +601,12 @@
             "state" : "translated",
             "value" : "Вы действительно хотите сбросить изменения этой темы?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要还原此主题的更改吗？"
+          }
         }
       }
     },
@@ -418,6 +616,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Синий"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "蓝色"
           }
         }
       }
@@ -430,6 +634,12 @@
             "state" : "translated",
             "value" : "Краткий обзор системы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统简要信息"
+          }
         }
       }
     },
@@ -441,6 +651,12 @@
             "state" : "translated",
             "value" : "Кэш:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缓存："
+          }
         }
       }
     },
@@ -451,6 +667,12 @@
             "state" : "translated",
             "value" : "Отмена"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -460,6 +682,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "C учетом регистра"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "区分大小写"
           }
         }
       }
@@ -472,6 +700,12 @@
             "state" : "translated",
             "value" : "Проверить наличие обновлений..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
+          }
         }
       }
     },
@@ -481,6 +715,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Очистить недавние поиски"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除最近记录"
           }
         }
       }
@@ -493,6 +733,12 @@
             "state" : "translated",
             "value" : "Нажмите “Разрешить доступ” чтобы позволить работать с файлами в выбранной директории"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按“允许访问”以授予对所选目录中文件的访问权限"
+          }
         }
       }
     },
@@ -504,6 +750,12 @@
             "state" : "translated",
             "value" : "Закрыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
         }
       }
     },
@@ -513,6 +765,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть остальные вкладки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭其他标签页"
           }
         }
       }
@@ -525,6 +783,12 @@
             "state" : "translated",
             "value" : "Закрыть вкладку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭标签页"
+          }
         }
       }
     },
@@ -535,6 +799,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть просмотрщик"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭查看器"
           }
         }
       }
@@ -547,6 +817,12 @@
             "state" : "translated",
             "value" : "Закрыть окно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭窗口"
+          }
         }
       }
     },
@@ -557,6 +833,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрытие этого окна прервет следующие процессы: "
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭此窗口将终止正在运行的进程："
           }
         }
       }
@@ -569,6 +851,12 @@
             "state" : "translated",
             "value" : "Сжато:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩后："
+          }
         }
       }
     },
@@ -580,6 +868,12 @@
             "state" : "translated",
             "value" : "Имя компьютера:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电脑名称："
+          }
         }
       }
     },
@@ -589,6 +883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Конфликты (%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冲突 (%@)"
           }
         }
       }
@@ -601,6 +901,12 @@
             "state" : "translated",
             "value" : "Соединения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
         }
       }
     },
@@ -612,6 +918,12 @@
             "state" : "translated",
             "value" : "ЦП"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU"
+          }
         }
       }
     },
@@ -621,6 +933,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удалить Тэг"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除标签"
           }
         }
       }
@@ -633,6 +951,12 @@
             "state" : "translated",
             "value" : "Выключить режим администратора"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭管理员模式"
+          }
         }
       }
     },
@@ -643,6 +967,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать все объекты с тегом “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示所有带有“%@”标签的项目"
           }
         }
       }
@@ -655,6 +985,12 @@
             "state" : "translated",
             "value" : "Вы хотите закрыть это окно?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要关闭此窗口吗？"
+          }
         }
       }
     },
@@ -665,6 +1001,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы действительно хотите удалить тэг “%@”?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要删除标签“%@”吗？"
           }
         }
       }
@@ -678,6 +1020,12 @@
             "state" : "translated",
             "value" : "Ошибка подключения к Dropbox:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropbox 连接错误："
+          }
         }
       },
       "shouldTranslate" : false
@@ -690,6 +1038,12 @@
             "state" : "translated",
             "value" : "Включить режим администратора"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开管理员模式"
+          }
         }
       }
     },
@@ -699,6 +1053,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Кодировка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编码"
           }
         }
       }
@@ -711,6 +1071,12 @@
             "state" : "translated",
             "value" : "Войти в “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进入“%@”"
+          }
         }
       }
     },
@@ -721,6 +1087,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запустить “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "执行“%@”"
           }
         }
       }
@@ -733,6 +1105,12 @@
             "state" : "translated",
             "value" : "Не удалось получить доступ к перетащенному объекту:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问拖入的项目："
+          }
         }
       }
     },
@@ -743,6 +1121,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось связаться с привилегированным помощником."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问特权辅助程序。"
           }
         }
       }
@@ -755,6 +1139,12 @@
             "state" : "translated",
             "value" : "Не удалось создать пустой файл:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法创建空文件："
+          }
         }
       }
     },
@@ -765,6 +1155,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось открыть расширенные атрибуты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开扩展属性"
           }
         }
       }
@@ -777,6 +1173,12 @@
             "state" : "translated",
             "value" : "Не удалось получить Избранное Finder'а"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法获取访达的收藏夹"
+          }
         }
       }
     },
@@ -788,6 +1190,12 @@
             "state" : "translated",
             "value" : "Избранное"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏夹"
+          }
         }
       }
     },
@@ -797,6 +1205,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Фокус на левую панель"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 聚焦左侧面板"
           }
         }
       }
@@ -808,6 +1222,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Фокус на правую панель"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 聚焦右侧面板"
+          }
         }
       }
     },
@@ -817,6 +1237,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Перейти в папку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 进入文件夹"
           }
         }
       }
@@ -828,6 +1254,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Перейти на уровень выше"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 前往上层文件夹"
+          }
         }
       }
     },
@@ -837,6 +1269,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Перейти в папку ~ Личное"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 前往个人文件夹 ~ 目录"
           }
         }
       }
@@ -848,6 +1286,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Перейти в папку / Корень"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 前往根目录 /"
+          }
         }
       }
     },
@@ -857,6 +1301,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться вниз"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 下移"
           }
         }
       }
@@ -868,6 +1318,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться влево"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 左移"
+          }
         }
       }
     },
@@ -877,6 +1333,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться вправо"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 右移"
           }
         }
       }
@@ -888,6 +1350,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться к первому элементу"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 移到第一个项目"
+          }
         }
       }
     },
@@ -897,6 +1365,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться к последнему элементу"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 移到最后一个项目"
           }
         }
       }
@@ -908,6 +1382,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться на следующую страницу"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 移到下一页"
+          }
         }
       }
     },
@@ -917,6 +1397,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться на предыдущую страницу"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 移到上一页"
           }
         }
       }
@@ -928,6 +1414,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Переместиться вверх"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 上移"
+          }
         }
       }
     },
@@ -937,6 +1429,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Прокрутить к первому элементу"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 滚动到第一个项目"
           }
         }
       }
@@ -948,6 +1446,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Прокрутить к последнему элементу"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 滚动到最后一个项目"
+          }
         }
       }
     },
@@ -957,6 +1461,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Прокрутить к следующуей странице"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 滚动到下一页"
           }
         }
       }
@@ -968,6 +1478,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Прокрутить к предыдущей странице"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 滚动到上一页"
+          }
         }
       }
     },
@@ -977,6 +1493,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать контекстное меню"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示上下文菜单"
           }
         }
       }
@@ -988,6 +1510,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать предыдущую вкладку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示下一个标签页"
+          }
         }
       }
     },
@@ -997,6 +1525,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать быстрый просмотр"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示预览"
           }
         }
       }
@@ -1008,6 +1542,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать закладку вкладку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示上一个标签页"
+          }
         }
       }
     },
@@ -1017,6 +1557,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №1"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №1"
           }
         }
       }
@@ -1028,6 +1574,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №2"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №2"
+          }
         }
       }
     },
@@ -1037,6 +1589,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №3"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №3"
           }
         }
       }
@@ -1048,6 +1606,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №4"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №4"
+          }
         }
       }
     },
@@ -1057,6 +1621,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №5"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №5"
           }
         }
       }
@@ -1068,6 +1638,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №6"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №6"
+          }
         }
       }
     },
@@ -1077,6 +1653,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №7"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №7"
           }
         }
       }
@@ -1088,6 +1670,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №8"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №8"
+          }
         }
       }
     },
@@ -1097,6 +1685,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №9"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №9"
           }
         }
       }
@@ -1108,6 +1702,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Показать вкладку №10"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 显示标签页 №10"
+          }
         }
       }
     },
@@ -1118,6 +1718,12 @@
             "state" : "translated",
             "value" : "Файловые панели ▶ Изменить выделение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 切换选择"
+          }
         }
       }
     },
@@ -1127,6 +1733,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые панели ▶ Изменить выделение и переместиться вниз"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件面板 ▶ 切换选择并下移"
           }
         }
       }
@@ -1139,6 +1751,12 @@
             "state" : "translated",
             "value" : "Фокус на файловые панели"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聚焦文件面板"
+          }
         }
       }
     },
@@ -1149,6 +1767,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Фокус на терминал"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聚焦重叠的终端"
           }
         }
       }
@@ -1161,6 +1785,12 @@
             "state" : "translated",
             "value" : "Следовать за “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随“%@”"
+          }
         }
       }
     },
@@ -1171,6 +1801,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Свободно байт:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空闲字节数："
           }
         }
       }
@@ -1183,6 +1819,12 @@
             "state" : "translated",
             "value" : "Часто посещаемое"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常访问"
+          }
         }
       }
     },
@@ -1193,6 +1835,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ошибка подключения FTP:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP 连接错误："
           }
         }
       }
@@ -1205,6 +1853,12 @@
             "state" : "translated",
             "value" : "Основное"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
         }
       }
     },
@@ -1216,6 +1870,12 @@
             "state" : "translated",
             "value" : "Перейти к"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往"
+          }
         }
       }
     },
@@ -1226,6 +1886,12 @@
             "state" : "translated",
             "value" : "Серый"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "灰色"
+          }
         }
       }
     },
@@ -1235,6 +1901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Зеленый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绿色"
           }
         }
       }
@@ -1247,6 +1919,12 @@
             "state" : "translated",
             "value" : "Скрыть панели"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏面板"
+          }
         }
       }
     },
@@ -1257,6 +1935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скрыть панель вкладок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏标签页栏"
           }
         }
       }
@@ -1269,6 +1953,12 @@
             "state" : "translated",
             "value" : "Скрыть терминал"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏终端"
+          }
         }
       }
     },
@@ -1279,6 +1969,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скрыть панель инструментов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏工具栏"
           }
         }
       }
@@ -1291,6 +1987,12 @@
             "state" : "translated",
             "value" : "История"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "历史记录"
+          }
         }
       }
     },
@@ -1301,6 +2003,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Свободно:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空闲："
           }
         }
       }
@@ -1313,6 +2021,12 @@
             "state" : "new",
             "value" : "Layout #%d"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布局 #%d"
+          }
         }
       }
     },
@@ -1324,6 +2038,12 @@
             "state" : "translated",
             "value" : "Левый Переход"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左侧前往"
+          }
         }
       }
     },
@@ -1334,6 +2054,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Загрузка:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "负载："
           }
         }
       }
@@ -1347,6 +2073,12 @@
             "state" : "translated",
             "value" : "Модель Mac:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac 型号："
+          }
         }
       }
     },
@@ -1357,6 +2089,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Маска “%@”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "掩码“%@”"
           }
         }
       }
@@ -1369,6 +2107,12 @@
             "state" : "translated",
             "value" : "Маска: *, или *.t?t, или *.txt,*.jpg"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "掩码：*、或 *.t?t、或 *.txt,*.jpg"
+          }
         }
       }
     },
@@ -1378,6 +2122,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Н/Д"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不适用"
           }
         }
       }
@@ -1390,6 +2140,12 @@
             "state" : "translated",
             "value" : "Новая папка с объектами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用项目新建文件夹"
+          }
         }
       }
     },
@@ -1400,17 +2156,47 @@
             "state" : "translated",
             "value" : "Новая вкладка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建标签页"
+          }
         }
       }
     },
-    "Nimble Commander will copy them to a temporary location before they can be opened." : {},
-    "Nimble Commander will create a copy in a temporary location before it can be opened." : {},
+    "Nimble Commander will copy them to a temporary location before they can be opened." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander 会先将它们拷贝到临时位置，然后才能打开。"
+          }
+        }
+      }
+    },
+    "Nimble Commander will create a copy in a temporary location before it can be opened." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander 会先在临时位置创建副本，然后才能打开。"
+          }
+        }
+      }
+    },
     "No" : {
       "localizations" : {
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Нет"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否"
           }
         }
       }
@@ -1421,6 +2207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Без цвета"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无颜色"
           }
         }
       }
@@ -1433,6 +2225,12 @@
             "state" : "translated",
             "value" : "Новые тэги не найдены."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到新标签。"
+          }
         }
       }
     },
@@ -1443,6 +2241,12 @@
             "state" : "translated",
             "value" : "Не содержит"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不包含"
+          }
         }
       }
     },
@@ -1452,6 +2256,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
           }
         }
       }
@@ -1464,6 +2274,12 @@
             "state" : "translated",
             "value" : "Открыть “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开“%@”"
+          }
         }
       }
     },
@@ -1474,6 +2290,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Операция завершена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作已完成"
           }
         }
       }
@@ -1486,6 +2308,12 @@
             "state" : "translated",
             "value" : "Операции"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
         }
       }
     },
@@ -1496,6 +2324,12 @@
             "state" : "translated",
             "value" : "Настройки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选项"
+          }
         }
       }
     },
@@ -1505,6 +2339,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Оранжевый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "橙色"
           }
         }
       }
@@ -1517,6 +2357,12 @@
             "state" : "new",
             "value" : "Parameter #%d:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参数 #%d："
+          }
         }
       }
     },
@@ -1528,6 +2374,12 @@
             "state" : "translated",
             "value" : "Родительские папки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "父文件夹"
+          }
         }
       }
     },
@@ -1537,6 +2389,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пожалуйста введите параметры для запуска \"%@\""
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请提供运行“%@”所需的参数"
           }
         }
       }
@@ -1549,6 +2407,12 @@
             "state" : "translated",
             "value" : "Процессы:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进程："
+          }
         }
       }
     },
@@ -1558,6 +2422,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Лиловый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "紫色"
           }
         }
       }
@@ -1570,6 +2440,12 @@
             "state" : "translated",
             "value" : "Память"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内存"
+          }
         }
       }
     },
@@ -1579,6 +2455,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Недавние поиски"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近的搜索"
           }
         }
       }
@@ -1590,6 +2472,12 @@
             "state" : "translated",
             "value" : "Недавно закрытые"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近关闭"
+          }
         }
       }
     },
@@ -1599,6 +2487,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Красный"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "红色"
           }
         }
       }
@@ -1611,6 +2505,12 @@
             "state" : "translated",
             "value" : "RegEx “%@”"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则“%@”"
+          }
         }
       }
     },
@@ -1622,6 +2522,12 @@
             "state" : "translated",
             "value" : "Регулярное выражение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则表达式"
+          }
         }
       }
     },
@@ -1631,6 +2537,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Регулярное выражение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正则表达式"
           }
         }
       }
@@ -1643,6 +2555,12 @@
             "state" : "translated",
             "value" : "Правый Переход"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右侧前往"
+          }
         }
       }
     },
@@ -1653,6 +2571,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделено %1$@ в %2$@ файлах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %1$@，共 %2$@ 个文件"
           }
         }
       }
@@ -1665,6 +2589,12 @@
             "state" : "translated",
             "value" : "Выделено %@ в 1 файле"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 1 个文件"
+          }
         }
       }
     },
@@ -1675,6 +2605,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделено %@ в 2 файлах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 2 个文件"
           }
         }
       }
@@ -1687,6 +2623,12 @@
             "state" : "translated",
             "value" : "Выделено %@ в 3 файлах"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 3 个文件"
+          }
         }
       }
     },
@@ -1697,6 +2639,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделено %@ в 4 файлах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 4 个文件"
           }
         }
       }
@@ -1709,6 +2657,12 @@
             "state" : "translated",
             "value" : "Выделено %@ в 5 файлах"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 5 个文件"
+          }
         }
       }
     },
@@ -1719,6 +2673,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделено %@ в 6 файлах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 6 个文件"
           }
         }
       }
@@ -1731,6 +2691,12 @@
             "state" : "translated",
             "value" : "Выделено %@ в 7 файлах"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 7 个文件"
+          }
         }
       }
     },
@@ -1741,6 +2707,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделено %@ в 8 файлах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 8 个文件"
           }
         }
       }
@@ -1753,6 +2725,12 @@
             "state" : "translated",
             "value" : "Выделено %@ в 9 файлах"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择 %@，共 9 个文件"
+          }
         }
       }
     },
@@ -1763,6 +2741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ошибка подключения SFTP:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SFTP 连接错误："
           }
         }
       }
@@ -1775,6 +2759,12 @@
             "state" : "translated",
             "value" : "Показать панели"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示面板"
+          }
         }
       }
     },
@@ -1785,6 +2775,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать панель вкладок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示标签页栏"
           }
         }
       }
@@ -1797,6 +2793,12 @@
             "state" : "translated",
             "value" : "Показать терминал"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示终端"
+          }
         }
       }
     },
@@ -1807,6 +2809,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать панель инструментов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示工具栏"
           }
         }
       }
@@ -1819,6 +2827,12 @@
             "state" : "translated",
             "value" : "Укажите регулярное выражения для поиска имен файлов. (^M)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指定用于匹配文件名的正则表达式。(^M)"
+          }
         }
       }
     },
@@ -1829,6 +2843,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Остановить и закрыть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止并关闭"
           }
         }
       }
@@ -1841,6 +2861,12 @@
             "state" : "translated",
             "value" : "Остановить и завершить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止并退出"
+          }
         }
       }
     },
@@ -1851,6 +2877,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Хранилище"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储"
           }
         }
       }
@@ -1863,6 +2895,12 @@
             "state" : "translated",
             "value" : "Своп:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交换空间："
+          }
         }
       }
     },
@@ -1873,6 +2911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Система:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统："
           }
         }
       }
@@ -1885,6 +2929,12 @@
             "state" : "translated",
             "value" : "Теги"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签"
+          }
         }
       }
     },
@@ -1895,6 +2945,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Temporary Panel (%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时面板 (%@)"
           }
         }
       }
@@ -1907,6 +2963,12 @@
             "state" : "translated",
             "value" : "Прервать и закрыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "终止并关闭"
+          }
         }
       }
     },
@@ -1917,6 +2979,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Имеются работающие операции. Прекратить все операции и завершить приложение?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序有正在运行的操作。是否要停止所有操作并退出？"
           }
         }
       }
@@ -1929,6 +2997,12 @@
             "state" : "translated",
             "value" : "Следующие теги были добавлены: %@."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加以下标签：%@。"
+          }
         }
       }
     },
@@ -1939,6 +3013,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Имя “%@” не может быть использовано."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法使用名称“%@”。"
           }
         }
       }
@@ -1951,10 +3031,25 @@
             "state" : "translated",
             "value" : "Имя “%@” уже используется использовано. Пожалуйста, выберите другое имя."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称“%@”已被使用。\n请选择其他名称。"
+          }
         }
       }
     },
-    "The selected items are %@ in size.\nAre you sure you want to open them?" : {},
+    "The selected items are %@ in size.\nAre you sure you want to open them?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选内容的大小为 %@。\n确定要打开它们吗？"
+          }
+        }
+      }
+    },
     "The window has %@ tabs. Are you sure you want to close this window?" : {
       "comment" : "Asking user to close window with additional tabs",
       "localizations" : {
@@ -1962,6 +3057,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Это окно содежит %@ вкладок. Вы действительно хотите закрыть его?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此窗口有 %@ 个标签页。确定要关闭此窗口吗？"
           }
         }
       }
@@ -1974,6 +3075,12 @@
             "state" : "translated",
             "value" : "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此窗口有正在运行的操作。是否要停止它们并关闭窗口？"
+          }
         }
       }
     },
@@ -1984,6 +3091,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тема"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主题"
           }
         }
       }
@@ -1996,6 +3109,12 @@
             "state" : "translated",
             "value" : "Эта операция необратима."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此操作不可撤销。"
+          }
         }
       }
     },
@@ -2006,6 +3125,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Это удалит ваши собственные настройки."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这将清除你的所有自定义设置。"
           }
         }
       }
@@ -2018,6 +3143,12 @@
             "state" : "translated",
             "value" : "Потоки:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线程："
+          }
         }
       }
     },
@@ -2028,6 +3159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Включить двухпанельный режим"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到双窗格模式"
           }
         }
       }
@@ -2040,6 +3177,12 @@
             "state" : "translated",
             "value" : "Включить однопанельный режим"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到单窗格模式"
+          }
         }
       }
     },
@@ -2050,6 +3193,12 @@
             "state" : "translated",
             "value" : "Инструмент #%u"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具 #%u"
+          }
         }
       }
     },
@@ -2059,6 +3208,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Инструменты ▶ %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具 ▶ %@"
           }
         }
       }
@@ -2071,6 +3226,12 @@
             "state" : "translated",
             "value" : "Всего байт:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "总字节数："
+          }
         }
       }
     },
@@ -2081,6 +3242,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Всего:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "总计："
           }
         }
       }
@@ -2093,6 +3260,12 @@
             "state" : "translated",
             "value" : "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请尝试使用字符更少或不含标点符号的名称。"
+          }
         }
       }
     },
@@ -2103,6 +3276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не удалось подключиться к сетевой папке"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接到网络共享"
           }
         }
       }
@@ -2115,6 +3294,12 @@
             "state" : "translated",
             "value" : "Невозможно запустить внешний инструмент “%s”."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法运行外部工具“%s”"
+          }
         }
       }
     },
@@ -2125,6 +3310,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Unexpected exception was caught:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捕获到意外异常："
           }
         }
       }
@@ -2137,6 +3328,12 @@
             "state" : "new",
             "value" : "Unknown exception"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知异常"
+          }
         }
       }
     },
@@ -2147,6 +3344,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Новый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名"
           }
         }
       }
@@ -2159,6 +3362,12 @@
             "state" : "translated",
             "value" : "Новая папка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名文件夹"
+          }
         }
       }
     },
@@ -2169,6 +3378,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "новый файл.txt"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名.txt"
           }
         }
       }
@@ -2181,6 +3396,12 @@
             "state" : "translated",
             "value" : "Аптайм:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运行时间："
+          }
         }
       }
     },
@@ -2191,6 +3412,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Используйте \"*\" для подстановки нескольких символов, \"?\" для подстановки одного символа и \",\" чтобы указать больше одной маски. (^M)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用“*”作为多字符通配符，“?”作为单字符通配符，并使用“,”指定多个掩码。(^M)"
           }
         }
       }
@@ -2203,6 +3430,12 @@
             "state" : "translated",
             "value" : "Используемая:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已用："
+          }
         }
       }
     },
@@ -2213,6 +3446,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Имя пользователя:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户名："
           }
         }
       }
@@ -2225,6 +3464,12 @@
             "state" : "translated",
             "value" : "Пользователь:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户："
+          }
         }
       }
     },
@@ -2234,6 +3479,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Просмотрщик ▶ Обновить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 刷新"
           }
         }
       }
@@ -2245,6 +3496,12 @@
             "state" : "translated",
             "value" : "Просмотрщик ▶ Показать Переход"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 显示“前往”"
+          }
         }
       }
     },
@@ -2254,6 +3511,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Просмотрщик ▶ Показать Настройки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 显示设置"
           }
         }
       }
@@ -2265,6 +3528,12 @@
             "state" : "translated",
             "value" : "Просмотрщик ▶ Переключить на шестнадцатеричный вид"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 切换十六进制"
+          }
         }
       }
     },
@@ -2275,6 +3544,12 @@
             "state" : "translated",
             "value" : "Просмотрщик ▶ Переключить на быстрый просмотр"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 切换预览"
+          }
         }
       }
     },
@@ -2284,6 +3559,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Просмотрщик ▶ Переключить на текст"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看器 ▶ 切换文本"
           }
         }
       }
@@ -2296,6 +3577,12 @@
             "state" : "translated",
             "value" : "Название тома:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宗卷名称："
+          }
         }
       }
     },
@@ -2306,6 +3593,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тома"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宗卷"
           }
         }
       }
@@ -2318,6 +3611,12 @@
             "state" : "translated",
             "value" : "Ошибка подключения WebDAV:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WebDAV 连接错误："
+          }
         }
       }
     },
@@ -2327,6 +3626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Фраза целиком"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整个短语"
           }
         }
       }
@@ -2339,6 +3644,12 @@
             "state" : "translated",
             "value" : "Зарезервировано:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联动："
+          }
         }
       }
     },
@@ -2348,6 +3659,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Желтый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "黄色"
           }
         }
       }
@@ -2359,6 +3676,12 @@
             "state" : "translated",
             "value" : "Да"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是"
+          }
         }
       }
     },
@@ -2369,6 +3692,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вы не сможете отменить эту операцию."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你无法撤销此操作。"
           }
         }
       }

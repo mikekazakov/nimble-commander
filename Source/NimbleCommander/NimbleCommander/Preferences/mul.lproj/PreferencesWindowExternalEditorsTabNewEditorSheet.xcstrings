@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Только файлы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅文件"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Аргументы:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参数："
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Отмена"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Маска файлов:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件掩码："
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запускать в терминале"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在终端中运行"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "…"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "*, *.*, *.cpp, *.*m и т.д."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*、*.*、*.cpp、*.*m 等"
           }
         }
       }
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "Имя:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称："
+          }
         }
       }
     },
@@ -174,6 +228,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%%"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%%"
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "Все экземпляры %% будут заменены на путь файла. Вы можете использовать обратный слэш для избегания интерпретации пробелов как разделитей параметров."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有 %% 都将替换为文件路径。你可以使用反斜杠转义空格，使其不被解释为参数分隔符。"
+          }
         }
       }
     },
@@ -213,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Путь приложения:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序路径："
           }
         }
       }

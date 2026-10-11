@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Базовый путь:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基础路径："
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "авто"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "passwd"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "напр. \"dav\", или оставить пустым"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如“dav”，或留空"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Логин:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户名："
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сохранить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Подключиться"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
         }
       }
     },
@@ -138,6 +180,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "http://"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "http://"
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "webdav.example.com"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "webdav.example.com"
+          }
         }
       }
     },
@@ -174,6 +228,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "anonymous"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "anonymous"
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "Удаленный порт:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "远程端口："
+          }
         }
       }
     },
@@ -214,6 +280,12 @@
             "state" : "translated",
             "value" : "Подключиться к WebDAV серверу:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到 WebDAV 服务器："
+          }
         }
       }
     },
@@ -228,6 +300,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "https://"
@@ -250,6 +328,12 @@
             "state" : "translated",
             "value" : "произвольное название"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意标题"
+          }
         }
       }
     },
@@ -267,6 +351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пароль:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码："
           }
         }
       }
@@ -286,6 +376,12 @@
             "state" : "translated",
             "value" : "Отмена"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -303,6 +399,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сервер:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器："
           }
         }
       }
@@ -322,6 +424,12 @@
             "state" : "translated",
             "value" : "Протокол:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "协议："
+          }
         }
       }
     },
@@ -339,6 +447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Название:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标题："
           }
         }
       }

@@ -186,6 +186,7 @@
 				en,
 				Base,
 				ru,
+				zh-Hans,
 			);
 			mainGroup = CFD79ABD21FE29130043A26D;
 			productRefGroup = CFD79AC821FE29130043A26D /* Products */;

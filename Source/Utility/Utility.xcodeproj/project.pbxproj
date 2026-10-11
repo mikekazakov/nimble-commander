@@ -545,6 +545,7 @@
 			knownRegions = (
 				en,
 				Base,
+				zh-Hans,
 			);
 			mainGroup = CF960DD11C97F833001D8B02;
 			productRefGroup = CF960DDC1C97F833001D8B02 /* Products */;

@@ -10,6 +10,12 @@
             "state" : "translated",
             "value" : ""
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口"
+          }
         }
       }
     },
@@ -27,6 +33,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отмена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -46,6 +58,12 @@
             "state" : "translated",
             "value" : "Перейти"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往"
+          }
         }
       }
     },
@@ -63,6 +81,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Перейти к папке:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往文件夹："
           }
         }
       }

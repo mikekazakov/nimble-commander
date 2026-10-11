@@ -54,7 +54,7 @@
 		CF2B751522B82EF8009D4160 /* UTI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UTI.h; path = include/Utility/UTI.h; sourceTree = "<group>"; };
 		CF2B751722B82F05009D4160 /* UTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UTI.cpp; path = source/UTI.cpp; sourceTree = "<group>"; };
 		CF2B751922B82FE8009D4160 /* UTIImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UTIImpl.h; path = include/Utility/UTIImpl.h; sourceTree = "<group>"; };
-		CF2B751B22B82FF0009D4160 /* UTIImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UTIImpl.cpp; path = source/UTIImpl.cpp; sourceTree = "<group>"; };
+		CF2B751B22B82FF0009D4160 /* UTIImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UTIImpl.mm; path = source/UTIImpl.mm; sourceTree = "<group>"; };
 		CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsDirUpdate_UT.cpp; path = tests/FSEventsDirUpdate_UT.cpp; sourceTree = "<group>"; };
 		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
 		CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOnDiskStorage.h; path = include/Utility/BriefOnDiskStorage.h; sourceTree = "<group>"; };
@@ -399,7 +399,7 @@
 				CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */,
 				CFAB7F19276009E400926554 /* URLSecurityScopedResourceGuard.mm */,
 				CF2B751722B82F05009D4160 /* UTI.cpp */,
-				CF2B751B22B82FF0009D4160 /* UTIImpl.cpp */,
+				CF2B751B22B82FF0009D4160 /* UTIImpl.mm */,
 				CFC41DAA257159630037677B /* VersionCompare.mm */,
 				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,

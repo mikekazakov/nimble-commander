@@ -30,5 +30,6 @@
 #include "SyncMessageBox.mm"
 #include "SystemInformation.mm"
 #include "URLSecurityScopedResourceGuard.mm"
+#include "UTIImpl.mm"
 #include "VersionCompare.mm"
 #include "VerticallyCenteredTextFieldCell.mm"

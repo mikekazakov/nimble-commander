@@ -21,5 +21,4 @@
 #include "TemporaryFileStorage.cpp"
 #include "TemporaryFileStorageImpl.cpp"
 #include "UTI.cpp"
-#include "UTIImpl.cpp"
 #include "VolumeInformation.cpp"

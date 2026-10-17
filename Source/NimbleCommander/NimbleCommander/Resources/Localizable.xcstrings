@@ -322,12 +322,8 @@
         }
       }
     },
-    "⏎" : {
-
-    },
-    "␛" : {
-
-    },
+    "⏎" : {},
+    "␛" : {},
     "Allow Access" : {
       "comment" : "Asking user for granting file system access for NC - button title",
       "localizations" : {
@@ -1407,12 +1403,8 @@
         }
       }
     },
-    "Nimble Commander will copy them to a temporary location before they can be opened." : {
-
-    },
-    "Nimble Commander will create a copy in a temporary location before it can be opened." : {
-
-    },
+    "Nimble Commander will copy them to a temporary location before they can be opened." : {},
+    "Nimble Commander will create a copy in a temporary location before it can be opened." : {},
     "No" : {
       "localizations" : {
         "ru" : {
@@ -1962,9 +1954,7 @@
         }
       }
     },
-    "The selected items are %@ in size.\nAre you sure you want to open them?" : {
-
-    },
+    "The selected items are %@ in size.\nAre you sure you want to open them?" : {},
     "The window has %@ tabs. Are you sure you want to close this window?" : {
       "comment" : "Asking user to close window with additional tabs",
       "localizations" : {

@@ -4,6 +4,7 @@
 #include <spdlog/sinks/base_sink.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/Localizable.h>
 #include <Base/dispatch_cpp.h>
 #include <algorithm>
 #include <iostream>
@@ -186,7 +187,7 @@ void SpdLogUISink::DoFlush()
     [now setButtonType:NSButtonTypeToggle];
     now.target = self;
     now.action = @selector(onNowButtonClicked:);
-    now.toolTip = @"Autoscroll to the bottom";
+    now.toolTip = nc::utility::localizable::SpdLogWindowAutoscrollToTheBottomToolTip();
     [cv addSubview:now];
 
     NSButton *clear = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
@@ -197,7 +198,7 @@ void SpdLogUISink::DoFlush()
     [clear setButtonType:NSButtonTypeMomentaryPushIn];
     clear.target = self;
     clear.action = @selector(onClearButtonClicked:);
-    clear.toolTip = @"Clear the logs";
+    clear.toolTip = nc::utility::localizable::SpdLogWindowClearTheLogsToolTip();
     [cv addSubview:clear];
 
     NSButton *settings = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
@@ -208,7 +209,7 @@ void SpdLogUISink::DoFlush()
     [settings setButtonType:NSButtonTypeMomentaryPushIn];
     settings.target = self;
     settings.action = @selector(onSettingsButtonClicked:);
-    settings.toolTip = @"Adjust the logging settings";
+    settings.toolTip = nc::utility::localizable::SpdLogWindowAdjustTheLoggingSettingsToolTip();
     [cv addSubview:settings];
 
     const auto constraints = std::to_array({@"|-[now(==24)]-[clear(==24)]-[settings(==24)]",
@@ -259,7 +260,7 @@ void SpdLogUISink::DoFlush()
 
     auto wnd = [[NSPanel alloc] initWithContentRect:rc styleMask:style backing:backing defer:true];
     wnd.minSize = {.width = 400, .height = 300};
-    wnd.title = @"Logs";
+    wnd.title = nc::utility::localizable::SpdLogWindowTitle();
     [wnd setFrameAutosaveName:@"NCSpdLogWindow"]; // doesn't work??
     return wnd;
 }
@@ -338,49 +339,51 @@ static constexpr std::pair<spdlog::level::level_enum, unsigned> unpackFromTag(NS
 
         auto submenu = [[NSMenu alloc] init];
 
-        NSMenuItem *trace = [submenu addItemWithTitle:@"Trace"
+        NSMenuItem *trace = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelTrace()
                                                action:@selector(onSettingsLevelClicked:)
                                         keyEquivalent:@""];
         trace.tag = packIntoTag(level::trace, idx);
         if( (logger && logger->Get().level() == level::trace) || (!logger && all_are(level::trace)) )
             trace.state = NSControlStateValueOn;
 
-        NSMenuItem *dbg = [submenu addItemWithTitle:@"Debug"
+        NSMenuItem *dbg = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelDebug()
                                              action:@selector(onSettingsLevelClicked:)
                                       keyEquivalent:@""];
         dbg.tag = packIntoTag(level::debug, idx);
         if( (logger && logger->Get().level() == level::debug) || (!logger && all_are(level::debug)) )
             dbg.state = NSControlStateValueOn;
 
-        NSMenuItem *info = [submenu addItemWithTitle:@"Info"
+        NSMenuItem *info = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelInfo()
                                               action:@selector(onSettingsLevelClicked:)
                                        keyEquivalent:@""];
         info.tag = packIntoTag(level::info, idx);
         if( (logger && logger->Get().level() == level::info) || (!logger && all_are(level::info)) )
             info.state = NSControlStateValueOn;
 
-        NSMenuItem *warn = [submenu addItemWithTitle:@"Warning"
+        NSMenuItem *warn = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelWarning()
                                               action:@selector(onSettingsLevelClicked:)
                                        keyEquivalent:@""];
         warn.tag = packIntoTag(level::warn, idx);
         if( (logger && logger->Get().level() == level::warn) || (!logger && all_are(level::warn)) )
             warn.state = NSControlStateValueOn;
 
-        NSMenuItem *err = [submenu addItemWithTitle:@"Error"
+        NSMenuItem *err = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelError()
                                              action:@selector(onSettingsLevelClicked:)
                                       keyEquivalent:@""];
         err.tag = packIntoTag(level::err, idx);
         if( (logger && logger->Get().level() == level::err) || (!logger && all_are(level::err)) )
             err.state = NSControlStateValueOn;
 
-        NSMenuItem *cri = [submenu addItemWithTitle:@"Critical"
+        NSMenuItem *cri = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelCritical()
                                              action:@selector(onSettingsLevelClicked:)
                                       keyEquivalent:@""];
         cri.tag = packIntoTag(level::critical, idx);
         if( (logger && logger->Get().level() == level::critical) || (!logger && all_are(level::critical)) )
             cri.state = NSControlStateValueOn;
 
-        NSMenuItem *off = [submenu addItemWithTitle:@"Off" action:@selector(onSettingsLevelClicked:) keyEquivalent:@""];
+        NSMenuItem *off = [submenu addItemWithTitle:nc::utility::localizable::SpdLogWindowLevelOff()
+                                             action:@selector(onSettingsLevelClicked:)
+                                      keyEquivalent:@""];
         off.tag = packIntoTag(level::off, idx);
         if( (logger && logger->Get().level() == level::off) || (!logger && all_are(level::off)) )
             off.state = NSControlStateValueOn;
@@ -393,7 +396,10 @@ static constexpr std::pair<spdlog::level::level_enum, unsigned> unpackFromTag(NS
         }
         else {
             [menu addItem:NSMenuItem.separatorItem];
-            NSMenuItem *menu_holder = [menu addItemWithTitle:@"all" action:nil keyEquivalent:@""];
+            NSMenuItem *menu_holder =
+                [menu addItemWithTitle:nc::utility::localizable::SpdLogWindowApplyLevelToAllLoggers()
+                                action:nil
+                         keyEquivalent:@""];
             menu_holder.submenu = submenu;
         }
     }

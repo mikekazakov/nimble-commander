@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3D40000000000000051 /* UtilityResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000050 /* UtilityResources.bundle */; };
+		A1B2C3D40000000000000052 /* UtilityResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000050 /* UtilityResources.bundle */; };
+		A1B2C3D40000000000000053 /* UtilityResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000050 /* UtilityResources.bundle */; };
 		CF0A46FA2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
 		CF0A46FB2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
 		CF0A46FC2BDD830D00833160 /* PFMoveToApplicationsShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A46F92BDD830D00833160 /* PFMoveToApplicationsShim.mm */; };
@@ -400,6 +403,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		A1B2C3D40000000000000056 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A1B2C3D40000000000000032;
+			remoteInfo = UtilityResources;
+		};
+		A1B2C3D40000000000000054 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4000000000000003B;
+			remoteInfo = UtilityResources;
+		};
 		CF4AC4EF2C10F8A100475EDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
@@ -2141,6 +2158,7 @@
 			children = (
 				CFC705AD2B497CD90045D2C9 /* libUtility.a */,
 				CFC705AF2B497CD90045D2C9 /* UtilityUT */,
+				A1B2C3D40000000000000050 /* UtilityResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2315,6 +2333,7 @@
 				CFC706352B497E660045D2C9 /* PBXTargetDependency */,
 				CFC706332B497E620045D2C9 /* PBXTargetDependency */,
 				CFC706312B497E5E0045D2C9 /* PBXTargetDependency */,
+				A1B2C3D40000000000000055 /* PBXTargetDependency */,
 				CFC7062F2B497E590045D2C9 /* PBXTargetDependency */,
 				CFC7062D2B497E540045D2C9 /* PBXTargetDependency */,
 				CFC7062B2B497E510045D2C9 /* PBXTargetDependency */,
@@ -2524,6 +2543,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A1B2C3D40000000000000050 /* UtilityResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UtilityResources.bundle;
+			remoteRef = A1B2C3D40000000000000056 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CF5BF7DD2C0B8D230057C92E /* Highlighter.xpc */ = {
 			isa = PBXReferenceProxy;
 			fileType = "wrapper.xpc-service";
@@ -2757,6 +2783,7 @@
 			files = (
 				CF4CBD3D2D0EFCE70072AE8A /* SyntaxHighlighting in Resources */,
 				CFC706552B497FB00045D2C9 /* OperationsResources.bundle in Resources */,
+				A1B2C3D40000000000000053 /* UtilityResources.bundle in Resources */,
 				CFC706562B497FB20045D2C9 /* PanelResources.bundle in Resources */,
 				CFC706582B497FB90045D2C9 /* ViewerResources.bundle in Resources */,
 				CFC706542B497FAC0045D2C9 /* CUIResources.bundle in Resources */,
@@ -2809,6 +2836,7 @@
 			files = (
 				CF4AC4F72C1106E100475EDC /* SyntaxHighlighting in Resources */,
 				CFC706502B497F970045D2C9 /* OperationsResources.bundle in Resources */,
+				A1B2C3D40000000000000052 /* UtilityResources.bundle in Resources */,
 				CFC706532B497FA20045D2C9 /* ViewerResources.bundle in Resources */,
 				CFC706512B497F9A0045D2C9 /* PanelResources.bundle in Resources */,
 				CFC706522B497F9D0045D2C9 /* RoutedIOResources.bundle in Resources */,
@@ -2875,6 +2903,7 @@
 				CFC7064D2B497F820045D2C9 /* RoutedIOResources.bundle in Resources */,
 				CFC7064E2B497F880045D2C9 /* ViewerResources.bundle in Resources */,
 				CFC7064B2B497F7B0045D2C9 /* OperationsResources.bundle in Resources */,
+				A1B2C3D40000000000000051 /* UtilityResources.bundle in Resources */,
 				CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */,
 				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CF9F4B411ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
@@ -3237,6 +3266,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A1B2C3D40000000000000055 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = UtilityResources;
+			targetProxy = A1B2C3D40000000000000054 /* PBXContainerItemProxy */;
+		};
 		CF4AC4F02C10F8A100475EDC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Highlighter;

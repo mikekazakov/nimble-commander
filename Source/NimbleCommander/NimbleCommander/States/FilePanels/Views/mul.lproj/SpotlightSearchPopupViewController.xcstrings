@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Найти с помощью Spotlight:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Spotlight 查找："
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Введите критерий поиска"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入搜索条件"
           }
         }
       }

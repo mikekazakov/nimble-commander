@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Введите имя символической ссылки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入符号链接值"
+          }
         }
       }
     },
@@ -34,6 +40,12 @@
             "state" : "translated",
             "value" : "ОК"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
         }
       }
     },
@@ -51,6 +63,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отмена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }

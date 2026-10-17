@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3D40000000000000037 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000030 /* Localizable.xcstrings */; };
+		A1B2C3D40000000000000038 /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000035 /* Internal.mm */; };
+		A1B2C3D40000000000000039 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000036 /* Localizable.mm */; };
 		CF4C980D2EDA0239001E6496 /* _Utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980C2EDA0239001E6496 /* _Utility.mm */; };
+		FF5EB6556D8A412384DCAB58 /* SpdLogWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF71BCE22932389100997E0F /* SpdLogWindow.mm */; };
 		CF4C980E2EDA0239001E6496 /* _Utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980B2EDA0239001E6496 /* _Utility.cpp */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
@@ -29,6 +33,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A1B2C3D40000000000000030 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = resources/Localizable.xcstrings; sourceTree = "<group>"; };
+		A1B2C3D40000000000000031 /* UtilityResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = UtilityResources.plist; path = resources/UtilityResources.plist; sourceTree = "<group>"; };
+		A1B2C3D40000000000000032 /* UtilityResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UtilityResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D40000000000000033 /* Localizable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Localizable.h; path = include/Utility/Localizable.h; sourceTree = "<group>"; };
+		A1B2C3D40000000000000034 /* Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
+		A1B2C3D40000000000000035 /* Internal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
+		A1B2C3D40000000000000036 /* Localizable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = Localizable.mm; path = source/Localizable.mm; sourceTree = "<group>"; };
 		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
 		CF0A49AA250D2C6F008EC7B0 /* CharInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharInfo.h; path = include/Utility/CharInfo.h; sourceTree = "<group>"; };
@@ -191,6 +202,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A1B2C3D40000000000000041 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF46012A256125A30095FC73 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -209,6 +227,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A1B2C3D4000000000000003A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D40000000000000030 /* Localizable.xcstrings */,
+				A1B2C3D40000000000000031 /* UtilityResources.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		CF233AEF219E7E8200693E1A /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,6 +283,7 @@
 		CF960DD11C97F833001D8B02 = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4000000000000003A /* Resources */,
 				CF233AEF219E7E8200693E1A /* Config */,
 				CF960E151C992EDC001D8B02 /* Headers */,
 				CF960E161C992EE7001D8B02 /* Source */,
@@ -270,6 +298,7 @@
 			children = (
 				CFC546272136DAC800D288A4 /* UtilityUT */,
 				CF46012C256125A30095FC73 /* libUtility.a */,
+				A1B2C3D40000000000000032 /* UtilityResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -277,6 +306,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D40000000000000033 /* Localizable.h */,
 				CF24E1F32288A9FB00C166FA /* ActionShortcut.h */,
 				CFC4C4042D208969006C8A0F /* ActionsShortcutsManager.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
@@ -342,6 +372,9 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D40000000000000034 /* Internal.h */,
+				A1B2C3D40000000000000035 /* Internal.mm */,
+				A1B2C3D40000000000000036 /* Localizable.mm */,
 				CF4C980B2EDA0239001E6496 /* _Utility.cpp */,
 				CF4C980C2EDA0239001E6496 /* _Utility.mm */,
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
@@ -436,6 +469,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		A1B2C3D4000000000000003B /* UtilityResources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4000000000000003C /* Build configuration list for PBXNativeTarget "UtilityResources" */;
+			buildPhases = (
+				A1B2C3D40000000000000040 /* Sources */,
+				A1B2C3D40000000000000041 /* Frameworks */,
+				A1B2C3D4000000000000003F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UtilityResources;
+			productName = UtilityResources;
+			productReference = A1B2C3D40000000000000032 /* UtilityResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		CF46012B256125A30095FC73 /* Utility */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF46012D256125A30095FC73 /* Build configuration list for PBXNativeTarget "Utility" */;
@@ -495,24 +545,48 @@
 			knownRegions = (
 				en,
 				Base,
+				zh-Hans,
 			);
 			mainGroup = CF960DD11C97F833001D8B02;
 			productRefGroup = CF960DDC1C97F833001D8B02 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				A1B2C3D4000000000000003B /* UtilityResources */,
 				CF46012B256125A30095FC73 /* Utility */,
 				CFC546262136DAC800D288A4 /* UtilityUT */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4000000000000003F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D40000000000000037 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		A1B2C3D40000000000000040 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D40000000000000038 /* Internal.mm in Sources */,
+				A1B2C3D40000000000000039 /* Localizable.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF460129256125A30095FC73 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CF4C980D2EDA0239001E6496 /* _Utility.mm in Sources */,
+				A1B2C3D40000000000000038 /* Internal.mm in Sources */,
+				A1B2C3D40000000000000039 /* Localizable.mm in Sources */,
 				CF4C980E2EDA0239001E6496 /* _Utility.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -530,6 +604,34 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A1B2C3D4000000000000003D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				INFOPLIST_FILE = resources/UtilityResources.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.UtilityResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		A1B2C3D4000000000000003E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				INFOPLIST_FILE = resources/UtilityResources.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.UtilityResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		CF46012E256125A30095FC73 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -581,6 +683,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A1B2C3D4000000000000003C /* Build configuration list for PBXNativeTarget "UtilityResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4000000000000003D /* Debug */,
+				A1B2C3D4000000000000003E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CF46012D256125A30095FC73 /* Build configuration list for PBXNativeTarget "Utility" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

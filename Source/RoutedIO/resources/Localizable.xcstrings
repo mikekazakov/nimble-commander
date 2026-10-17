@@ -15,6 +15,12 @@
             "state" : "translated",
             "value" : "Пожалуйста пройдите аутентификацию как администратор чтобы предоставить Nimble Commander дополнительные права"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请以管理员身份进行认证，以向 Nimble Commander 提供额外权限"
+          }
         }
       }
     },
@@ -31,6 +37,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пожалуйста пройдите аутентификацию как администратор чтобы позволить Nimble Commander установить дополнительные компоненты."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请以管理员身份进行认证，以允许 Nimble Commander 安装附加组件。"
           }
         }
       }

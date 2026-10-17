@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Закрыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
         }
       }
     },
@@ -27,6 +33,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Окно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口"
           }
         }
       }

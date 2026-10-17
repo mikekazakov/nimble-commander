@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Темная тема"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色主题："
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отмена"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "ОК"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
         }
       }
     },
@@ -70,6 +88,12 @@
             "state" : "translated",
             "value" : "Светлая тема"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浅色主题："
+          }
         }
       }
     },
@@ -87,6 +111,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переключать когда оформление macOS изменяется:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 外观更改时切换："
           }
         }
       }

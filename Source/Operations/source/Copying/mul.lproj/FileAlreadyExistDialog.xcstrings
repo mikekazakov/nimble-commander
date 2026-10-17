@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "^K"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^K"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Иначе объект будет пропущен"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否则将跳过该项目"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Иначе объект будет пропущен"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "否则将跳过该项目"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Заменить старый"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覆盖较旧的"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Оставить оба"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留两者"
+          }
         }
       }
     },
@@ -106,6 +136,12 @@
             "state" : "translated",
             "value" : "Заменить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覆盖"
+          }
         }
       }
     },
@@ -120,6 +156,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^S"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^S"
@@ -142,6 +184,12 @@
             "state" : "translated",
             "value" : "Пропустить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过"
+          }
         }
       }
     },
@@ -156,6 +204,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^P"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^P"
@@ -178,6 +232,12 @@
             "state" : "translated",
             "value" : "Дописать"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
         }
       }
     },
@@ -192,6 +252,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘⎋"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "⌘⎋"
@@ -214,6 +280,12 @@
             "state" : "translated",
             "value" : "Отменить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中止"
+          }
         }
       }
     },
@@ -231,6 +303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удерживайте Shift чтобы применить ко всем (^A)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 Shift 以应用到全部 (^A)"
           }
         }
       }
@@ -250,6 +328,12 @@
             "state" : "translated",
             "value" : "Применить ко всем"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用到全部"
+          }
         }
       }
     },
@@ -267,6 +351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Новый:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建："
           }
         }
       }
@@ -286,6 +376,12 @@
             "state" : "translated",
             "value" : "Имеющийся:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现有："
+          }
         }
       }
     },
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Файл уже существует"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件已存在"
+          }
         }
       }
     },
@@ -318,6 +420,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^O"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^O"

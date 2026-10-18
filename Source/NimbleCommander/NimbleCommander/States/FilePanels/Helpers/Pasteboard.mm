@@ -2,6 +2,7 @@
 #include "Pasteboard.h"
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 namespace nc::panel {
 
@@ -40,10 +41,7 @@ bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_item
                     [urls addObject:url];
 
     [_pasteboard clearContents];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [_pasteboard declareTypes:@[(__bridge NSString *)kUTTypeFileURL] owner:nil];
-#pragma clang diagnostic pop
+    [_pasteboard declareTypes:@[UTTypeFileURL.identifier] owner:nil];
     return [_pasteboard writeObjects:urls];
 }
 

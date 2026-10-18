@@ -94,6 +94,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 using namespace std::literals;
 using namespace nc::bootstrap;
 
@@ -387,7 +389,7 @@ static NCAppDelegate *g_Me = nil;
     NSApp.servicesProvider = self;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
+    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, UTTypeFileURL.identifier]
                              returnTypes:@[]]; // pasteboard types provided by PanelController
 #pragma clang diagnostic pop
     NSUpdateDynamicServices();

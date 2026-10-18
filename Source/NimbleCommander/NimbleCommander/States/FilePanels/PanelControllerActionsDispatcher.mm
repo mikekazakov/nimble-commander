@@ -9,6 +9,7 @@
 #include "Actions/OpenFile.h"
 #include "Actions/Enter.h"
 #include <iostream>
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 using namespace nc::core;
 using namespace nc::panel;
@@ -188,8 +189,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    if( ([sendType isEqualToString:NSFilenamesPboardType] ||
-         [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) )
+    if( ([sendType isEqualToString:NSFilenamesPboardType] || [sendType isEqualToString:UTTypeFileURL.identifier]) )
         return self;
 
     return [super validRequestorForSendType:sendType returnType:returnType];
@@ -197,7 +197,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
 {
-    if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
+    if( [types containsObject:UTTypeFileURL.identifier] )
         return PasteboardSupport::WriteURLSPBoard(m_PC.selectedEntriesOrFocusedEntry, pboard);
     if( [types containsObject:NSFilenamesPboardType] )
         return PasteboardSupport::WriteFilesnamesPBoard(m_PC.selectedEntriesOrFocusedEntry, pboard);

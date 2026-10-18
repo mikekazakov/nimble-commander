@@ -8,25 +8,15 @@
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
 #include "../MainWindowController.h"
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
-static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
+static NSString *const g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 
 // "com.apple.pasteboard.promised-file-url"
-static const auto g_PasteboardFileURLPromiseUTI = static_cast<NSString *>(kPasteboardTypeFileURLPromise);
+static NSString *const g_PasteboardFileURLPromiseUTI = static_cast<NSString *>(kPasteboardTypeFileURLPromise);
 
 // "public.file-url"
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-static const auto g_PasteboardFileURLUTI = static_cast<NSString *>(kUTTypeFileURL);
-#pragma clang diagnostic pop
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
-    CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType,
-                                                            (__bridge CFStringRef)NSFilenamesPboardType,
-                                                            kUTTypeData)));
-#pragma clang diagnostic pop
+static NSString *const g_PasteboardFileURLUTI = UTTypeFileURL.identifier;
 
 @implementation PanelDraggingItem {
     VFSListingItem m_Item;
@@ -41,11 +31,7 @@ static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
         m_Item = _item;
 
         // for File URL Promise. need to check if this is necessary
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [self setString:static_cast<NSString *>(kUTTypeData)
-                forType:static_cast<NSString *>(kPasteboardTypeFilePromiseContent)];
-#pragma clang diagnostic pop
+        [self setString:UTTypeData.identifier forType:static_cast<NSString *>(kPasteboardTypeFilePromiseContent)];
     }
     return self;
 }
@@ -76,17 +62,15 @@ static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
 {
     return g_PrivateDragUTI;
 }
+
 + (NSString *)fileURLsPromiseDragUTI
 {
     return g_PasteboardFileURLPromiseUTI;
 }
+
 + (NSString *)fileURLsDragUTI
 {
     return g_PasteboardFileURLUTI;
-}
-+ (NSString *)filenamesPBoardDragUTI
-{
-    return g_PasteboardFilenamesUTI;
 }
 
 - (FilesDraggingSource *)initWithSourceController:(PanelController *)_controller

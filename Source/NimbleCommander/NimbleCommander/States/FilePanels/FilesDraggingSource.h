@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2026 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -19,9 +19,10 @@
 @interface FilesDraggingSource : NSObject <NSDraggingSource, NSPasteboardItemDataProvider>
 
 + (NSString *)privateDragUTI;
+
 + (NSString *)fileURLsPromiseDragUTI;
+
 + (NSString *)fileURLsDragUTI;
-+ (NSString *)filenamesPBoardDragUTI;
 
 @property(nonatomic, readonly, weak) PanelController *sourceController;
 @property(nonatomic, readonly) bool areAllHostsWriteable;

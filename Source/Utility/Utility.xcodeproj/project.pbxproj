@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		A1B2C3D40000000000000037 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000030 /* Localizable.xcstrings */; };
-		A1B2C3D40000000000000038 /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000035 /* Internal.mm */; };
-		A1B2C3D40000000000000039 /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000036 /* Localizable.mm */; };
 		CF4C980D2EDA0239001E6496 /* _Utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980C2EDA0239001E6496 /* _Utility.mm */; };
-		FF5EB6556D8A412384DCAB58 /* SpdLogWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF71BCE22932389100997E0F /* SpdLogWindow.mm */; };
 		CF4C980E2EDA0239001E6496 /* _Utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4C980B2EDA0239001E6496 /* _Utility.cpp */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
+		CFB7F1843084DF7C0079FADF /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000035 /* Internal.mm */; };
+		CFB7F1853084DF7C0079FADF /* Localizable.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000036 /* Localizable.mm */; };
+		CFB7F1943084DF8F0079FADF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000030 /* Localizable.xcstrings */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFF762362EDA3946002DD1EE /* _Utility_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF762352EDA3946002DD1EE /* _Utility_UT.cpp */; };
 		CFF762382EDA3B6A002DD1EE /* _Utility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF762372EDA3B6A002DD1EE /* _Utility_UT.mm */; };
@@ -283,13 +283,13 @@
 		CF960DD11C97F833001D8B02 = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4000000000000003A /* Resources */,
 				CF233AEF219E7E8200693E1A /* Config */,
+				CFFA948D1F453DF30035E606 /* Frameworks */,
 				CF960E151C992EDC001D8B02 /* Headers */,
+				CF960DDC1C97F833001D8B02 /* Products */,
+				A1B2C3D4000000000000003A /* Resources */,
 				CF960E161C992EE7001D8B02 /* Source */,
 				CF614A9E1F9D86CC0005F2DB /* Tests */,
-				CF960DDC1C97F833001D8B02 /* Products */,
-				CFFA948D1F453DF30035E606 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -493,6 +493,7 @@
 				CF460128256125A30095FC73 /* Headers */,
 				CF460129256125A30095FC73 /* Sources */,
 				CF46012A256125A30095FC73 /* Frameworks */,
+				CFB7F1933084DF890079FADF /* Resources */,
 			);
 			buildRules = (
 			);
@@ -567,6 +568,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFB7F1933084DF890079FADF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB7F1943084DF8F0079FADF /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -574,8 +583,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B2C3D40000000000000038 /* Internal.mm in Sources */,
-				A1B2C3D40000000000000039 /* Localizable.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,8 +591,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF4C980D2EDA0239001E6496 /* _Utility.mm in Sources */,
-				A1B2C3D40000000000000038 /* Internal.mm in Sources */,
-				A1B2C3D40000000000000039 /* Localizable.mm in Sources */,
+				CFB7F1843084DF7C0079FADF /* Internal.mm in Sources */,
+				CFB7F1853084DF7C0079FADF /* Localizable.mm in Sources */,
 				CF4C980E2EDA0239001E6496 /* _Utility.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

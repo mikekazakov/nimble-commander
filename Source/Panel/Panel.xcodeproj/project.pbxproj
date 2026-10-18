@@ -500,6 +500,7 @@
 				en,
 				Base,
 				ru,
+				zh-Hans,
 			);
 			mainGroup = CFF33F562556924900B3C92C;
 			productRefGroup = CFF33F602556924900B3C92C /* Products */;

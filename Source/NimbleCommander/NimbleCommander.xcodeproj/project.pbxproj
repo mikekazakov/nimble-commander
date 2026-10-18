@@ -2481,6 +2481,7 @@
 				en,
 				Base,
 				ru,
+				zh-Hans,
 			);
 			mainGroup = CFC5120816C4BD3D00D247EE;
 			productRefGroup = CFC5121216C4BD3D00D247EE /* Products */;

@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "⎋"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⎋"
+          }
         }
       }
     },
@@ -30,6 +36,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "0"
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "^M"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^M"
+          }
         }
       }
     },
@@ -70,6 +88,12 @@
             "state" : "translated",
             "value" : "Файловая маска некорректна"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件名掩码无效"
+          }
         }
       }
     },
@@ -84,6 +108,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "="
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "="
@@ -106,6 +136,12 @@
             "state" : "translated",
             "value" : "^I"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^I"
+          }
         }
       }
     },
@@ -123,6 +159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Искать в архивах"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在压缩包中查找"
           }
         }
       }
@@ -142,6 +184,12 @@
             "state" : "translated",
             "value" : "Файлы и папки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件和文件夹"
+          }
         }
       }
     },
@@ -156,6 +204,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^S"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^S"
@@ -178,6 +232,12 @@
             "state" : "translated",
             "value" : "Панель"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面板"
+          }
         }
       }
     },
@@ -195,6 +255,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Расположение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置"
           }
         }
       }
@@ -214,6 +280,12 @@
             "state" : "translated",
             "value" : "Мб"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MB"
+          }
         }
       }
     },
@@ -231,6 +303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Время модификации"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改时间"
           }
         }
       }
@@ -250,6 +328,12 @@
             "state" : "translated",
             "value" : "Просмотр"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
+          }
         }
       }
     },
@@ -267,6 +351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Папки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹"
           }
         }
       }
@@ -286,6 +376,12 @@
             "state" : "translated",
             "value" : "Имя файла"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件名"
+          }
         }
       }
     },
@@ -300,6 +396,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "0"
@@ -322,6 +424,12 @@
             "state" : "translated",
             "value" : "^P"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^P"
+          }
         }
       }
     },
@@ -339,6 +447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Искать:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索内容："
           }
         }
       }
@@ -358,6 +472,12 @@
             "state" : "translated",
             "value" : "Файлы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件"
+          }
         }
       }
     },
@@ -369,6 +489,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ""
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本单元格"
           }
         }
       }
@@ -388,6 +514,12 @@
             "state" : "translated",
             "value" : "Размер"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小"
+          }
         }
       }
     },
@@ -406,6 +538,12 @@
             "state" : "translated",
             "value" : "Искать в подпапках"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在子目录中查找"
+          }
         }
       }
     },
@@ -418,6 +556,12 @@
             "state" : "translated",
             "value" : ""
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本单元格"
+          }
         }
       }
     },
@@ -429,6 +573,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ""
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本单元格"
           }
         }
       }
@@ -444,6 +594,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^G"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^G"
@@ -466,6 +622,12 @@
             "state" : "translated",
             "value" : "Стоп"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
         }
       }
     },
@@ -483,6 +645,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Искать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索"
           }
         }
       }
@@ -502,6 +670,12 @@
             "state" : "translated",
             "value" : "Гб"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GB"
+          }
         }
       }
     },
@@ -519,6 +693,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
           }
         }
       }
@@ -538,6 +718,12 @@
             "state" : "translated",
             "value" : "Искать файлы с маской:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用掩码搜索项目："
+          }
         }
       }
     },
@@ -549,6 +735,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ""
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本单元格"
           }
         }
       }
@@ -568,6 +760,12 @@
             "state" : "translated",
             "value" : "Содержащие текст:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "包含文本："
+          }
         }
       }
     },
@@ -582,6 +780,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^T"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^T"
@@ -604,6 +808,12 @@
             "state" : "translated",
             "value" : "б"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B"
+          }
         }
       }
     },
@@ -618,6 +828,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≤"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "≤"
@@ -640,6 +856,12 @@
             "state" : "translated",
             "value" : "Перейти"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往"
+          }
         }
       }
     },
@@ -658,6 +880,12 @@
             "state" : "translated",
             "value" : "Кб"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KB"
+          }
         }
       }
     },
@@ -672,6 +900,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^V"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "^V"
@@ -694,6 +928,12 @@
             "state" : "translated",
             "value" : "⚠️"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️"
+          }
         }
       }
     },
@@ -708,6 +948,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "≥"
@@ -730,6 +976,12 @@
             "state" : "translated",
             "value" : "С размером:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小："
+          }
         }
       }
     },
@@ -747,6 +999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Найдено:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到的项目："
           }
         }
       }

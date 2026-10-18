@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "Label"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签"
+          }
         }
       }
     }

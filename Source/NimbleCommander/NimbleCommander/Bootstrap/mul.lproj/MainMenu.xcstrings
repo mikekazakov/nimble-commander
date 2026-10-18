@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "5"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать журналы..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示日志…"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Переход"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переместить в Корзину"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移到废纸篓"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Всегда открывать в программе"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始终以此方式打开"
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отладка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调试"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Все окна - на передний план"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部置于顶层"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать в противоположной вкладке"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在对面面板标签页中显示"
           }
         }
       }
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "Новая папка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建文件夹"
+          }
         }
       }
     },
@@ -177,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Назад"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后退"
           }
         }
       }
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "Недавно закрытые"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近关闭"
+          }
         }
       }
     },
@@ -213,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Добавить в избранное"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加到收藏夹"
           }
         }
       }
@@ -232,6 +304,12 @@
             "state" : "translated",
             "value" : "Краткий обзор системы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统简要概览"
+          }
         }
       }
     },
@@ -249,6 +327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переход"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往"
           }
         }
       }
@@ -268,6 +352,12 @@
             "state" : "translated",
             "value" : "Новая вкладка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建标签页"
+          }
         }
       }
     },
@@ -285,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Switch Dual/Single Pane"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换双窗格/单窗格"
           }
         }
       }
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Программы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序"
+          }
         }
       }
     },
@@ -321,6 +423,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Управлять избранным..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理收藏夹…"
           }
         }
       }
@@ -340,6 +448,12 @@
             "state" : "translated",
             "value" : "Справка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助"
+          }
         }
       }
     },
@@ -357,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировать по времени открытия"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按访问时间排序"
           }
         }
       }
@@ -376,6 +496,12 @@
             "state" : "translated",
             "value" : "Окно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口"
+          }
         }
       }
     },
@@ -393,6 +519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Убрать в Dock"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小化"
           }
         }
       }
@@ -412,6 +544,12 @@
             "state" : "translated",
             "value" : "Окно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口"
+          }
         }
       }
     },
@@ -426,6 +564,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AMainMenu"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AMainMenu"
@@ -448,6 +592,12 @@
             "state" : "translated",
             "value" : "Nimble Commander"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander"
+          }
         }
       }
     },
@@ -462,6 +612,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nimble Commander"
@@ -484,6 +640,12 @@
             "state" : "translated",
             "value" : "О Nimble Commander"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于 Nimble Commander"
+          }
         }
       }
     },
@@ -501,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Войти"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进入"
           }
         }
       }
@@ -520,6 +688,12 @@
             "state" : "translated",
             "value" : "Закрыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
         }
       }
     },
@@ -537,6 +711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件"
           }
         }
       }
@@ -556,6 +736,12 @@
             "state" : "translated",
             "value" : "Новое окно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建窗口"
+          }
         }
       }
     },
@@ -573,6 +759,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件"
           }
         }
       }
@@ -592,6 +784,12 @@
             "state" : "translated",
             "value" : "Настройки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "偏好设置…"
+          }
         }
       }
     },
@@ -609,6 +807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Службы"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务"
           }
         }
       }
@@ -628,6 +832,12 @@
             "state" : "translated",
             "value" : "Службы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务"
+          }
         }
       }
     },
@@ -645,6 +855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скрыть Nimble Commander"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏 Nimble Commander"
           }
         }
       }
@@ -664,6 +880,12 @@
             "state" : "translated",
             "value" : "Завершить Nimble Commander"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 Nimble Commander"
+          }
         }
       }
     },
@@ -681,6 +903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скрыть остальные"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏其他"
           }
         }
       }
@@ -700,6 +928,12 @@
             "state" : "translated",
             "value" : "Показать все"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部显示"
+          }
         }
       }
     },
@@ -717,6 +951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Копировать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝"
           }
         }
       }
@@ -736,6 +976,12 @@
             "state" : "translated",
             "value" : "Выделить все"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全选"
+          }
         }
       }
     },
@@ -753,6 +999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴"
           }
         }
       }
@@ -772,6 +1024,12 @@
             "state" : "translated",
             "value" : "Правка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
         }
       }
     },
@@ -789,6 +1047,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Правка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
           }
         }
       }
@@ -808,6 +1072,12 @@
             "state" : "translated",
             "value" : "Изменить масштаб"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缩放"
+          }
         }
       }
     },
@@ -825,6 +1095,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вид"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
           }
         }
       }
@@ -844,6 +1120,12 @@
             "state" : "translated",
             "value" : "Вид"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
+          }
         }
       }
     },
@@ -861,6 +1143,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Справка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助"
           }
         }
       }
@@ -880,6 +1168,12 @@
             "state" : "translated",
             "value" : "Справка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助"
+          }
         }
       }
     },
@@ -897,6 +1191,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сделать панели одинаковыми"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步面板"
           }
         }
       }
@@ -916,6 +1216,12 @@
             "state" : "translated",
             "value" : "Поменять панели местами"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交换面板"
+          }
         }
       }
     },
@@ -933,6 +1239,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Команда"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令"
           }
         }
       }
@@ -952,6 +1264,12 @@
             "state" : "translated",
             "value" : "Команда"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令"
+          }
         }
       }
     },
@@ -969,6 +1287,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Файловые атрибуты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件属性"
           }
         }
       }
@@ -988,6 +1312,12 @@
             "state" : "translated",
             "value" : "Детальная информация о томе"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宗卷详细信息"
+          }
         }
       }
     },
@@ -1005,6 +1335,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удалить..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除…"
           }
         }
       }
@@ -1024,6 +1360,12 @@
             "state" : "translated",
             "value" : "Создать папку..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建目录…"
+          }
         }
       }
     },
@@ -1041,6 +1383,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Копировать в..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝到…"
           }
         }
       }
@@ -1060,6 +1408,12 @@
             "state" : "translated",
             "value" : "Копировать как..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝为…"
+          }
         }
       }
     },
@@ -1077,6 +1431,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переименовать/переместить в..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名/移动到…"
           }
         }
       }
@@ -1096,6 +1456,12 @@
             "state" : "translated",
             "value" : "Переименовать/переместить как..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名/移动为…"
+          }
         }
       }
     },
@@ -1113,6 +1479,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Перейти в полноэкранный режим"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进入全屏幕"
           }
         }
       }
@@ -1132,6 +1504,12 @@
             "state" : "translated",
             "value" : "Сортировка"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排序"
+          }
         }
       }
     },
@@ -1149,6 +1527,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排序"
           }
         }
       }
@@ -1168,6 +1552,12 @@
             "state" : "translated",
             "value" : "Сортировать по имени"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按名称排序"
+          }
         }
       }
     },
@@ -1185,6 +1575,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировать по расширению"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按扩展名排序"
           }
         }
       }
@@ -1204,6 +1600,12 @@
             "state" : "translated",
             "value" : "Сортировать по времени модификации"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按修改时间排序"
+          }
         }
       }
     },
@@ -1221,6 +1623,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировать по размеру"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按大小排序"
           }
         }
       }
@@ -1240,6 +1648,12 @@
             "state" : "translated",
             "value" : "Сортировать по времени создания"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按创建时间排序"
+          }
         }
       }
     },
@@ -1257,6 +1671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отделять папки от файлов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹与文件分开显示"
           }
         }
       }
@@ -1276,6 +1696,12 @@
             "state" : "translated",
             "value" : "Режим отображения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示模式"
+          }
         }
       }
     },
@@ -1294,6 +1720,12 @@
             "state" : "translated",
             "value" : "Режим отображения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示模式"
+          }
         }
       }
     },
@@ -1308,6 +1740,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "1"
@@ -1330,6 +1768,12 @@
             "state" : "translated",
             "value" : "2"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
         }
       }
     },
@@ -1344,6 +1788,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "3"
@@ -1366,6 +1816,12 @@
             "state" : "translated",
             "value" : "4"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
         }
       }
     },
@@ -1383,6 +1839,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Быстрый просмотр"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预览"
           }
         }
       }
@@ -1402,6 +1864,12 @@
             "state" : "translated",
             "value" : "Обновить"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新"
+          }
         }
       }
     },
@@ -1419,6 +1887,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Убрать выделение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消全选"
           }
         }
       }
@@ -1438,6 +1912,12 @@
             "state" : "translated",
             "value" : "Сравнение без учета регистра"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不区分大小写比较"
+          }
         }
       }
     },
@@ -1455,6 +1935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Встроенный просмотрщик"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内置查看器"
           }
         }
       }
@@ -1474,6 +1960,12 @@
             "state" : "translated",
             "value" : "Ссылки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "链接"
+          }
         }
       }
     },
@@ -1491,6 +1983,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ссылки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "链接"
           }
         }
       }
@@ -1510,6 +2008,12 @@
             "state" : "translated",
             "value" : "Создать символическую ссылку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建符号链接"
+          }
         }
       }
     },
@@ -1527,6 +2031,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Редактировать символическую ссылку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑符号链接"
           }
         }
       }
@@ -1546,6 +2056,12 @@
             "state" : "translated",
             "value" : "Создать жесткую ссылку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建硬链接"
+          }
         }
       }
     },
@@ -1563,6 +2079,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделить с маской..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按掩码选择…"
           }
         }
       }
@@ -1582,6 +2104,12 @@
             "state" : "translated",
             "value" : "Снять выделение с маской..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按掩码取消选择…"
+          }
         }
       }
     },
@@ -1599,6 +2127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удалить необратимо..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "永久删除…"
           }
         }
       }
@@ -1618,6 +2152,12 @@
             "state" : "translated",
             "value" : "Сетевой папке..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络共享…"
+          }
         }
       }
     },
@@ -1635,6 +2175,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Повторить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重做"
           }
         }
       }
@@ -1654,6 +2200,12 @@
             "state" : "translated",
             "value" : "Теги"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签"
+          }
         }
       }
     },
@@ -1668,6 +2220,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "10"
@@ -1690,6 +2248,12 @@
             "state" : "translated",
             "value" : "Сдвинуть вверх"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上移"
+          }
         }
       }
     },
@@ -1707,6 +2271,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SFTP серверу..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SFTP 服务器…"
           }
         }
       }
@@ -1726,6 +2296,12 @@
             "state" : "translated",
             "value" : "Утилиты"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "实用工具"
+          }
         }
       }
     },
@@ -1743,6 +2319,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть остальные вкладки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭其他标签页"
           }
         }
       }
@@ -1762,6 +2344,12 @@
             "state" : "translated",
             "value" : "Сжать..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩…"
+          }
         }
       }
     },
@@ -1779,6 +2367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Открыть в программе"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开方式"
           }
         }
       }
@@ -1798,6 +2392,12 @@
             "state" : "translated",
             "value" : "Сжать в..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩到…"
+          }
         }
       }
     },
@@ -1812,6 +2412,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "6"
@@ -1834,6 +2440,12 @@
             "state" : "translated",
             "value" : "Рабочий стол"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "桌面"
+          }
         }
       }
     },
@@ -1851,6 +2463,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сдвинуть вниз"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下移"
           }
         }
       }
@@ -1870,6 +2488,12 @@
             "state" : "translated",
             "value" : "Переименовать на месте"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原地重命名"
+          }
         }
       }
     },
@@ -1887,6 +2511,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сравнение с учетом регистра"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "区分大小写比较"
           }
         }
       }
@@ -1906,6 +2536,12 @@
             "state" : "translated",
             "value" : "Новый файл"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建文件"
+          }
         }
       }
     },
@@ -1923,6 +2559,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть окно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭窗口"
           }
         }
       }
@@ -1942,6 +2584,12 @@
             "state" : "translated",
             "value" : "Инвертировать выделение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反向选择"
+          }
         }
       }
     },
@@ -1959,6 +2607,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вырезать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪切"
           }
         }
       }
@@ -1978,6 +2632,12 @@
             "state" : "translated",
             "value" : "Включить режим администратора"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开管理员模式"
+          }
         }
       }
     },
@@ -1995,6 +2655,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вычислить размер папок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "计算文件夹大小"
           }
         }
       }
@@ -2014,6 +2680,12 @@
             "state" : "translated",
             "value" : "Дублировать"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
         }
       }
     },
@@ -2028,6 +2700,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "8"
@@ -2050,6 +2728,12 @@
             "state" : "translated",
             "value" : "Загрузки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载"
+          }
         }
       }
     },
@@ -2067,6 +2751,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FTP серверу..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP 服务器…"
           }
         }
       }
@@ -2086,6 +2776,12 @@
             "state" : "translated",
             "value" : "Посетить форум"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问论坛"
+          }
         }
       }
     },
@@ -2103,6 +2799,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать/скрыть панель инструментов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示/隐藏工具栏"
           }
         }
       }
@@ -2122,6 +2824,12 @@
             "state" : "translated",
             "value" : "Найти..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找…"
+          }
         }
       }
     },
@@ -2139,6 +2847,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Внешний редактор"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部编辑器"
           }
         }
       }
@@ -2158,6 +2872,12 @@
             "state" : "translated",
             "value" : "Справка Nimble Commander"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimble Commander 帮助"
+          }
         }
       }
     },
@@ -2175,6 +2895,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Личное"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "个人文件夹"
           }
         }
       }
@@ -2194,6 +2920,12 @@
             "state" : "translated",
             "value" : "Управлять соединениями..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理连接…"
+          }
         }
       }
     },
@@ -2211,6 +2943,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Хранилищу Dropbox..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropbox 存储…"
           }
         }
       }
@@ -2230,6 +2968,12 @@
             "state" : "translated",
             "value" : "Копировать директорию файла"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝项目所在目录"
+          }
         }
       }
     },
@@ -2247,6 +2991,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Часто посещаемые"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常访问"
           }
         }
       }
@@ -2266,6 +3016,12 @@
             "state" : "translated",
             "value" : "Правая панель..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右侧面板…"
+          }
         }
       }
     },
@@ -2283,6 +3039,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отладка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调试"
           }
         }
       }
@@ -2302,6 +3064,12 @@
             "state" : "translated",
             "value" : "Найти с помощью Spotlight..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Spotlight 查找…"
+          }
         }
       }
     },
@@ -2319,6 +3087,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать в противоположной панели"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在对面面板中显示"
           }
         }
       }
@@ -2338,6 +3112,12 @@
             "state" : "translated",
             "value" : "Документы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文稿"
+          }
         }
       }
     },
@@ -2355,6 +3135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Соединения"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
           }
         }
       }
@@ -2374,6 +3160,12 @@
             "state" : "translated",
             "value" : "Снять выделение по расширению"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按扩展名取消选择"
+          }
         }
       }
     },
@@ -2391,6 +3183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Копировать путь файла"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝项目路径"
           }
         }
       }
@@ -2410,6 +3208,12 @@
             "state" : "translated",
             "value" : "На уровень выше"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上层文件夹"
+          }
         }
       }
     },
@@ -2427,6 +3231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сдвинуть вправо"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右移"
           }
         }
       }
@@ -2446,6 +3256,12 @@
             "state" : "translated",
             "value" : "WebDAV серверу..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WebDAV 服务器…"
+          }
         }
       }
     },
@@ -2463,6 +3279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Избранные"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏夹"
           }
         }
       }
@@ -2482,6 +3304,12 @@
             "state" : "translated",
             "value" : "Очистить меню"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除菜单"
+          }
         }
       }
     },
@@ -2499,6 +3327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Восстановить закрытую вкладку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复关闭的标签页"
           }
         }
       }
@@ -2518,6 +3352,12 @@
             "state" : "translated",
             "value" : "Переместить объект сюда"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将项目移动到这里"
+          }
         }
       }
     },
@@ -2535,6 +3375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Избранные"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏夹"
           }
         }
       }
@@ -2554,6 +3400,12 @@
             "state" : "translated",
             "value" : "Новая папка из выделения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用所选项新建文件夹"
+          }
         }
       }
     },
@@ -2571,6 +3423,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Быстрые списки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速列表"
           }
         }
       }
@@ -2590,6 +3448,12 @@
             "state" : "translated",
             "value" : "Открыть"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开"
+          }
         }
       }
     },
@@ -2607,6 +3471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать/скрыть панель вкладок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示/隐藏标签页栏"
           }
         }
       }
@@ -2626,6 +3496,12 @@
             "state" : "translated",
             "value" : "Показать расширенные атрибуты"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开扩展属性"
+          }
         }
       }
     },
@@ -2643,6 +3519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Следовать за ссылкой"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随符号链接"
           }
         }
       }
@@ -2662,6 +3544,12 @@
             "state" : "translated",
             "value" : "Список процессов"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进程列表"
+          }
         }
       }
     },
@@ -2679,6 +3567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отменить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销"
           }
         }
       }
@@ -2698,6 +3592,12 @@
             "state" : "translated",
             "value" : "Групповое переименование..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "批量重命名…"
+          }
         }
       }
     },
@@ -2716,6 +3616,12 @@
             "state" : "translated",
             "value" : "Показать/скрыть панели"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示/隐藏面板"
+          }
         }
       }
     },
@@ -2727,6 +3633,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать список ВФС"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示 VFS 列表"
           }
         }
       }
@@ -2746,6 +3658,12 @@
             "state" : "translated",
             "value" : "Последние подключения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近的连接"
+          }
         }
       }
     },
@@ -2763,6 +3681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вычислить размер всех папок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "计算所有文件夹大小"
           }
         }
       }
@@ -2782,6 +3706,12 @@
             "state" : "translated",
             "value" : "Часто посещаемые"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常访问"
+          }
         }
       }
     },
@@ -2799,6 +3729,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Позиция панелей"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面板位置"
           }
         }
       }
@@ -2818,6 +3754,12 @@
             "state" : "translated",
             "value" : "Тома"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宗卷"
+          }
         }
       }
     },
@@ -2835,6 +3777,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Извлечь том"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推出宗卷"
           }
         }
       }
@@ -2854,6 +3802,12 @@
             "state" : "translated",
             "value" : "Подключиться к"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到"
+          }
         }
       }
     },
@@ -2871,6 +3825,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переход к папке..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往文件夹…"
           }
         }
       }
@@ -2890,6 +3850,12 @@
             "state" : "translated",
             "value" : "Папки без расширений"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无扩展名的文件夹"
+          }
         }
       }
     },
@@ -2907,6 +3873,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вперед"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前进"
           }
         }
       }
@@ -2926,6 +3898,12 @@
             "state" : "translated",
             "value" : "В папку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进入文件夹"
+          }
         }
       }
     },
@@ -2943,6 +3921,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Выделить по расширению"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按扩展名选择"
           }
         }
       }
@@ -2962,6 +3946,12 @@
             "state" : "translated",
             "value" : "Показать следующую вкладку"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示下一个标签页"
+          }
         }
       }
     },
@@ -2979,6 +3969,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Корень"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根目录"
           }
         }
       }
@@ -2998,6 +3994,12 @@
             "state" : "translated",
             "value" : "Естественное сравнение"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自然排序比较"
+          }
         }
       }
     },
@@ -3015,6 +4017,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Быстрые списки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速列表"
           }
         }
       }
@@ -3034,6 +4042,12 @@
             "state" : "translated",
             "value" : "История"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "历史记录"
+          }
         }
       }
     },
@@ -3051,6 +4065,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сортировать по времени добавления"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按添加时间排序"
           }
         }
       }
@@ -3070,6 +4090,12 @@
             "state" : "translated",
             "value" : "Инструменты"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
+          }
         }
       }
     },
@@ -3087,6 +4113,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Избранные"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收藏夹"
           }
         }
       }
@@ -3106,6 +4138,12 @@
             "state" : "translated",
             "value" : "Подключиться к"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接到"
+          }
         }
       }
     },
@@ -3123,6 +4161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать предыдущую вкладку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示上一个标签页"
           }
         }
       }
@@ -3142,6 +4186,12 @@
             "state" : "translated",
             "value" : "Создать папку в противоположной панели…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在对面面板中新建目录…"
+          }
         }
       }
     },
@@ -3159,6 +4209,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Инструменты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
           }
         }
       }
@@ -3178,6 +4234,12 @@
             "state" : "translated",
             "value" : "Вставить имена файлов в терминал..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将文件名粘贴到终端…"
+          }
         }
       }
     },
@@ -3195,6 +4257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Показать/скрыть терминал"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示/隐藏终端"
           }
         }
       }
@@ -3214,6 +4282,12 @@
             "state" : "translated",
             "value" : "Копировать имя файла"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝项目名称"
+          }
         }
       }
     },
@@ -3231,6 +4305,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить имя файла в терминал"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将文件名粘贴到终端"
           }
         }
       }
@@ -3250,6 +4330,12 @@
             "state" : "translated",
             "value" : "Сдвинуть влево"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左移"
+          }
         }
       }
     },
@@ -3264,6 +4350,12 @@
           }
         },
         "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "9"
@@ -3286,6 +4378,12 @@
             "state" : "translated",
             "value" : "7"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7"
+          }
         }
       }
     },
@@ -3303,6 +4401,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Библиотеки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "资源库"
           }
         }
       }
@@ -3322,6 +4426,12 @@
             "state" : "translated",
             "value" : "Фокус на терминал"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聚焦重叠的终端"
+          }
         }
       }
     },
@@ -3339,6 +4449,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Левая панель..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左侧面板…"
           }
         }
       }
@@ -3358,6 +4474,12 @@
             "state" : "translated",
             "value" : "Родительские папки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "父文件夹"
+          }
         }
       }
     },
@@ -3375,6 +4497,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Недавно закрытые"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近关闭"
           }
         }
       }
@@ -3394,6 +4522,12 @@
             "state" : "translated",
             "value" : "Показывать скрытые файлы"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示隐藏文件"
+          }
         }
       }
     },
@@ -3412,6 +4546,12 @@
             "state" : "translated",
             "value" : "Положение панелей"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面板位置"
+          }
         }
       }
     },
@@ -3429,6 +4569,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Найти далее"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查找下一个"
           }
         }
       }

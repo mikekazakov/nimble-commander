@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Поддерживаемые shell: bash, zsh и [t]csh"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持的 shell：bash、zsh 和 [t]csh"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shell входа по умолчанию"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认登录 shell"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "▁ Подчеркивание"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "▁ 下划线"
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "█ Блок"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "█ 方块"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "Курсор"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "光标："
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запускать терминал с:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用以下方式打开 shell："
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : " ▏Вертикальная полоса"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " ▏竖线"
+          }
         }
       }
     },
@@ -142,6 +184,12 @@
             "state" : "translated",
             "value" : "Скрыть полосу прокрутки"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏滚动条"
+          }
         }
       }
     },
@@ -159,6 +207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Команда (полный путь)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令（完整路径）："
           }
         }
       }

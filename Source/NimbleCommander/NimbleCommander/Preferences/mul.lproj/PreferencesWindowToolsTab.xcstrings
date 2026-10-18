@@ -16,6 +16,12 @@
             "state" : "translated",
             "value" : "Запускать в терминале"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在终端中运行"
+          }
         }
       }
     },
@@ -33,6 +39,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запускать независимо"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "独立运行"
           }
         }
       }
@@ -52,6 +64,12 @@
             "state" : "translated",
             "value" : "Название инструмента:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具标题："
+          }
         }
       }
     },
@@ -69,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%F\t\tИмена исходных объектов как параметры"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%F\t\t源文件名作为参数"
           }
         }
       }
@@ -88,6 +112,12 @@
             "state" : "translated",
             "value" : "%-p\tПуть целевого объекта"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-p\t目标项目路径"
+          }
         }
       }
     },
@@ -105,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "…"
           }
         }
       }
@@ -124,6 +160,12 @@
             "state" : "translated",
             "value" : "Обратите внимание, что инструменты командной строки не поддерживаются в версиях для MacAppStore"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请注意，Mac App Store 版本不支持命令行外部工具"
+          }
         }
       }
     },
@@ -141,6 +183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить текущий объект"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入当前项目"
           }
         }
       }
@@ -160,6 +208,12 @@
             "state" : "translated",
             "value" : "%-F \tИмена целевых объектов как параметры"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-F \t目标文件名作为参数"
+          }
         }
       }
     },
@@ -177,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%f\tИмя исходного объекта"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%f\t源项目文件名"
           }
         }
       }
@@ -196,6 +256,12 @@
             "state" : "translated",
             "value" : "%10F\tИмена исходных объектов как параметры, ограниченно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10F\t源文件名作为参数（数量受限）"
+          }
         }
       }
     },
@@ -213,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-P \tПути целевых объектов как параметры"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-P \t目标文件路径作为参数"
           }
         }
       }
@@ -232,6 +304,12 @@
             "state" : "translated",
             "value" : "Автоматически"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动"
+          }
         }
       }
     },
@@ -249,6 +327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%10P\tПути исходных объектов как параметры, ограниченно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10P\t源文件路径作为参数（数量受限）"
           }
         }
       }
@@ -268,6 +352,12 @@
             "state" : "translated",
             "value" : "Прочее"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
         }
       }
     },
@@ -285,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%5T Ограничить общее число объектов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%5T 限制输出文件的总数"
           }
         }
       }
@@ -304,6 +400,12 @@
             "state" : "translated",
             "value" : "Приложение:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用程序："
+          }
         }
       }
     },
@@ -321,6 +423,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-e\tРасширение целевого объекта"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-e\t目标项目扩展名"
           }
         }
       }
@@ -340,6 +448,12 @@
             "state" : "translated",
             "value" : "%LF\t\tИмена исходных объектов в текстовом файле"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%LF\t\t文本文件中的源文件名"
+          }
         }
       }
     },
@@ -357,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить текущий объект"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入当前项目"
           }
         }
       }
@@ -376,6 +496,12 @@
             "state" : "translated",
             "value" : "%p\tПуть исходного объекта"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%p\t源项目路径"
+          }
         }
       }
     },
@@ -393,6 +519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тип запуска:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动方式："
           }
         }
       }
@@ -412,6 +544,12 @@
             "state" : "translated",
             "value" : "%10LF \tИмена исходных объектов в текстовом файле, ограниченно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10LF \t文本文件中的源文件名（数量受限）"
+          }
         }
       }
     },
@@ -429,6 +567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Спросить значение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "询问值"
           }
         }
       }
@@ -448,6 +592,12 @@
             "state" : "translated",
             "value" : "%\"Название параметра\"? Ввести значение параметра, с названием"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%\"Option name\"? 输入所指定参数的值"
+          }
         }
       }
     },
@@ -465,6 +615,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%% Вставить символ %"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%% 插入 % 字符"
           }
         }
       }
@@ -484,6 +640,12 @@
             "state" : "translated",
             "value" : "Вставить выбранные объекты"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入所选项"
+          }
         }
       }
     },
@@ -501,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-f\tИмя целевого объекта"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-f\t目标项目文件名"
           }
         }
       }
@@ -520,6 +688,12 @@
             "state" : "translated",
             "value" : "Параметры:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参数："
+          }
         }
       }
     },
@@ -537,6 +711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%10LP \tПути исходных объектов в текстовом файле, ограниченно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%10LP \t文本文件中的源文件路径（数量受限）"
           }
         }
       }
@@ -556,6 +736,12 @@
             "state" : "translated",
             "value" : "Прочее"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
         }
       }
     },
@@ -573,6 +759,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вставить выбранные объекты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入所选项"
           }
         }
       }
@@ -592,6 +784,12 @@
             "state" : "translated",
             "value" : "%P\t\tПути исходных объектов как параметры"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%P\t\t源文件路径作为参数"
+          }
         }
       }
     },
@@ -609,6 +807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-10LP \tПути целевых объектов в текстовом файле, ограниченно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10LP \t文本文件中的目标文件路径（数量受限）"
           }
         }
       }
@@ -628,6 +832,12 @@
             "state" : "translated",
             "value" : "%e\tРасширение исходного объекта"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%e\t源项目扩展名"
+          }
         }
       }
     },
@@ -645,6 +855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-r\tПуть целевой панели"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-r\t目标面板路径"
           }
         }
       }
@@ -664,6 +880,12 @@
             "state" : "translated",
             "value" : "%-n\tИмя целевого объекта без расширения"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-n\t不含扩展名的目标项目文件名"
+          }
         }
       }
     },
@@ -681,6 +903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%LP\t\tПути исходных объектов в текстовом файле"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%LP\t\t文本文件中的源文件路径"
           }
         }
       }
@@ -700,6 +928,12 @@
             "state" : "translated",
             "value" : "%- Использовать левую/правую панель вместо исходной/целевой"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%- 使用左/右面板代替源/目标"
+          }
         }
       }
     },
@@ -717,6 +951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%n\tИмя исходного объекта без расширения"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%n\t不含扩展名的源项目文件名"
           }
         }
       }
@@ -736,6 +976,12 @@
             "state" : "translated",
             "value" : "%r\tПуть исходной панели"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%r\t源面板路径"
+          }
         }
       }
     },
@@ -753,6 +999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-10F \tИмена целевых объектов как параметры, ограниченно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10F \t目标文件名作为参数（数量受限）"
           }
         }
       }
@@ -772,6 +1024,12 @@
             "state" : "translated",
             "value" : "%? Ввести значение параметра"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%? 输入参数的值"
+          }
         }
       }
     },
@@ -789,6 +1047,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-LP \tПути целевых объектов в текстовом файле"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-LP \t文本文件中的目标文件路径"
           }
         }
       }
@@ -808,6 +1072,12 @@
             "state" : "translated",
             "value" : "%-LF \tИмена целевых объектов в текстовом файле"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-LF \t文本文件中的目标文件名"
+          }
         }
       }
     },
@@ -825,6 +1095,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Спросить значение"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "询问值"
           }
         }
       }
@@ -844,6 +1120,12 @@
             "state" : "translated",
             "value" : "%-10LF \tИмена целевых объектов в текстовом файле, ограниченно"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10LF \t文本文件中的目标文件名（数量受限）"
+          }
         }
       }
     },
@@ -861,6 +1143,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%-10P \tПути целевых объектов как параметры, ограниченно"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%-10P \t目标文件路径作为参数（数量受限）"
           }
         }
       }

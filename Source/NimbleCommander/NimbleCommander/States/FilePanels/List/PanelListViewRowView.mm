@@ -284,7 +284,7 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
 - (void)drawRect:(NSRect) [[maybe_unused]] _dirty_rect
 {
     [m_RowColor set];
-    NSRectFill(_dirty_rect);
+    NSRectFill(self.bounds);
 }
 
 - (void)addSubview:(NSView *)view

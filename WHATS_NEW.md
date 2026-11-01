@@ -1,5 +1,21 @@
 # What's New in Nimble Commander
 
+## Version 1.9.0 (1 Nov 2026)
+- Updated for macOS Golden Gate.
+- Added Simplified Chinese (zh-Hans) localization.
+- Added TOML syntax highlighting.
+- Added an option to open large files (>64 MB) directly from VFS locations.
+- New action: Create Directory in Opposite Panel (Shift+F7).
+- Go To Folder now accepts paths enclosed in quotes.
+- Holding Option when opening the context menu now allows to copy an item as a pathname.
+- Fixed an issue that caused directories on network shares to take a long time to load.
+- Fixed a crash that occurred when using "Open With" on a VFS location.
+- Fixed an issue that caused files extracted from ZIP archives to have invalid timestamps.
+- Fixed a crash that occurred when opening multiple files at once.
+- Fixed a couple of visual glitches.
+- Raised the minimum supported macOS version to Monterey.
+- Many other internal improvements and minor fixes.
+
 ## Version 1.8.0 (19 Dec 2025)
 - Updated for macOS Tahoe.
 - Added a new presentation mode: Gallery.

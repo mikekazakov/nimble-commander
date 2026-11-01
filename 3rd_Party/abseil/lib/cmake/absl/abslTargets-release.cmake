@@ -5,6 +5,26 @@
 # Commands may need to know the format version.
 set(CMAKE_IMPORT_FILE_VERSION 1)
 
+# Import target "absl::base_cpu_detect" for configuration "Release"
+set_property(TARGET absl::base_cpu_detect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(absl::base_cpu_detect PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libabsl_base_cpu_detect.a"
+  )
+
+list(APPEND _cmake_import_check_targets absl::base_cpu_detect )
+list(APPEND _cmake_import_check_files_for_absl::base_cpu_detect "${_IMPORT_PREFIX}/lib/libabsl_base_cpu_detect.a" )
+
+# Import target "absl::hardening" for configuration "Release"
+set_property(TARGET absl::hardening APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(absl::hardening PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libabsl_hardening.a"
+  )
+
+list(APPEND _cmake_import_check_targets absl::hardening )
+list(APPEND _cmake_import_check_files_for_absl::hardening "${_IMPORT_PREFIX}/lib/libabsl_hardening.a" )
+
 # Import target "absl::log_severity" for configuration "Release"
 set_property(TARGET absl::log_severity APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(absl::log_severity PROPERTIES
@@ -124,16 +144,6 @@ set_target_properties(absl::raw_hash_set PROPERTIES
 
 list(APPEND _cmake_import_check_targets absl::raw_hash_set )
 list(APPEND _cmake_import_check_files_for_absl::raw_hash_set "${_IMPORT_PREFIX}/lib/libabsl_raw_hash_set.a" )
-
-# Import target "absl::crc_cpu_detect" for configuration "Release"
-set_property(TARGET absl::crc_cpu_detect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(absl::crc_cpu_detect PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libabsl_crc_cpu_detect.a"
-  )
-
-list(APPEND _cmake_import_check_targets absl::crc_cpu_detect )
-list(APPEND _cmake_import_check_files_for_absl::crc_cpu_detect "${_IMPORT_PREFIX}/lib/libabsl_crc_cpu_detect.a" )
 
 # Import target "absl::crc_internal" for configuration "Release"
 set_property(TARGET absl::crc_internal APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)

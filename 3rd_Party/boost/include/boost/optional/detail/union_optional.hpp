@@ -391,7 +391,9 @@ namespace boost {
     template <typename U,
               BOOST_OPTIONAL_REQUIRES(::std::is_constructible<T, U&&>),
               BOOST_OPTIONAL_REQUIRES(!optional_detail::is_typed_in_place_factory<U>),
-              BOOST_OPTIONAL_REQUIRES(!optional_detail::is_in_place_factory<U>)>
+              BOOST_OPTIONAL_REQUIRES(!optional_detail::is_in_place_factory<U>),
+              BOOST_OPTIONAL_REQUIRES(!BOOST_OPTIONAL_IS_TAGGED(optional_detail::optional_tag, U))
+              >
     constexpr explicit optional(U&& v)
     : storage(optional_ns::in_place_init, optional_detail::forward_<U>(v))
     {}

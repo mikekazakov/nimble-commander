@@ -9,10 +9,10 @@ TMP_DIR=${CUR_DIR}/lexilla.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-wget https://www.scintilla.org/scintilla563.zip
-unzip scintilla563.zip
+wget https://www.scintilla.org/scintilla568.zip
+unzip scintilla568.zip
 
-git clone -b rel-5-5-0 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
+git clone -b rel-5-5-5 --single-branch --depth=1 https://github.com/ScintillaOrg/lexilla.git
 cd lexilla
 
 source_files=""
@@ -34,7 +34,7 @@ clang++ -c \
   -fvisibility=hidden \
   -flto \
   -Os \
-  -mmacosx-version-min=11.0 \
+  -mmacosx-version-min=12.0 \
   -DNDEBUG \
   -I./include \
   -I./lexlib \

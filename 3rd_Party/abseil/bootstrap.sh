@@ -9,14 +9,14 @@ TMP_DIR=${CUR_DIR}/abseil.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b 20260526.0 --single-branch --depth=1 https://github.com/abseil/abseil-cpp.git
+git clone -b 20260817.0 --single-branch --depth=1 https://github.com/abseil/abseil-cpp.git
 cd abseil-cpp
 mkdir build_cmake
 cd build_cmake
 cmake \
   -D CMAKE_BUILD_TYPE=Release\
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-  -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="12.0" \
   -D CMAKE_CXX_FLAGS="-fvisibility=hidden -flto -Os" \
   -D CMAKE_CXX_STANDARD="23" \
   -D CMAKE_INSTALL_PREFIX="${TMP_DIR}" \

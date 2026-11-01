@@ -9,11 +9,11 @@ TMP_DIR=${CUR_DIR}/openssl.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR}
 
-git clone -b openssl-3.5.5 --single-branch --depth 1 https://github.com/openssl/openssl.git openssl.x64
+git clone -b openssl-3.6.5 --single-branch --depth 1 https://github.com/openssl/openssl.git openssl.x64
 cp -r openssl.x64 openssl.arm64
 
 # NB! No -fvisibility=hidden neither -flto passed, since OpenSSL3 is quite a snowflake...
-CFLAGS="-mmacosx-version-min=11.0 -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
+CFLAGS="-mmacosx-version-min=12.0 -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
 
 cd openssl.x64
 arch -arch x86_64 ./config \

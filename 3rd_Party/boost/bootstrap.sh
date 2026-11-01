@@ -9,8 +9,8 @@ TMP_DIR=${CUR_DIR}/boost.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-wget https://archives.boost.io/release/1.91.0/source/boost_1_91_0.tar.gz
-tar -xf boost_1_91_0.tar.gz
+wget https://archives.boost.io/release/1.92.0/source/boost_1_92_0.tar.gz
+tar -xf boost_1_92_0.tar.gz
 
 cd ..
 
@@ -18,7 +18,7 @@ rm -rf ./include/
 mkdir include
 mkdir include/boost
 
-B=${TMP_DIR}/boost_1_91_0/boost
+B=${TMP_DIR}/boost_1_92_0/boost
 
 cp -R \
  ${B}/algorithm \

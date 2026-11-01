@@ -26,8 +26,7 @@ static constexpr uint64_t g_ArcLARawMaxBytes = 64ULL * 1024ULL * 1024ULL;
 static constexpr const char *g_ArcLARawLastResortFilename = "data";
 
 // Lowercase FormC extensions supported by this VFS
-static constexpr std::string g_ArcLARawExtensionsList[] =
-    {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
+static constexpr std::string g_ArcLARawExtensionsList[] = {"bz2", "gz", "lz", "lz4", "lzma", "lzo", "xz", "z", "zst"};
 
 // O(1) unordered set of the extensions
 [[clang::no_destroy]] static const ankerl::unordered_dense::

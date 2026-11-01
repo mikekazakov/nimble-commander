@@ -18,7 +18,7 @@ clang++ -c \
   -fvisibility=hidden \
   -flto \
   -Os \
-  -mmacosx-version-min=11.0 \
+  -mmacosx-version-min=12.0 \
   -DNDEBUG \
   -DSPDLOG_COMPILED_LIB \
   -DSPDLOG_FMT_EXTERNAL \

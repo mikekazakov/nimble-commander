@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.8.7 --depth 1 https://github.com/libarchive/libarchive.git
+git clone -b v3.8.11 --depth 1 https://github.com/libarchive/libarchive.git
 
 cd libarchive
 
@@ -20,7 +20,7 @@ cmake \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-  -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="12.0" \
   -D CMAKE_IGNORE_PREFIX_PATH=/usr/local \
   -D BUILD_SHARED_LIBS="OFF" \
   -D ENABLE_LIBB2="OFF" \

@@ -9,7 +9,6 @@ using namespace std::string_literals;
 using namespace nc::utility;
 using ::testing::_;
 using ::testing::Eq;
-using ::testing::Invoke;
 using ::testing::Return;
 
 TEST_CASE("BriefOnDiskStorageImpl writes the entire file")
@@ -20,12 +19,12 @@ TEST_CASE("BriefOnDiskStorageImpl writes the entire file")
     const auto fake_fd = 42;
 
     nc::base::PosixFilesystemMock fs;
-    EXPECT_CALL(fs, mkstemp(Eq(expected_pattern))).WillOnce(Invoke([fake_path](char *p) {
+    EXPECT_CALL(fs, mkstemp(Eq(expected_pattern))).WillOnce([fake_path](char *p) {
         // NOLINTBEGIN(bugprone-unsafe-functions)
         strcpy(p, fake_path.c_str());
         // NOLINTEND(bugprone-unsafe-functions)
         return fake_fd;
-    }));
+    });
     EXPECT_CALL(fs, write(fake_fd, data.c_str(), data.length())).WillOnce(Return(data.length()));
     EXPECT_CALL(fs, close(fake_fd));
     EXPECT_CALL(fs, unlink(Eq(fake_path)));

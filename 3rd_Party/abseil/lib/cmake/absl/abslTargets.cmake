@@ -19,7 +19,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_cmake_targets_defined "")
 set(_cmake_targets_not_defined "")
 set(_cmake_expected_targets "")
-foreach(_cmake_expected_target IN ITEMS absl::atomic_hook absl::errno_saver absl::hardening absl::log_severity absl::no_destructor absl::nullability absl::nullability_traits_internal absl::raw_logging_internal absl::spinlock_wait absl::config absl::dynamic_annotations absl::core_headers absl::malloc_internal absl::base_internal absl::base absl::throw_delegate absl::pretty_function absl::endian absl::scoped_set_env absl::strerror absl::fast_type_id absl::prefetch absl::poison absl::tracing_internal absl::iterator_traits_internal absl::iterator_traits_test_helper_internal absl::algorithm absl::algorithm_container absl::cleanup_internal absl::cleanup absl::btree absl::compressed_tuple absl::fixed_array absl::inlined_vector_internal absl::inlined_vector absl::flat_hash_map absl::flat_hash_set absl::node_hash_map absl::node_hash_set absl::hash_container_defaults absl::container_memory absl::hash_function_defaults absl::hash_policy_traits absl::common_policy_traits absl::hashtablez_sampler absl::hashtable_debug absl::hashtable_debug_hooks absl::node_slot_policy absl::raw_hash_map absl::container_common absl::hashtable_control_bytes absl::raw_hash_set absl::raw_hash_set_resize_impl absl::layout absl::linked_hash_set absl::linked_hash_map absl::chunked_queue absl::crc_cpu_detect absl::crc_internal absl::crc32c absl::non_temporal_arm_intrinsics absl::non_temporal_memcpy absl::crc_cord_state absl::stacktrace absl::symbolize absl::examine_stack absl::failure_signal_handler absl::debugging_internal absl::demangle_internal absl::bounded_utf8_length_sequence absl::decode_rust_punycode absl::demangle_rust absl::utf8_for_code_point absl::leak_check absl::debugging absl::flags_path_util absl::flags_program_name absl::flags_config absl::flags_marshalling absl::flags_commandlineflag_internal absl::flags_commandlineflag absl::flags_private_handle_accessor absl::flags_reflection absl::flags_internal absl::flags absl::flags_usage_internal absl::flags_usage absl::flags_parse absl::any_invocable absl::bind_back absl::bind_front absl::function_ref absl::overload absl::hash absl::city absl::weakly_mixed_integer absl::log_internal_check_impl absl::log_internal_check_op absl::log_internal_conditions absl::log_internal_config absl::log_internal_flags absl::log_internal_format absl::log_internal_globals absl::log_internal_log_impl absl::log_internal_proto absl::log_internal_message absl::log_internal_log_sink_set absl::log_internal_nullguard absl::log_internal_nullstream absl::log_internal_strip absl::log_internal_voidify absl::log_internal_append_truncated absl::absl_check absl::absl_log absl::check absl::die_if_null absl::log_flags absl::log_globals absl::log_initialize absl::log absl::log_entry absl::log_sink absl::log_sink_registry absl::log_streamer absl::log_internal_structured absl::log_internal_structured_proto absl::log_structured absl::vlog_config_internal absl::absl_vlog_is_on absl::vlog_is_on absl::log_internal_fnmatch absl::log_internal_container absl::memory absl::constexpr_testing_internal absl::requires_internal absl::type_traits absl::meta absl::bits absl::int128 absl::numeric absl::numeric_representation absl::sample_recorder absl::exponential_biased absl::periodic_sampler absl::profile_builder absl::hashtable_profiler absl::random_random absl::random_bit_gen_ref absl::random_mocking_access absl::random_internal_mock_helpers absl::random_distributions absl::random_seed_gen_exception absl::random_seed_sequences absl::random_internal_traits absl::random_internal_distribution_caller absl::random_internal_fast_uniform_bits absl::random_internal_seed_material absl::random_internal_entropy_pool absl::random_internal_salted_seed_seq absl::random_internal_iostream_state_saver absl::random_internal_generate_real absl::random_internal_wide_multiply absl::random_internal_fastmath absl::random_internal_nonsecure_base absl::random_internal_pcg_engine absl::random_internal_randen_engine absl::random_internal_platform absl::random_internal_randen absl::random_internal_randen_slow absl::random_internal_randen_hwaes absl::random_internal_randen_hwaes_impl absl::random_internal_distribution_test_util absl::random_internal_uniform_helper absl::status absl::statusor absl::status_builder absl::status_macros absl::string_view absl::strings absl::charset absl::has_ostream_operator absl::stringify_stream absl::strings_internal absl::strings_resize_and_overwrite absl::strings_append_and_overwrite absl::str_format absl::str_format_internal absl::cord_internal absl::cordz_update_tracker absl::cordz_functions absl::cordz_statistics absl::cordz_handle absl::cordz_info absl::cordz_sample_token absl::cordz_update_scope absl::cord absl::generic_printer_internal absl::graphcycles_internal absl::kernel_timeout_internal absl::synchronization absl::time absl::civil_time absl::time_zone absl::clock_interface absl::any absl::any_span absl::span absl::optional absl::variant absl::source_location absl::compare absl::internal_optional_ref absl::bad_any_cast absl::bad_optional_access absl::bad_variant_access absl::utility)
+foreach(_cmake_expected_target IN ITEMS absl::atomic_hook absl::base_cpu_detect absl::errno_saver absl::hardening absl::log_severity absl::no_destructor absl::nullability absl::nullability_traits_internal absl::raw_logging_internal absl::spinlock_wait absl::config absl::dynamic_annotations absl::core_headers absl::malloc_internal absl::base_internal absl::base absl::throw_delegate absl::pretty_function absl::endian absl::scoped_set_env absl::strerror absl::fast_type_id absl::prefetch absl::poison absl::tracing_internal absl::iterator_traits_internal absl::iterator_traits_test_helper_internal absl::algorithm absl::algorithm_container absl::cleanup_internal absl::cleanup absl::btree absl::compressed_tuple absl::fixed_array absl::inlined_vector_internal absl::inlined_vector absl::flat_hash_map absl::flat_hash_set absl::node_hash_map absl::node_hash_set absl::hash_container_defaults absl::container_memory absl::hash_function_defaults absl::hash_policy_traits absl::common_policy_traits absl::hashtablez_sampler absl::hashtable_debug absl::hashtable_debug_hooks absl::node_slot_policy absl::raw_hash_map absl::container_common absl::hashtable_control_bytes absl::raw_hash_set absl::raw_hash_set_resize_impl absl::layout absl::linked_hash_set absl::linked_hash_map absl::chunked_queue absl::crc_internal absl::crc32c absl::non_temporal_arm_intrinsics absl::non_temporal_memcpy absl::crc_cord_state absl::stacktrace absl::symbolize absl::examine_stack absl::failure_signal_handler absl::debugging_internal absl::demangle_internal absl::bounded_utf8_length_sequence absl::decode_rust_punycode absl::demangle_rust absl::utf8_for_code_point absl::leak_check absl::debugging absl::flags_path_util absl::flags_program_name absl::flags_config absl::flags_marshalling absl::flags_commandlineflag_internal absl::flags_commandlineflag absl::flags_private_handle_accessor absl::flags_reflection absl::flags_internal absl::flags absl::flags_usage_internal absl::flags_usage absl::flags_parse absl::any_invocable absl::bind_back absl::bind_front absl::function_ref absl::overload absl::hash absl::city absl::weakly_mixed_integer absl::log_internal_check_impl absl::log_internal_check_op absl::log_internal_conditions absl::log_internal_config absl::log_internal_flags absl::log_internal_format absl::log_internal_globals absl::log_internal_log_impl absl::log_internal_proto absl::log_internal_message absl::log_internal_log_sink_set absl::log_internal_nullguard absl::log_internal_nullstream absl::log_internal_strip absl::log_internal_voidify absl::log_internal_append_truncated absl::absl_check absl::absl_log absl::check absl::die_if_null absl::log_flags absl::log_globals absl::log_initialize absl::log absl::log_entry absl::log_sink absl::log_sink_registry absl::log_streamer absl::log_internal_structured absl::log_internal_structured_proto absl::log_structured absl::vlog_config_internal absl::absl_vlog_is_on absl::vlog_is_on absl::log_internal_fnmatch absl::log_internal_container absl::memory absl::constexpr_testing_internal absl::requires_internal absl::type_traits absl::meta absl::bits absl::int128 absl::numeric absl::numeric_representation absl::sample_recorder absl::exponential_biased absl::periodic_sampler absl::profile_builder absl::hashtable_profiler absl::random_random absl::random_bit_gen_ref absl::random_mocking_access absl::random_internal_mock_helpers absl::random_distributions absl::random_seed_gen_exception absl::random_seed_sequences absl::random_internal_traits absl::random_internal_distribution_caller absl::random_internal_fast_uniform_bits absl::random_internal_seed_material absl::random_internal_entropy_pool absl::random_internal_salted_seed_seq absl::random_internal_iostream_state_saver absl::random_internal_generate_real absl::random_internal_wide_multiply absl::random_internal_fastmath absl::random_internal_nonsecure_base absl::random_internal_pcg_engine absl::random_internal_randen_engine absl::random_internal_platform absl::random_internal_randen absl::random_internal_randen_slow absl::random_internal_randen_hwaes absl::random_internal_randen_hwaes_impl absl::random_internal_distribution_test_util absl::random_internal_uniform_helper absl::status absl::statusor absl::status_builder absl::status_macros absl::string_view absl::strings absl::charset absl::has_ostream_operator absl::stringify_stream absl::strings_internal absl::strings_resize_and_overwrite absl::strings_append_and_overwrite absl::str_format absl::str_format_internal absl::cord_internal absl::cordz_update_tracker absl::cordz_functions absl::cordz_statistics absl::cordz_handle absl::cordz_info absl::cordz_sample_token absl::cordz_update_scope absl::cord absl::generic_printer_internal absl::graphcycles_internal absl::kernel_timeout_internal absl::synchronization absl::time absl::civil_time absl::time_zone absl::clock_interface absl::any absl::any_span absl::span absl::optional absl::variant absl::source_location absl::compare absl::internal_optional_ref absl::bad_any_cast absl::bad_optional_access absl::bad_variant_access absl::utility)
   list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
   if(TARGET "${_cmake_expected_target}")
     list(APPEND _cmake_targets_defined "${_cmake_expected_target}")
@@ -64,6 +64,15 @@ set_target_properties(absl::atomic_hook PROPERTIES
   INTERFACE_LINK_LIBRARIES "absl::config;absl::core_headers"
 )
 
+# Create imported target absl::base_cpu_detect
+add_library(absl::base_cpu_detect STATIC IMPORTED)
+
+set_target_properties(absl::base_cpu_detect PROPERTIES
+  INTERFACE_COMPILE_FEATURES "cxx_std_20"
+  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+  INTERFACE_LINK_LIBRARIES "absl::base;absl::config"
+)
+
 # Create imported target absl::errno_saver
 add_library(absl::errno_saver INTERFACE IMPORTED)
 
@@ -74,7 +83,7 @@ set_target_properties(absl::errno_saver PROPERTIES
 )
 
 # Create imported target absl::hardening
-add_library(absl::hardening INTERFACE IMPORTED)
+add_library(absl::hardening STATIC IMPORTED)
 
 set_target_properties(absl::hardening PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_std_20"
@@ -566,22 +575,13 @@ set_target_properties(absl::chunked_queue PROPERTIES
   INTERFACE_LINK_LIBRARIES "absl::config;absl::core_headers;absl::hardening;absl::iterator_traits_internal;absl::layout"
 )
 
-# Create imported target absl::crc_cpu_detect
-add_library(absl::crc_cpu_detect STATIC IMPORTED)
-
-set_target_properties(absl::crc_cpu_detect PROPERTIES
-  INTERFACE_COMPILE_FEATURES "cxx_std_20"
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "absl::base;absl::config"
-)
-
 # Create imported target absl::crc_internal
 add_library(absl::crc_internal STATIC IMPORTED)
 
 set_target_properties(absl::crc_internal PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_std_20"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "absl::crc_cpu_detect;absl::bits;absl::config;absl::core_headers;absl::endian;absl::memory;absl::prefetch;absl::raw_logging_internal"
+  INTERFACE_LINK_LIBRARIES "absl::base_cpu_detect;absl::bits;absl::config;absl::core_headers;absl::endian;absl::memory;absl::prefetch;absl::raw_logging_internal"
 )
 
 # Create imported target absl::crc32c
@@ -590,7 +590,7 @@ add_library(absl::crc32c STATIC IMPORTED)
 set_target_properties(absl::crc32c PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_std_20"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "absl::crc_cpu_detect;absl::crc_internal;absl::non_temporal_memcpy;absl::config;absl::core_headers;absl::endian;absl::prefetch;absl::str_format;absl::strings"
+  INTERFACE_LINK_LIBRARIES "absl::base_cpu_detect;absl::crc_internal;absl::non_temporal_memcpy;absl::config;absl::core_headers;absl::endian;absl::prefetch;absl::str_format;absl::strings"
 )
 
 # Create imported target absl::non_temporal_arm_intrinsics
@@ -1662,7 +1662,7 @@ add_library(absl::strings STATIC IMPORTED)
 set_target_properties(absl::strings PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_std_20"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "absl::string_view;absl::strings_append_and_overwrite;absl::strings_internal;absl::strings_resize_and_overwrite;absl::base;absl::bits;absl::charset;absl::config;absl::core_headers;absl::endian;absl::hardening;absl::int128;absl::iterator_traits_internal;absl::memory;absl::nullability;absl::raw_logging_internal;absl::source_location;absl::strings;absl::throw_delegate;absl::type_traits"
+  INTERFACE_LINK_LIBRARIES "absl::string_view;absl::strings_append_and_overwrite;absl::strings_internal;absl::strings_resize_and_overwrite;absl::base;absl::bits;absl::charset;absl::config;absl::core_headers;absl::endian;absl::hardening;absl::int128;absl::iterator_traits_internal;absl::memory;absl::nullability;absl::raw_logging_internal;absl::source_location;absl::throw_delegate;absl::type_traits"
 )
 
 # Create imported target absl::charset

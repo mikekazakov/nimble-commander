@@ -9,13 +9,13 @@ TMP_DIR=${CUR_DIR}/gtest.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.17.0 --single-branch --depth=1 https://github.com/google/googletest.git
+git clone -b v1.18.0 --single-branch --depth=1 https://github.com/google/googletest.git
 cd googletest
 
 mkdir build && cd build
 cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-  -D CMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="12.0" \
   -D CMAKE_CXX_FLAGS="-fvisibility=hidden -flto -Os" \
   -D CMAKE_CXX_STANDARD="23" \
   ..

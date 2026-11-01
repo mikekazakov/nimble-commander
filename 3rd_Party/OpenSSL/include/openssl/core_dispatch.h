@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -162,16 +162,16 @@ OSSL_CORE_MAKE_FUNC(void,
 
 OSSL_CORE_MAKE_FUNC(OSSL_CORE_BIO *, BIO_new_file, (const char *filename, const char *mode))
 OSSL_CORE_MAKE_FUNC(OSSL_CORE_BIO *, BIO_new_membuf, (const void *buf, int len))
-OSSL_CORE_MAKE_FUNC(int, BIO_read_ex, (OSSL_CORE_BIO * bio, void *data, size_t data_len, size_t *bytes_read))
-OSSL_CORE_MAKE_FUNC(int, BIO_write_ex, (OSSL_CORE_BIO * bio, const void *data, size_t data_len, size_t *written))
-OSSL_CORE_MAKE_FUNC(int, BIO_gets, (OSSL_CORE_BIO * bio, char *buf, int size))
-OSSL_CORE_MAKE_FUNC(int, BIO_puts, (OSSL_CORE_BIO * bio, const char *str))
-OSSL_CORE_MAKE_FUNC(int, BIO_up_ref, (OSSL_CORE_BIO * bio))
-OSSL_CORE_MAKE_FUNC(int, BIO_free, (OSSL_CORE_BIO * bio))
-OSSL_CORE_MAKE_FUNC(int, BIO_vprintf, (OSSL_CORE_BIO * bio, const char *format, va_list args))
+OSSL_CORE_MAKE_FUNC(int, BIO_read_ex, (OSSL_CORE_BIO *bio, void *data, size_t data_len, size_t *bytes_read))
+OSSL_CORE_MAKE_FUNC(int, BIO_write_ex, (OSSL_CORE_BIO *bio, const void *data, size_t data_len, size_t *written))
+OSSL_CORE_MAKE_FUNC(int, BIO_gets, (OSSL_CORE_BIO *bio, char *buf, int size))
+OSSL_CORE_MAKE_FUNC(int, BIO_puts, (OSSL_CORE_BIO *bio, const char *str))
+OSSL_CORE_MAKE_FUNC(int, BIO_up_ref, (OSSL_CORE_BIO *bio))
+OSSL_CORE_MAKE_FUNC(int, BIO_free, (OSSL_CORE_BIO *bio))
+OSSL_CORE_MAKE_FUNC(int, BIO_vprintf, (OSSL_CORE_BIO *bio, const char *format, va_list args))
 OSSL_CORE_MAKE_FUNC(int, BIO_vsnprintf,
     (char *buf, size_t n, const char *fmt, va_list args))
-OSSL_CORE_MAKE_FUNC(int, BIO_ctrl, (OSSL_CORE_BIO * bio, int cmd, long num, void *ptr))
+OSSL_CORE_MAKE_FUNC(int, BIO_ctrl, (OSSL_CORE_BIO *bio, int cmd, long num, void *ptr))
 
 /* New seeding functions prototypes with the 101-104 series */
 #define OSSL_FUNC_CLEANUP_USER_ENTROPY 96
@@ -180,9 +180,9 @@ OSSL_CORE_MAKE_FUNC(int, BIO_ctrl, (OSSL_CORE_BIO * bio, int cmd, long num, void
 #define OSSL_FUNC_GET_USER_NONCE 99
 
 #define OSSL_FUNC_INDICATOR_CB 95
-OSSL_CORE_MAKE_FUNC(void, indicator_cb, (OPENSSL_CORE_CTX * ctx, OSSL_INDICATOR_CALLBACK **cb))
+OSSL_CORE_MAKE_FUNC(void, indicator_cb, (OPENSSL_CORE_CTX *ctx, OSSL_INDICATOR_CALLBACK **cb))
 #define OSSL_FUNC_SELF_TEST_CB 100
-OSSL_CORE_MAKE_FUNC(void, self_test_cb, (OPENSSL_CORE_CTX * ctx, OSSL_CALLBACK **cb, void **cbarg))
+OSSL_CORE_MAKE_FUNC(void, self_test_cb, (OPENSSL_CORE_CTX *ctx, OSSL_CALLBACK **cb, void **cbarg))
 
 /* Functions to get seed material from the operating system */
 #define OSSL_FUNC_GET_ENTROPY 101
@@ -257,26 +257,26 @@ OSSL_CORE_MAKE_FUNC(int, provider_random_bytes, (void *provctx, int which, void 
 /* Libssl related functions */
 #define OSSL_FUNC_SSL_QUIC_TLS_CRYPTO_SEND 2001
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_crypto_send,
-    (SSL * s, const unsigned char *buf, size_t buf_len,
+    (SSL *s, const unsigned char *buf, size_t buf_len,
         size_t *consumed, void *arg))
 #define OSSL_FUNC_SSL_QUIC_TLS_CRYPTO_RECV_RCD 2002
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_crypto_recv_rcd,
-    (SSL * s, const unsigned char **buf, size_t *bytes_read,
+    (SSL *s, const unsigned char **buf, size_t *bytes_read,
         void *arg))
 #define OSSL_FUNC_SSL_QUIC_TLS_CRYPTO_RELEASE_RCD 2003
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_crypto_release_rcd,
-    (SSL * s, size_t bytes_read, void *arg))
+    (SSL *s, size_t bytes_read, void *arg))
 #define OSSL_FUNC_SSL_QUIC_TLS_YIELD_SECRET 2004
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_yield_secret,
-    (SSL * s, uint32_t prot_level, int direction,
+    (SSL *s, uint32_t prot_level, int direction,
         const unsigned char *secret, size_t secret_len, void *arg))
 #define OSSL_FUNC_SSL_QUIC_TLS_GOT_TRANSPORT_PARAMS 2005
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_got_transport_params,
-    (SSL * s, const unsigned char *params, size_t params_len,
+    (SSL *s, const unsigned char *params, size_t params_len,
         void *arg))
 #define OSSL_FUNC_SSL_QUIC_TLS_ALERT 2006
 OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_alert,
-    (SSL * s, unsigned char alert_code, void *arg))
+    (SSL *s, unsigned char alert_code, void *arg))
 
 /* Operations */
 
@@ -451,6 +451,50 @@ OSSL_CORE_MAKE_FUNC(int, mac_set_ctx_params,
     (void *mctx, const OSSL_PARAM params[]))
 OSSL_CORE_MAKE_FUNC(int, mac_init_skey, (void *mctx, void *key, const OSSL_PARAM params[]))
 
+/*-
+ * Symmetric key management
+ *
+ * The Key Management takes care of provider side of symmetric key objects, and
+ * includes essentially everything that manipulates the keys  themselves and
+ * their parameters.
+ *
+ * The key objects are commonly referred to as |keydata|, and it MUST be able
+ * to contain parameters if the key has any, and the secret key.
+ *
+ * Key objects are created with OSSL_FUNC_skeymgmt_import() (there is no
+ * dedicated memory allocation function), exported with
+ * OSSL_FUNC_skeymgmt_export() and destroyed with OSSL_FUNC_keymgmt_free().
+ *
+ */
+
+/* Key data subset selection - individual bits */
+#define OSSL_SKEYMGMT_SELECT_PARAMETERS 0x01
+#define OSSL_SKEYMGMT_SELECT_SECRET_KEY 0x02
+
+/* Key data subset selection - combinations */
+#define OSSL_SKEYMGMT_SELECT_ALL \
+    (OSSL_SKEYMGMT_SELECT_PARAMETERS | OSSL_SKEYMGMT_SELECT_SECRET_KEY)
+
+#define OSSL_FUNC_SKEYMGMT_FREE 1
+#define OSSL_FUNC_SKEYMGMT_IMPORT 2
+#define OSSL_FUNC_SKEYMGMT_EXPORT 3
+#define OSSL_FUNC_SKEYMGMT_GENERATE 4
+#define OSSL_FUNC_SKEYMGMT_GET_KEY_ID 5
+#define OSSL_FUNC_SKEYMGMT_IMP_SETTABLE_PARAMS 6
+#define OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS 7
+
+OSSL_CORE_MAKE_FUNC(void, skeymgmt_free, (void *keydata))
+OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
+    skeymgmt_imp_settable_params, (void *provctx))
+OSSL_CORE_MAKE_FUNC(void *, skeymgmt_import, (void *provctx, int selection, const OSSL_PARAM params[]))
+OSSL_CORE_MAKE_FUNC(int, skeymgmt_export,
+    (void *keydata, int selection,
+        OSSL_CALLBACK *param_cb, void *cbarg))
+OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
+    skeymgmt_gen_settable_params, (void *provctx))
+OSSL_CORE_MAKE_FUNC(void *, skeymgmt_generate, (void *provctx, const OSSL_PARAM params[]))
+OSSL_CORE_MAKE_FUNC(const char *, skeymgmt_get_key_id, (void *keydata))
+
 /* KDFs and PRFs */
 
 #define OSSL_FUNC_KDF_NEWCTX 1
@@ -464,6 +508,8 @@ OSSL_CORE_MAKE_FUNC(int, mac_init_skey, (void *mctx, void *key, const OSSL_PARAM
 #define OSSL_FUNC_KDF_GET_PARAMS 9
 #define OSSL_FUNC_KDF_GET_CTX_PARAMS 10
 #define OSSL_FUNC_KDF_SET_CTX_PARAMS 11
+#define OSSL_FUNC_KDF_SET_SKEY 12
+#define OSSL_FUNC_KDF_DERIVE_SKEY 13
 
 OSSL_CORE_MAKE_FUNC(void *, kdf_newctx, (void *provctx))
 OSSL_CORE_MAKE_FUNC(void *, kdf_dupctx, (void *src))
@@ -480,6 +526,9 @@ OSSL_CORE_MAKE_FUNC(int, kdf_get_ctx_params,
     (void *kctx, OSSL_PARAM params[]))
 OSSL_CORE_MAKE_FUNC(int, kdf_set_ctx_params,
     (void *kctx, const OSSL_PARAM params[]))
+OSSL_CORE_MAKE_FUNC(int, kdf_set_skey,
+    (void *kctx, void *skeydata, const char *paramname))
+OSSL_CORE_MAKE_FUNC(void *, kdf_derive_skey, (void *ctx, const char *key_type, void *provctx, OSSL_FUNC_skeymgmt_import_fn *import, size_t keylen, const OSSL_PARAM params[]))
 
 /* RAND */
 
@@ -719,6 +768,7 @@ OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, keymgmt_export_types_ex,
 #define OSSL_FUNC_KEYEXCH_SETTABLE_CTX_PARAMS 8
 #define OSSL_FUNC_KEYEXCH_GET_CTX_PARAMS 9
 #define OSSL_FUNC_KEYEXCH_GETTABLE_CTX_PARAMS 10
+#define OSSL_FUNC_KEYEXCH_DERIVE_SKEY 11
 
 OSSL_CORE_MAKE_FUNC(void *, keyexch_newctx, (void *provctx))
 OSSL_CORE_MAKE_FUNC(int, keyexch_init, (void *ctx, void *provkey, const OSSL_PARAM params[]))
@@ -732,6 +782,7 @@ OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, keyexch_settable_ctx_params,
 OSSL_CORE_MAKE_FUNC(int, keyexch_get_ctx_params, (void *ctx, OSSL_PARAM params[]))
 OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, keyexch_gettable_ctx_params,
     (void *ctx, void *provctx))
+OSSL_CORE_MAKE_FUNC(void *, keyexch_derive_skey, (void *ctx, const char *key_type, void *provctx, OSSL_FUNC_skeymgmt_import_fn *import, size_t keylen, const OSSL_PARAM params[]))
 
 /* Signature */
 
@@ -834,50 +885,6 @@ OSSL_CORE_MAKE_FUNC(int, signature_set_ctx_md_params,
 OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, signature_settable_ctx_md_params,
     (void *ctx))
 OSSL_CORE_MAKE_FUNC(const char **, signature_query_key_types, (void))
-
-/*-
- * Symmetric key management
- *
- * The Key Management takes care of provider side of symmetric key objects, and
- * includes essentially everything that manipulates the keys  themselves and
- * their parameters.
- *
- * The key objects are commonly referred to as |keydata|, and it MUST be able
- * to contain parameters if the key has any, and the secret key.
- *
- * Key objects are created with OSSL_FUNC_skeymgmt_import() (there is no
- * dedicated memory allocation function), exported with
- * OSSL_FUNC_skeymgmt_export() and destroyed with OSSL_FUNC_keymgmt_free().
- *
- */
-
-/* Key data subset selection - individual bits */
-#define OSSL_SKEYMGMT_SELECT_PARAMETERS 0x01
-#define OSSL_SKEYMGMT_SELECT_SECRET_KEY 0x02
-
-/* Key data subset selection - combinations */
-#define OSSL_SKEYMGMT_SELECT_ALL \
-    (OSSL_SKEYMGMT_SELECT_PARAMETERS | OSSL_SKEYMGMT_SELECT_SECRET_KEY)
-
-#define OSSL_FUNC_SKEYMGMT_FREE 1
-#define OSSL_FUNC_SKEYMGMT_IMPORT 2
-#define OSSL_FUNC_SKEYMGMT_EXPORT 3
-#define OSSL_FUNC_SKEYMGMT_GENERATE 4
-#define OSSL_FUNC_SKEYMGMT_GET_KEY_ID 5
-#define OSSL_FUNC_SKEYMGMT_IMP_SETTABLE_PARAMS 6
-#define OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS 7
-
-OSSL_CORE_MAKE_FUNC(void, skeymgmt_free, (void *keydata))
-OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
-    skeymgmt_imp_settable_params, (void *provctx))
-OSSL_CORE_MAKE_FUNC(void *, skeymgmt_import, (void *provctx, int selection, const OSSL_PARAM params[]))
-OSSL_CORE_MAKE_FUNC(int, skeymgmt_export,
-    (void *keydata, int selection,
-        OSSL_CALLBACK *param_cb, void *cbarg))
-OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
-    skeymgmt_gen_settable_params, (void *provctx))
-OSSL_CORE_MAKE_FUNC(void *, skeymgmt_generate, (void *provctx, const OSSL_PARAM params[]))
-OSSL_CORE_MAKE_FUNC(const char *, skeymgmt_get_key_id, (void *keydata))
 
 /* Asymmetric Ciphers */
 

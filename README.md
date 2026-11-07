@@ -2,7 +2,7 @@
 [![Nightly Build](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml)
 
 > [!IMPORTANT]
-> **Nimble Commander is no longer actively maintained**
+> **Nimble Commander is no longer actively maintained**  
 > More details in the [discussion](https://github.com/mikekazakov/nimble-commander/discussions/756).
 
 # Nimble Commander

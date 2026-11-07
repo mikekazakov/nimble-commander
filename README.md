@@ -1,6 +1,10 @@
 [![Build and Test](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml)
 [![Nightly Build](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml)
 
+> [!IMPORTANT]
+> **Nimble Commander is no longer actively maintained**  
+> More details in the [discussion](https://github.com/mikekazakov/nimble-commander/discussions/756).
+
 # Nimble Commander
 ![](Docs/nc.png)
 Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility.  
